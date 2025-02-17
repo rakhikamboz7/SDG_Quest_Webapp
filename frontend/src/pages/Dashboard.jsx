@@ -1,97 +1,3 @@
-// // import React, { useState, useEffect } from "react";
-// // import { useNavigate } from "react-router-dom";
-
-// // const ProfilePage = () => {
-// //   const navigate = useNavigate();
-// //   const [user, setUser] = useState(null);
-// //   const [profileImage, setProfileImage] = useState("");
-
-// //   // Fetch user data when page loads
-// //   useEffect(() => {
-// //     const userData = JSON.parse(localStorage.getItem("user"));
-// //     if (!userData) {
-// //       navigate("/login");
-// //     } else {
-// //       setUser(userData);
-
-// //       // Fetch user details from backend (including profile image)
-// //       fetch(`http://localhost:5005/api/user/${userData._id}`)
-// //         .then((res) => res.json())
-// //         .then((data) => {
-// //           setUser(data);
-// //           setProfileImage(data.profilePicture);
-// //         })
-// //         .catch((err) => console.error("Error fetching user data:", err));
-// //     }
-// //   }, [navigate]);
-
-// //   // Handle Profile Image Upload
-// //   const handleProfileImageChange = async (e) => {
-// //     const file = e.target.files[0];
-// //     if (!file) return;
-
-// //     const formData = new FormData();
-// //     formData.append("profilePicture", file);
-// //     formData.append("userId", user._id);
-
-// //     try {
-// //       const response = await fetch("http://localhost:5005/api/upload-profile", {
-// //         method: "POST",
-// //         body: formData,
-// //       });
-
-// //       const data = await response.json();
-// //       if (response.ok) {
-// //         setProfileImage(data.profilePicture);
-// //         setUser({ ...user, profilePicture: data.profilePicture });
-
-// //         // Update localStorage to persist image after logout
-// //         localStorage.setItem("user", JSON.stringify({ ...user, profilePicture: data.profilePicture }));
-// //       } else {
-// //         alert("Failed to upload image.");
-// //       }
-// //     } catch (error) {
-// //       console.error("Error uploading image:", error);
-// //     }
-// //   };
-
-// //   // Logout Function
-// //   const handleLogout = () => {
-// //     localStorage.removeItem("user");
-// //     navigate("/signup");
-// //   };
-
-// //   return (
-// //     <div className="profile-container">
-// //       <h2>Profile Page</h2>
-// //       {user ? (
-// //         <div className="profile-details">
-// //          <img src="data:<%= user.image.contentType %>;base64,<%= user.image.data.toString('base64') %>" alt="Profile Picture"/>
-
-// //           <input type="file" accept="image/*" onChange={handleProfileImageChange} />
-// //           <h3>{user.name}</h3>
-// //           <p>Email: {user.email}</p>
-// //           <button onClick={handleLogout}>Logout</button>
-// //         </div>
-// //       ) : (
-// //         <p>Loading...</p>
-// //       )}
-// //     </div>
-// //   );
-// // };
-
-// // export default ProfilePage;
-
-
-
-
-
-
-
-
-
-
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bar, Doughnut } from "react-chartjs-2";
@@ -100,51 +6,45 @@ import {
   CategoryScale,
   LinearScale,
   PointElement,
-  LineElement,
   BarElement,
-  Title,
   ArcElement,
   Tooltip,
-  Legend,
 } from "chart.js";
 import axios from "axios";
+import BadgesDisplay from "../components/BadgesDisplay";
 
-// Register ChartJS components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  Title,
-  ArcElement,
-  Tooltip,
-  Legend
-);
+ChartJS.register(CategoryScale, LinearScale, PointElement, BarElement, ArcElement, Tooltip);
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [profileImage, setProfileImage] = useState("");
+  const [profileImage, setProfileImage] = useState("default-profile.png");
   const [uploadError, setUploadError] = useState("");
-  const [quizScores, setQuizScores] = useState([]); // State for storing quiz scores
+  const [quizScores, setQuizScores] = useState([]);
+  const [welcomeMessage, setWelcomeMessage] = useState("");
+  const [badgesEarned, setBadgesEarned] = useState([]);
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("user"));
     const userId = localStorage.getItem("userId");
-    if (!userData) {
+
+    if (!userData || !userId) {
       navigate("/login");
       return;
     }
 
+    const hour = new Date().getHours();
+    const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+    setWelcomeMessage(`${greeting}, ${userData.name}! 👋`);
     setUser(userData);
     setProfileImage(userData.profilePicture || "default-profile.png");
 
     const fetchScores = async () => {
       try {
         const res = await axios.get(`http://localhost:5005/api/scores/${userId}`);
-        console.log(res.data.userScores);
-        setQuizScores(res.data.userScores || []);
+        const scoresData = res.data.userScores || [];
+        setQuizScores(scoresData);
+        assignBadges(scoresData);
       } catch (error) {
         console.error("Error fetching scores:", error);
       }
@@ -153,42 +53,32 @@ const Dashboard = () => {
     fetchScores();
   }, [navigate]);
 
-  // Group quiz scores by goalId
-  const goalScores = Array(17).fill(0); // Initialize array for 17 goals
-
-  quizScores.forEach((quiz) => {
-    const goalIndex = parseInt(quiz.goalId) - 1; // Convert goalId to array index
+  const goalScores = Array(17).fill(0);
+  quizScores.forEach(quiz => {
+    const goalIndex = parseInt(quiz.goalId) - 1;
     if (goalIndex >= 0 && goalIndex < 17) {
-      goalScores[goalIndex] += quiz.score; // Sum scores for the goal
+      goalScores[goalIndex] += quiz.score || 0; 
     }
   });
 
-  // Bar Chart Data (Grouped by Goal ID)
   const quizzesData = {
-    labels: Array.from({ length: 17 }, (_, i) => `Goal ${i + 1}`), // Goal labels
-    datasets: [
-      {
-        label: "Total Score per Goal",
-        data: goalScores, // Set accumulated score for each goal
-        backgroundColor: "#008080",
-        borderColor: "#008080",
-        borderWidth: 1,
-      },
-    ],
+    labels: Array.from({ length: 17 }, (_, i) => `Goal ${i + 1}`),
+    datasets: [{
+      label: "Total Score per Goal",
+      data: goalScores,
+      backgroundColor: "#008080",
+    }],
   };
 
   const completedQuizzes = quizScores.length;
-  const remainingQuizzes = 17 - completedQuizzes; // Assuming 17 quizzes in total
+  const remainingQuizzes = 17 - completedQuizzes;
 
   const quizCompletionData = {
     labels: ["Completed", "Remaining"],
-    datasets: [
-      {
-        data: [completedQuizzes, remainingQuizzes],
-        backgroundColor: ["#008080", "#f0b100"],
-        borderWidth: 0,
-      },
-    ],
+    datasets: [{
+      data: [completedQuizzes, remainingQuizzes],
+      backgroundColor: ["#008080", "#f0b100"],
+    }],
   };
 
   const handleProfileImageChange = async (e) => {
@@ -202,58 +92,60 @@ const Dashboard = () => {
       setUploadError("Please upload an image file.");
       return;
     }
+  
     if (file.size > 5 * 1024 * 1024) {
       setUploadError("File size must be less than 5MB.");
       return;
     }
 
     const reader = new FileReader();
-    reader.onloadend = () => {
-      const updatedUser = { ...user, profilePicture: reader.result };
-      setProfileImage(reader.result);
+    reader.onloadend = async () => {
+      const imageBase64 = reader.result;
+      const updatedUser = { ...user, profilePicture: imageBase64 };
+      setProfileImage(imageBase64);
       setUser(updatedUser);
       localStorage.setItem("user", JSON.stringify(updatedUser));
       setUploadError("");
+      try {
+        await axios.put(`http://localhost:5005/api/user/profile-picture`, {
+          profilePicture: imageBase64
+        });
+        console.log("Profile picture updated successfully!");
+      } catch (error) {
+        console.error("Error updating profile image:", error);
+        setUploadError("Failed to update profile image.");
+      }
     };
+
     reader.readAsDataURL(file);
   };
 
   const handleLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("userId");
     navigate("/signup");
   };
 
+  const assignBadges = (scores) => {
+    const totalPoints = scores.reduce((acc, quiz) => acc + (quiz.score || 0), 0);
+    const earnedBadges = [];
+    if (totalPoints >= 75) earnedBadges.push("Gold");
+    if (totalPoints >= 30) earnedBadges.push("Silver");
+    if (totalPoints > 0) earnedBadges.push("Bronze");
+    setBadgesEarned(earnedBadges);
+  };
+
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
-      <div className="w-64 bg-white shadow-lg">
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
+      <div className="w-full md:w-64 bg-white shadow-lg">
         <div className="p-6 space-y-4">
           <div className="flex flex-col items-center">
             <div className="relative w-32 h-32 mb-4">
-              <img
-                src={profileImage}
-                alt="Profile"
-                className="w-full h-full rounded-full object-cover border-4 border-teal-700"
-              />
+              <img src={profileImage} alt="Profile" className="w-full h-full rounded-full border-4 border-teal-700" />
               <label className="absolute bottom-0 right-0 bg-teal-700 p-2 rounded-full cursor-pointer">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleProfileImageChange}
-                  className="hidden"
-                />
-                <svg
-                  className="w-4 h-4 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M12 4v16m8-8H4"
-                  />
+                <input type="file" accept="image/*" onChange={handleProfileImageChange} className="hidden" />
+                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
                 </svg>
               </label>
             </div>
@@ -263,80 +155,64 @@ const Dashboard = () => {
                 <p className="text-sm text-gray-600">{user.email}</p>
               </>
             )}
-            {uploadError && (
-              <p className="text-sm text-red-600">{uploadError}</p>
-            )}
+            {uploadError && <p className="text-sm text-red-600">{uploadError}</p>}
           </div>
-          <button
-            onClick={handleLogout}
-            className="w-full bg-teal-700 text-white py-2 rounded-lg hover:bg-teal-800 transition-colors"
-          >
+
+          <button onClick={() => navigate("/")} className="w-full bg-teal-600 text-white py-2 rounded-lg hover:bg-teal-700 transition-colors mb-2 flex items-center justify-center gap-2">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            Home
+          </button>
+
+          <button onClick={handleLogout} className="w-full bg-teal-700 text-white py-2 rounded-lg hover:bg-teal-800 transition-colors">
             Logout
           </button>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 p-8">
-        <h2 className="text-3xl font-bold text-gray-800 mb-8">Dashboard</h2>
+      <div className="flex-1 p-4 md:p-8">
+        <div className="mb-8">
+          <h1 className="text-2xl md:text-4xl font-bold text-teal-700">{welcomeMessage}</h1>
+          <p className="text-gray-600 mt-2">Welcome to your personal dashboard. Track your progress and achieve your goals!</p>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Quizzes Progress Bar Chart */}
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">
-              Quizzes Progress (Grouped by Goal)
-            </h3>
-            <div className="h-64">
-              <Bar
-                data={quizzesData}
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  scales: {
-                    y: {
-                      beginAtZero: true,
-                      max: 10,
-                    },
-                  },
-                }}
-              />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-white p-4 md:p-6 rounded-lg shadow-lg">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">Quizzes Progress (Grouped by Goal)</h3>
+            <div className="h-40 md:h-64">
+              <Bar data={quizzesData} options={{ responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 10 } } }} />
             </div>
           </div>
 
-          {/* Quiz Completion Chart */}
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">
-              Quiz Completion
-            </h3>
-            <div className="h-64">
-              <Doughnut
-                data={quizCompletionData}
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: false,
-                }}
-              />
+          <div className="bg-white p-4 md:p-6 rounded-lg shadow-lg">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">Quiz Completion</h3>
+            <div className="h-40 md:h-64">
+              <Doughnut data={quizCompletionData} options={{ responsive: true, maintainAspectRatio: false }} />
             </div>
           </div>
+        </div>
 
-          {/* Stats Cards */}
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">
-              Quick Stats
-            </h3>
+        {/* Quick Stats and Rewards Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <div className="bg-white p-4 md:p-6 rounded-lg shadow-lg">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">Quick Stats</h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 bg-teal-50 rounded-lg">
                 <p className="text-sm text-teal-700">Total Points</p>
-                <p className="text-2xl font-bold text-teal-700">
-                  {quizScores.reduce((acc, quiz) => acc + quiz.score, 0)}
-                </p>
+                <p className="text-2xl font-bold text-teal-700">{quizScores.reduce((acc, quiz) => acc + (quiz.score || 0), 0)}/{85}</p>
               </div>
               <div className="p-4 bg-yellow-50 rounded-lg">
                 <p className="text-sm text-yellow-700">Completed Goals</p>
-                <p className="text-2xl font-bold text-yellow-700">
-                  {completedQuizzes}/{17}
-                </p>
+                <p className="text-2xl font-bold text-yellow-700">{completedQuizzes}/{17}</p>
               </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-4 md:p-6 rounded-lg shadow-lg">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">Your Rewards</h3>
+            <div className="flex flex-col items-center mt-2">
+              <BadgesDisplay badgesEarned={badgesEarned} quizScores={quizScores} />
             </div>
           </div>
         </div>
