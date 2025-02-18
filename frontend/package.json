@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "postinstall": "shx chmod +x node_modules/.bin/vite",
     "start": "vite",
     "dev": "vite",
     "build": "vite build",
@@ -42,6 +43,7 @@
     "eslint-plugin-react-refresh": "^0.4.16",
     "globals": "^15.14.0",
     "postcss": "^8.5.1",
+    "shx": "^0.3.4",
     "tailwindcss": "^4.0.0",
     "vite": "^6.0.5"
   }
