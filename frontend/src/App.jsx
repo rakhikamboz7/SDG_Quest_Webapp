@@ -12,9 +12,11 @@ import GoalContent from './components/goalContent';
 import KnowledgeBites from './pages/knowledgeBites';
 import ProfilePage from "./pages/Dashboard";
 import { AboutUs, ContactUs } from "./pages/about";
+import { API_BASE_URL } from "./config";
 
 
 const App = () => {
+    console.log({API_BASE_URL});
     return (
         <MantineProvider withGlobalStyles withNormalizeCSS>
         

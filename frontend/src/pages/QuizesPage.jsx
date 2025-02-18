@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import BadgesDisplay from '../components/BadgesDisplay';
-const BACKEND_URL= import.meta.env.API_BASE_URL;
+import { API_BASE_URL } from '../config';
 
 
 function QuizPage() {
@@ -55,7 +55,7 @@ function QuizPage() {
     useEffect(() => {
         const fetchQuizzes = async () => {
             try {
-                const response = await axios.get(`${BACKEND_URL}/api/quizzes`);
+                const response = await axios.get(`${API_BASE_URL}/api/quizzes`);
                 setAllQuizzes(response.data);
 
                 const foundQuiz = response.data.find((q) => String(q.goalId) === String(goalId));
