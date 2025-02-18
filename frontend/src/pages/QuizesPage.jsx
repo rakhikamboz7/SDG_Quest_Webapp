@@ -41,7 +41,7 @@ function QuizPage() {
     const fetchScores = async () => {
         try {
             const userId = localStorage.getItem("userId");
-            const res = await axios.get(`http://localhost:5005/api/scores/${userId}`);
+            const res = await axios.get(`https://sdg-quest-backend.onrender.com/api/scores/${userId}`);
             const scores = res.data.userScores || [];
             setQuizScores(scores);
             setBadgesEarned(assignBadges(scores));
@@ -53,7 +53,7 @@ function QuizPage() {
     useEffect(() => {
         const fetchQuizzes = async () => {
             try {
-                const response = await axios.get("http://localhost:5005/api/quizzes");
+                const response = await axios.get("https://sdg-quest-backend.onrender.com/api/quizzes");
                 setAllQuizzes(response.data);
 
                 const foundQuiz = response.data.find((q) => String(q.goalId) === String(goalId));
@@ -101,7 +101,7 @@ function QuizPage() {
             }
 
             const response = await axios.post(
-                "http://localhost:5005/api/scores/submit",
+                "https://sdg-quest-backend.onrender.com/api/scores/submit",
                 {
                     userId,
                     goalId: goalId,

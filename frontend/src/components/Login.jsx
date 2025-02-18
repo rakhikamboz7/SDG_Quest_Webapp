@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaGoogle, FaFacebook, FaGithub, FaLinkedin } from "react-icons/fa";
 
-const BASE_URL = "http://localhost:5005";
+const BASE_URL = "https://sdg-quest-webapp.onrender.com";
 
 function LoginSignup() {
   const navigate = useNavigate();
@@ -51,7 +51,7 @@ function LoginSignup() {
     }
 
     try {
-      await axios.post("http://localhost:5005/register", formData);
+      await axios.post("https://sdg-quest-webapp.onrender.com/register", formData);
 
       alert('Registration successful!');
       resetForm();
@@ -69,7 +69,7 @@ function LoginSignup() {
     setError('');
 
     try {
-      const res = await axios.post('http://localhost:5005/login', {
+      const res = await axios.post('https://sdg-quest-webapp.onrender.com/login', {
         email,
         password,
       });
@@ -79,7 +79,7 @@ function LoginSignup() {
       localStorage.setItem('token', token);
       localStorage.setItem('userId', res.data.userId);
 
-      const userRes = await axios.get('http://localhost:5005/user', {
+      const userRes = await axios.get('https://sdg-quest-webapp.onrender.com/user', {
         headers: { Authorization: `Bearer ${token}` },
       });
 

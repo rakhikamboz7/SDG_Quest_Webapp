@@ -11,7 +11,7 @@ connectDB();
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: "https://sdg-quest-dug3he5gr-rakhikamboz7-gmailcoms-projects.vercel.app/", credentials: true }));
 app.use("/uploads", express.static("uploads"));
 
 // Routes

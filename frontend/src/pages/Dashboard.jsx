@@ -41,7 +41,7 @@ const Dashboard = () => {
 
     const fetchScores = async () => {
       try {
-        const res = await axios.get(`http://localhost:5005/api/scores/${userId}`);
+        const res = await axios.get(`https://sdg-quest-webapp.onrender.com/api/scores/${userId}`);
         const scoresData = res.data.userScores || [];
         setQuizScores(scoresData);
         assignBadges(scoresData);
@@ -107,7 +107,7 @@ const Dashboard = () => {
       localStorage.setItem("user", JSON.stringify(updatedUser));
       setUploadError("");
       try {
-        await axios.put(`http://localhost:5005/api/user/profile-picture`, {
+        await axios.put(`https://sdg-quest-webapp.onrender.com/api/user/profile-picture`, {
           profilePicture: imageBase64
         });
         console.log("Profile picture updated successfully!");

@@ -170,7 +170,7 @@ const Home = () => {
   useEffect(() => {
     const fetchQuizzes = async () => {
       try {
-        const response = await axios.get('http://localhost:5005/api/quizzes/');
+        const response = await axios.get('https://sdg-quest-webapp.onrender.com/api/quizzes/');
         console.log("Fetched quizzes:", response.data.myData); // Debug log
         setQuizzes(response.data.myData);
       } catch (error) {
