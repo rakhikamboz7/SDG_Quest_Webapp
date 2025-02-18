@@ -11,6 +11,7 @@ import {
   Tooltip,
 } from "chart.js";
 import axios from "axios";
+const BACKEND_URL= import.meta.env.API_BASE_URL;
 import BadgesDisplay from "../components/BadgesDisplay";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, BarElement, ArcElement, Tooltip);
@@ -41,7 +42,7 @@ const Dashboard = () => {
 
     const fetchScores = async () => {
       try {
-        const res = await axios.get(`https://sdg-quest-webapp.onrender.com/api/scores/${userId}`);
+        const res = await axios.get(`${BACKEND_URL}/scores/${userId}`);
         const scoresData = res.data.userScores || [];
         setQuizScores(scoresData);
         assignBadges(scoresData);
@@ -107,7 +108,7 @@ const Dashboard = () => {
       localStorage.setItem("user", JSON.stringify(updatedUser));
       setUploadError("");
       try {
-        await axios.put(`https://sdg-quest-webapp.onrender.com/api/user/profile-picture`, {
+        await axios.put(`${BACKEND_URL}/api/user/profile-picture`, {
           profilePicture: imageBase64
         });
         console.log("Profile picture updated successfully!");

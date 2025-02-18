@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaGoogle, FaFacebook, FaGithub, FaLinkedin } from "react-icons/fa";
 
-const BASE_URL = "https://sdg-quest-webapp.onrender.com";
+const BACKEND_URL= import.meta.env.API_BASE_URL;
 
 function LoginSignup() {
   const navigate = useNavigate();
@@ -51,7 +51,7 @@ function LoginSignup() {
     }
 
     try {
-      await axios.post("https://sdg-quest-webapp.onrender.com/register", formData);
+      await axios.post(`${BACKEND_URL}/register`, formData);
 
       alert('Registration successful!');
       resetForm();
@@ -69,7 +69,7 @@ function LoginSignup() {
     setError('');
 
     try {
-      const res = await axios.post('https://sdg-quest-webapp.onrender.com/login', {
+      const res = await axios.post(`${BACKEND_URL}/login`, {
         email,
         password,
       });
@@ -79,7 +79,7 @@ function LoginSignup() {
       localStorage.setItem('token', token);
       localStorage.setItem('userId', res.data.userId);
 
-      const userRes = await axios.get('https://sdg-quest-webapp.onrender.com/user', {
+      const userRes = await axios.get(`${BACKEND_URL}/user`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -229,7 +229,7 @@ function LoginSignup() {
           <h2 className="text-2xl">Welcome, {user.name}</h2>
           {user.profilePicture && (
             <img
-              src={`${BASE_URL}/${user.profilePicture}`}
+              src={`${BACKEND_URL}/${user.profilePicture}`}
               alt="User"
               className="w-40 h-40 rounded-full my-4"
             />

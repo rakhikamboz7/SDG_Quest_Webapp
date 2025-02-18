@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import BadgesDisplay from '../components/BadgesDisplay';
+const BACKEND_URL= import.meta.env.API_BASE_URL;
 
 
 function QuizPage() {
@@ -42,7 +43,7 @@ function QuizPage() {
     const fetchScores = async () => {
         try {
             const userId = localStorage.getItem("userId");
-            const res = await axios.get(`https://sdg-quest-backend.onrender.com/api/scores/${userId}`);
+            const res = await axios.get(`${BACKEND_URL}/api/scores/${userId}`);
             const scores = res.data.userScores || [];
             setQuizScores(scores);
             setBadgesEarned(assignBadges(scores));
@@ -54,7 +55,7 @@ function QuizPage() {
     useEffect(() => {
         const fetchQuizzes = async () => {
             try {
-                const response = await axios.get("https://sdg-quest-backend.onrender.com/api/quizzes");
+                const response = await axios.get(`${BACKEND_URL}/api/quizzes`);
                 setAllQuizzes(response.data);
 
                 const foundQuiz = response.data.find((q) => String(q.goalId) === String(goalId));
@@ -101,8 +102,8 @@ function QuizPage() {
                 return;
             }
 
-            const response = await axios.post(
-                "https://sdg-quest-backend.onrender.com/api/scores/submit",
+            const response = await axios.post(`${BACKEND_URL}
+                /api/scores/submit`,
                 {
                     userId,
                     goalId: goalId,

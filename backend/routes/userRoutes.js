@@ -9,4 +9,5 @@ router.post("/register", upload.single("image"), registerUser);
 router.post("/login", loginUser);
 router.get("/user", protect, getUserData);
 
+
 module.exports = router;

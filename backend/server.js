@@ -1,10 +1,12 @@
 require("dotenv").config();
-const express = require("express");
+const express = require("express"); // common js --> module js ---> import express from "express";
 const cors = require("cors");
 const connectDB = require("./config/db");
 
+
+
 const app = express();
-const PORT = process.env.PORT || 5005;
+const PORT = process.env.PORT || 10000;
 
 connectDB();
 
@@ -24,6 +26,11 @@ app.use("/api", require("./routes/scoreRoutes"));
 
 
 app.get("/", (req, res) => res.send("API is running..."));
+
+app.get("*", (req, res) => {
+  console.log("url : ", req.url);
+  res.status(404).json({ message: "Route not found", url : req.url });
+});
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
