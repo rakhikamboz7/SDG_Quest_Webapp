@@ -12,8 +12,7 @@ connectDB();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-    origin: ["https://sdg-quest-app.vercel.app/"], // Allow Vercel frontend
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: true,// Allow to send request from any origin ----> cors ---> cross origin resource sharing ----> 
     credentials: true
   }));
 app.use("/uploads", express.static("uploads"));
