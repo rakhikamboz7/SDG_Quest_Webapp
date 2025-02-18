@@ -5,11 +5,28 @@ import { useParams } from "react-router-dom";
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import axios from 'axios';
+import poverty from "../assets/poverty.svg.ico";
+import Hunger from "../assets/Hunger.ico";
+import Health from "../assets/Health.ico";
+import education from "../assets/education.svg.ico";
+import gender from "../assets/gender.svg.ico";
+import goal6 from "../assets/goal6.svg.ico";
+import goal7 from "../assets/goal7.png.ico";
+import goal8 from "../assets/goal8.svg.ico";
+import goal9 from "../assets/goal9.svg.ico";
+import goal10 from "../assets/goal10.png.ico";
+import goal11 from "../assets/goal11.svg.ico";
+import goal12 from "../assets/goal12.svg.ico";
+import goal13 from "../assets/goal13.svg.ico";
+import goal14 from "../assets/goal14.svg.ico";
+import goal15 from "../assets/goal15.svg.ico";
+import goal16 from "../assets/goal16.svg.ico";
+import goal17 from "../assets/goal17.svg.ico";
 const goalsData = [
   {
     id: 1,
     title: "No Poverty",
-    icon: "src/assets/poverty.svg.ico",
+    icon: poverty,
     overview:
       "Goal 1 aims to end poverty in all its forms everywhere. The number of people living in extreme poverty dropped by more than half between 1990 and 2015.",
     color: "#E5243B",
@@ -17,7 +34,7 @@ const goalsData = [
   {
     id: 2,
     title: "Zero Hunger",
-    icon: "src/assets/Hunger.ico",
+    icon: Hunger,
     overview:
       "Goal 2 seeks sustainable solutions to end hunger and achieve food security for all.",
     color: "#DDA63A",
@@ -25,7 +42,7 @@ const goalsData = [
   {
     id: 3,
     title: "Good Health and Well-Being",
-    icon: "src/assets/Health.ico",
+    icon: Health,
     overview:
       "Goal 3 ensures healthy lives and promotes well-being at all ages.",
     color: "#4C9F38",
@@ -33,7 +50,7 @@ const goalsData = [
   {
     id: 4,
     title: "Quality Education",
-    icon: "src/assets/education.svg.ico",
+    icon:education,
     overview:
       "Goal 4 ensures inclusive and equitable quality education and promotes lifelong learning opportunities.",
     color: "#C5192D",
@@ -41,7 +58,7 @@ const goalsData = [
   {
     id: 5,
     title: "Gender Equality",
-    icon: "src/assets/gender.svg.ico",
+    icon: gender,
     overview:
       "Goal 5 aims to achieve gender equality and empower all women and girls.",
     color: "#FF3A21",
@@ -49,7 +66,7 @@ const goalsData = [
   {
     id: 6,
     title: "Goal 6: Clean Water and Sanitation",
-    icon: "src/assets/goal6.svg.ico",
+    icon: goal6,
     overview:
       "Goal 6 aims to ensure availability and sustainable management of water and sanitation for all. Billions of people still lack access to safe water and sanitation.",
     color: "#26BDE2",
@@ -57,7 +74,7 @@ const goalsData = [
   {
     id: 7,
     title: "Goal 7: Affordable and Clean Energy",
-    icon: "src/assets/goal7.png.ico",
+    icon: goal7,
     overview:
       "Goal 7 ensures access to affordable, reliable, sustainable, and modern energy for all. Transitioning to renewable energy is key to fighting climate change.",
     color: "#FCC30B",
@@ -65,7 +82,7 @@ const goalsData = [
   {
     id: 8,
     title: "Goal 8: Decent Work and Economic Growth",
-    icon: "src/assets/goal8.svg.ico",
+    icon: goal8,
     overview:
       "Goal 8 promotes sustained, inclusive economic growth, full employment, and decent work for all while ensuring labor rights and economic productivity.",
     color: "#A21942",
@@ -73,7 +90,7 @@ const goalsData = [
   {
     id: 9,
     title: "Goal 9: Industry, Innovation and Infrastructure",
-    icon: "src/assets/goal9.svg.ico",
+    icon: goal9,
     overview:
       "Goal 9 focuses on building resilient infrastructure, promoting sustainable industrialization, and fostering innovation to drive economic progress.",
     color: "#FD6925",
@@ -81,7 +98,7 @@ const goalsData = [
   {
     id: 10,
     title: "Goal 10: Reduced Inequalities",
-    icon: "src/assets/goal10.png.ico",
+    icon: goal10,
     overview:
       "Goal 10 aims to reduce inequalities within and among countries by ensuring equal opportunities and promoting social and economic inclusion.",
     color: "#DD1367",
@@ -89,7 +106,7 @@ const goalsData = [
   {
     id: 11,
     title: "Goal 11: Sustainable Cities and Communities",
-    icon: "src/assets/goal11.svg.ico",
+    icon: goal11,
     overview:
       "Goal 11 seeks to make cities inclusive, safe, resilient, and sustainable by addressing housing, transportation, and environmental challenges.",
     color: "#FD9D24",
@@ -97,7 +114,7 @@ const goalsData = [
   {
     id: 12,
     title: "Goal 12: Responsible Consumption and Production",
-    icon: "src/assets/goal12.svg.ico",
+    icon: goal12,
     overview:
       "Goal 12 promotes sustainable consumption and production patterns, aiming to reduce waste and encourage responsible resource management.",
     color: "#BF8B2E",
@@ -105,7 +122,7 @@ const goalsData = [
   {
     id: 13,
     title: "Goal 13: Climate Action",
-    icon: "src/assets/goal13.svg.ico",
+    icon: goal13,
     overview:
       "Goal 13 calls for urgent action to combat climate change and its impacts through adaptation, mitigation, and increased resilience.",
     color: "#3F7E44",
@@ -113,7 +130,7 @@ const goalsData = [
   {
     id: 14,
     title: "Goal 14: Life Below Water",
-    icon: "src/assets/goal14.svg.ico",
+  icon: goal14,
     overview:
       "Goal 14 aims to conserve and sustainably use the oceans, seas, and marine resources to prevent pollution and habitat destruction.",
     color: "#0A97D9",
@@ -121,7 +138,7 @@ const goalsData = [
   {
     id: 15,
     title: "Goal 15: Life on Land",
-    icon: "src/assets/goal15.svg.ico",
+    icon: goal15,
     overview:
       "Goal 15 focuses on protecting, restoring, and promoting the sustainable use of terrestrial ecosystems, forests, and biodiversity.",
     color: "#56C02B",
@@ -129,7 +146,7 @@ const goalsData = [
   {
     id: 16,
     title: "Goal 16: Peace, Justice, and Strong Institutions",
-    icon: "src/assets/goal16.svg.ico",
+  icon: goal16,
     overview:
       "Goal 16 promotes peaceful and inclusive societies, ensuring access to justice for all and building effective, accountable institutions.",
     color: "#00689D",
@@ -137,7 +154,7 @@ const goalsData = [
   {
     id: 17,
     title: "Goal 17: Partnerships for the Goals",
-    icon: "src/assets/goal17.svg.ico",
+  icon: goal17,
     overview:
       "Goal 17 emphasizes strengthening global partnerships for sustainable development, improving international cooperation and financial support.",
     color: "#19486A",

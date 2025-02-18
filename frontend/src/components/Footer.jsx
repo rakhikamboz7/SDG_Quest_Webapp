@@ -1,3 +1,4 @@
+import logo from '../assets/logo.svg'; 
 const Footer = () => {
   return (
     <footer className="bg-white text-teal-700 shadow-md py-6 px-4 md:px-8 lg:px-16 flex flex-col items-center w-full">
@@ -6,7 +7,7 @@ const Footer = () => {
         {/* Left Side: Logo and Tagline */}
         <div className="flex flex-col items-center md:items-start space-y-4">
           <div className="flex items-center space-x-4">
-            <img src="src/assets/logo.svg" alt="SDG Logo" className="w-20 h-16 md:w-24 md:h-20" />
+            <img src={logo} alt="SDG Logo" className="w-20 h-16 md:w-24 md:h-20" />
             <div className="text-center md:text-left">
               <h2 className="text-lg md:text-xl font-medium">Learn, Maintain, Support, Uphold</h2>
               <p className="text-base md:text-lg font-semibold mt-1">Start Contributing to a healthy community Today!!</p>

@@ -33,7 +33,7 @@ const flashcards = [
   },
   {
     question: "Which goal promotes gender equality?",
-    image: "https://gosharpener.com/content/uploads/photos/2024/09/sngine_dcb0169096430d9a40dd0a232003d1c7.jpg",
+    image: "src/assets/sngine_dcb0169096430d9a40dd0a232003d1c7.jpg",
     hint: "SDG 5 aims to achieve gender equality and empower all women and girls."
   }
 ];
@@ -80,7 +80,7 @@ const MissionSection = () => {
         Our Mission?
       </motion.h2>
       <p className="text-black mt-2 text-sm md:text-base lg:text-lg leading-relaxed max-w-6xl">
-        Empowering minds through interactive learning, Awareness and Action Towards Sustainable Development Goals. SDG Quest's mission is to inspire and educate individuals
+        Empowering minds through interactive learning, Awareness and Action Towards Sustainable Development Goals. SDG Quest&#39;s mission is to inspire and educate individuals
         about the 17 Sustainable Development Goals.
       </p>
       <motion.button
@@ -97,13 +97,13 @@ const MissionSection = () => {
         variants={textVariants}
       >
         <li className="bg-gray-50 rounded-lg shadow-md p-4 md:p-6 hover:shadow-lg transition-shadow duration-300">
-          <h3 className="text-lg md:text-xl font-medium text-teal-700">Goal's Content</h3>
+          <h3 className="text-lg md:text-xl font-medium text-teal-700">Goal&#39;s Content</h3>
           <p className="mt-2 text-sm md:text-base text-gray-600">
             In-depth information such as overview, key-points, learning resources on each of the 17 SDG goals.
           </p>
         </li>
         <li className="bg-gray-50 rounded-lg shadow-md p-4 md:p-6 hover:shadow-lg transition-shadow duration-300">
-          <h3 className="text-lg md:text-xl font-medium text-teal-700">Goal's Quizzes</h3>
+          <h3 className="text-lg md:text-xl font-medium text-teal-700">Goal&#39;s Quizzes</h3>
           <p className="mt-2 text-sm md:text-base text-gray-600">
             Test your knowledge of each goal with interactive quizzes in a tailored learning environment.
           </p>
@@ -126,7 +126,7 @@ const MissionSection = () => {
       <div className="mt-8 md:mt-12 bg-teal-700 rounded-lg shadow-md p-6 text-center">
         <h3 className="text-xl md:text-2xl font-semibold text-white mb-4">Inspiration of the Day</h3>
         <p className="italic text-white text-base md:text-lg">
-          "Be the change that you wish to see in the world." – Mahatma Gandhi
+          &#34;Be the change that you wish to see in the world.&#34; – Mahatma Gandhi
         </p>
       </div>
 
