@@ -12,7 +12,7 @@ connectDB();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-    origin: ["https://sdg-quest-dug3he5gr-rakhikamboz7-gmailcoms-projects.vercel.app"], // Allow Vercel frontend
+    origin: ["https://sdg-quest-app.vercel.app/"], // Allow Vercel frontend
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
   }));

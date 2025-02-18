@@ -1,33 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from "../../../backend/firebase";
-import logo from '../assets/logo.svg'; 
 import { Menu, X } from "lucide-react"; // Icons for mobile menu
+import logo from '../assets/logo.svg';
 
 const Header = () => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null); // You can replace this with your authentication logic
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-      } else {
-        const storedUser = JSON.parse(localStorage.getItem("user"));
-        if (storedUser) {
-          setUser(storedUser);
-        }
-      }
-    });
-    return () => unsubscribe();
-  }, []);
-
-  const handleLogout = async () => {
-    await signOut(auth);
-    localStorage.removeItem("user");
+  const handleLogout = () => {
+    // Add your logout logic here
     setUser(null);
     navigate("/signup");
   };
