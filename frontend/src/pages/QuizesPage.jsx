@@ -4,6 +4,7 @@ import axios from 'axios';
 import BadgesDisplay from '../components/BadgesDisplay';
 import { API_BASE_URL } from '../config';
 
+const BACKEND_URL = API_BASE_URL;
 
 function QuizPage() {
     const { goalId } = useParams();
@@ -55,7 +56,7 @@ function QuizPage() {
     useEffect(() => {
         const fetchQuizzes = async () => {
             try {
-                const response = await axios.get(`${API_BASE_URL}/api/quizzes`);
+                const response = await axios.get(`${BACKEND_URL}/api/quizzes`);
                 setAllQuizzes(response.data);
 
                 const foundQuiz = response.data.find((q) => String(q.goalId) === String(goalId));
