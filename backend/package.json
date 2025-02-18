@@ -5,7 +5,7 @@
   "scripts": {
   "start": "node server.js",          
   "dev": "nodemon server.js",       
-  "build": "npm run build --prefix frontend",  
+  "build": "echo 'No build command is required !!'",
   "deploy": "vercel --prod"        
 
 
