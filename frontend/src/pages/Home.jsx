@@ -164,6 +164,7 @@ const goalsData = [
 const Home = () => {
   const navigate = useNavigate();
   const [quizzes, setQuizzes] = useState([]);
+  // eslint-disable-next-line no-unused-vars
   const { id } = useParams();
 
   

@@ -27,6 +27,7 @@ function QuizPage() {
         setShowResult(false);
         setLoading(true);
         fetchScores(); // Fetch scores when component mounts
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [goalId]);
 
     const assignBadges = (scores) => {
