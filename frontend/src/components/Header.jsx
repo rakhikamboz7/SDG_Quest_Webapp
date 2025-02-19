@@ -1,16 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Menu, X } from "lucide-react"; // Icons for mobile menu
+import { Menu, X } from "lucide-react";
 import logo from '../assets/logo.svg';
 
 const Header = () => {
-  const [user, setUser] = useState(null); // You can replace this with your authentication logic
+  const [user, setUser] = useState(null);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
+  // Load user data from localStorage when component mounts
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
   const handleLogout = () => {
-    // Add your logout logic here
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("userId");
     setUser(null);
     navigate("/signup");
   };
@@ -18,7 +28,7 @@ const Header = () => {
   return (
     <header className="bg-white p-4 w-full fixed top-0 left-0 flex justify-between items-center shadow-md z-50">
       
-      {/* Left Side - Logo */}
+      {/* Logo */}
       <div className="flex items-center">
         <img src={logo} alt="SDG Quest Logo" className="h-10 w-10 mr-2" />
         <h1 className="text-[#00786F] text-2xl font-bold">
@@ -34,14 +44,14 @@ const Header = () => {
         {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
       </button>
 
-      {/* Navigation Links - Desktop */}
+      {/* Desktop Navigation */}
       <nav className="hidden md:flex space-x-6 font-bold">
         <Link to="/home" className="text-[#00786F] hover:text-green-800">Learn Goals</Link>
         <Link to="/knowledge" className="text-[#00786F] hover:text-green-800">Knowledge Bites</Link>
         <Link to="/quiz/1" className="text-[#00786F] hover:text-green-800">Start Quiz</Link>
       </nav>
 
-      {/* Profile / Signup Button */}
+      {/* Profile Dropdown or Signup Button */}
       <div className="hidden md:flex items-center">
         {user ? (
           <div className="relative">
@@ -49,7 +59,7 @@ const Header = () => {
               onClick={() => setShowProfileDropdown(!showProfileDropdown)} 
               className="text-[#00786F] hover:text-gray-500 flex items-center"
             >
-              {user.displayName || user.name}
+              {user.name}
               <svg className={`ml-2 h-4 w-4 transition-transform duration-200 ${showProfileDropdown ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
@@ -75,7 +85,7 @@ const Header = () => {
         )}
       </div>
 
-      {/* Mobile Menu - Opens on Click */}
+      
       {isMobileMenuOpen && (
         <nav className="absolute top-16 left-0 w-full bg-white shadow-md flex flex-col items-center space-y-4 py-4 md:hidden">
           <Link to="/home" className="text-[#00786F] hover:text-green-800" onClick={() => setIsMobileMenuOpen(false)}>Learn Goals</Link>
