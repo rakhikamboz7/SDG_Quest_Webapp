@@ -11,7 +11,7 @@ import {
   Tooltip,
 } from "chart.js";
 import axios from "axios";
-const BACKEND_URL= import.meta.env.API_BASE_URL;
+const BACKEND_URL= import.meta.env.VITE_API_BASE_URL;
 import BadgesDisplay from "../components/BadgesDisplay";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, BarElement, ArcElement, Tooltip);

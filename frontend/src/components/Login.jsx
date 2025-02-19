@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaGoogle, FaFacebook, FaGithub, FaLinkedin } from "react-icons/fa";
 
-const BACKEND_URL= import.meta.env.API_BASE_URL;
+const BACKEND_URL= import.meta.env.VITE_API_BASE_URL;
 
 function LoginSignup() {
   const navigate = useNavigate();

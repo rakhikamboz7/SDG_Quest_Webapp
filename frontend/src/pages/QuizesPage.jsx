@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import BadgesDisplay from '../components/BadgesDisplay';
-const BACKEND_URL= import.meta.env.API_BASE_URL;
+const BACKEND_URL= import.meta.env.VITE_API_BASE_URL;
 
 
 function QuizPage() {
