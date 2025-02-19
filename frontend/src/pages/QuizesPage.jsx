@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import BadgesDisplay from '../components/BadgesDisplay';
-const BACKEND_URL= import.meta.env.VITE_API_BASE_URL;
+const BACKEND_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:10000";
+
 
 
 function QuizPage() {
@@ -102,8 +103,7 @@ function QuizPage() {
                 return;
             }
 
-            const response = await axios.post(`${BACKEND_URL}
-                /api/scores/submit`,
+            const response = await axios.post(`${BACKEND_URL}/api/scores/submit`,
                 {
                     userId,
                     goalId: goalId,
@@ -147,10 +147,10 @@ function QuizPage() {
             <div className="text-center p-4">
                 <p>No quiz found for this goal.</p>
                 <button 
-                    onClick={() => navigate("/")} 
+                    onClick={() => navigate("/profile")} 
                     className="bg-teal-700 text-white px-4 py-2 rounded-lg"
                 >
-                    Back to Home
+                    Back to dashboard
                 </button>
             </div>
         );
