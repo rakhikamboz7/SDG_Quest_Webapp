@@ -3,26 +3,27 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { knowledgeBites } from '../knowledgeBites';
 import PropTypes from 'prop-types';
+import { motion } from 'framer-motion';
 
 const KnowledgeBites = () => {
   const [selectedGoal, setSelectedGoal] = useState(null);
 
   const GoalCard = ({ goal }) => (
     <div
-      className="cursor-pointer transform transition-transform hover:scale-105 mx-2 sm:mx-4 lg:mx-5"
+      className="cursor-pointer transform transition-transform hover:scale-105 mx-auto flex flex-col items-center justify-center"
       onClick={() => setSelectedGoal(goal)}
     >
       <div
-        className="w-30 h-30 rounded-full border-4 p-1 hover:animate-pulse"
+        className="w-24 h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-full border-4 p-2 flex items-center justify-center hover:animate-pulse"
         style={{ borderColor: goal.color }}
       >
         <img
           src={goal.icon}
           alt={goal.title}
-          lassName="w-150 h-30 rounded-full object-cover"
+          className="w-full h-full object-cover rounded-full"
         />
       </div>
-      <p className="text-left mt-1.5 font-semibold text-center">{goal.title}</p>
+      <p className="text-center mt-2 font-semibold text-sm md:text-base">{goal.title}</p>
     </div>
   );
 
@@ -35,10 +36,10 @@ const KnowledgeBites = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Header /><br /><br /><br />
-      <div className="container flex-1 justify-item-centre mx-auto px-4 py-16">
-        <div className="p-8 rounded-lg mb-10">
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      <Header />
+      <div className="container mx-auto px-4 py-25 flex-1">
+        <div className="text-left p-6 rounded-lg mb-10">
           <h1 className="text-3xl md:text-4xl font-bold text-yellow-500 mb-4">
             Welcome to SDG Knowledge Hub!
           </h1>
@@ -48,33 +49,40 @@ const KnowledgeBites = () => {
           </p>
         </div>
 
-        <div className="justify-between-center ml-18 grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-5 gap-6 mb-12">
+        {/* Responsive Grid */}
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-5 gap-6 place-items-center mb-12">
           {knowledgeBites.map((goal) => (
             <GoalCard key={goal.id} goal={goal} />
           ))}
         </div>
 
         {selectedGoal && (
-          <div className="fixed inset-0 mt-20 bg-black bg-opacity-50 flex items-center justify-center p-4">
-            <div className="bg-white mt-8 rounded-2xl p-5 max-w-lg sm:max-w-2xl w-full max-h-90vh overflow-y-auto">
+          <div className="mt-20 fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-md p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+              className="bg-white shadow-2xl rounded-2xl p-5 w-full max-w-lg sm:max-w-2xl overflow-y-auto"
+            >
               <div className="flex items-center mb-6">
                 <img
                   src={selectedGoal.icon}
                   alt={selectedGoal.title}
-                  className="w-20 h-20 rounded-full mr-4"
+                  className="w-16 h-16 md:w-20 md:h-20 rounded-full mr-4 shadow-md"
                 />
-                <h2 className="text-xl md:text-2xl font-bold">{selectedGoal.title}</h2>
+                <h2 className="text-lg text-left justify-align-items md:text-2xl font-bold">{selectedGoal.title}</h2>
                 <button
                   onClick={() => setSelectedGoal(null)}
-                  className="ml-auto text-gray-500 hover:text-gray-700"
+                  className="ml-auto text-gray-500 hover:text-red-600 text-2xl transition-transform transform hover:scale-110"
                 >
                   ✕
                 </button>
               </div>
 
               <div className="mb-6">
-                <h3 className="text-xl font-semibold mb-3">Tips for Action</h3>
-                <ul className="list-disc pl-6 space-y-2">
+                <h3 className="text-lg md:text-xl font-semibold mb-3">Tips for Action</h3>
+                <ul className="list-disc pl-6 space-y-2 text-gray-700">
                   {selectedGoal.tips.map((tip, index) => (
                     <li key={index}>{tip}</li>
                   ))}
@@ -82,14 +90,14 @@ const KnowledgeBites = () => {
               </div>
 
               <div>
-                <h3 className="text-xl font-semibold mb-3">Sustainable Solutions</h3>
-                <ul className="list-disc pl-6 space-y-2">
+                <h3 className="text-lg md:text-xl font-semibold mb-3">Sustainable Solutions</h3>
+                <ul className="list-disc pl-6 space-y-2 text-gray-700">
                   {selectedGoal.solutions.map((solution, index) => (
                     <li key={index}>{solution}</li>
                   ))}
                 </ul>
               </div>
-            </div>
+            </motion.div>
           </div>
         )}
       </div>
@@ -99,3 +107,4 @@ const KnowledgeBites = () => {
 };
 
 export default KnowledgeBites;
+

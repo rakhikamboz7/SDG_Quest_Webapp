@@ -95,12 +95,12 @@ function LoginSignup() {
   return (
     <div className="flex items-center justify-center bg-gray-100 h-screen">
       {!user ? (
-        <div className="relative bg-white w-full md:w-[800px] max-w-full min-h-[400px] h-[550px] rounded-3xl shadow-lg overflow-hidden transition-all duration-500">
+        <div className="relative bg-white w-full md:w-[800px] m-10 max-w-full min-h-[400px] h-[500px] rounded-3xl shadow-lg overflow-hidden transition-all duration-500">
           {/* Mobile View */}
-          <div className="md:hidden p-6">
+          <div className="md:hidden m-10 py-0">
             <div className="flex flex-col items-center justify-center mb-6">
-              <img src="logo.svg" alt="Logo" className="w-12 h-12 mb-4" />
-              <h1 className="text-2xl font-semibold mb-4">
+              <img src="logo.svg" alt="Logo" className="w-12 h-12 mb-2" />
+              <h1 className="text-2xl font-semibold mb-2">
                 {isSignUp ? "Create an Account" : "Sign In"}
               </h1>
             </div>
@@ -140,14 +140,14 @@ function LoginSignup() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-teal-700 text-white px-6 py-2 rounded-md focus:outline-none hover:bg-teal-600 disabled:opacity-50"
+                className="w-full bg-teal-700 text-white px-6 py-2 mt-3 rounded-md focus:outline-none hover:bg-teal-600 disabled:opacity-50"
               >
                 {loading ? (isSignUp ? 'Signing Up...' : 'Signing In...') : isSignUp ? 'Sign Up' : 'Sign In'}
               </button>
             </form>
-            <button
+            <button 
               onClick={handleToggle}
-              className="w-full bg-teal-700 text-white px-6 py-2 rounded-md focus:outline-none hover:bg-teal-600 mt-4"
+              className="w-full bg-teal-700 text-white px-8 py-2 rounded-md focus:outline-none hover:bg-teal-600 mt-3 p"
             >
               {isSignUp ? "Already a member? Sign In" : "New here? Sign Up"}
             </button>
@@ -199,7 +199,7 @@ function LoginSignup() {
 
               {/* Sign Up Form */}
               <div
-                className={`flex flex-col items-center justify-center p-15 w-full md:w-1/2 transition-opacity duration-500 ${
+                className={`flex flex-col items-center justify-center p-15 w-full ms-20 md:w-1/2 transition-opacity duration-500 ${
                   isSignUp ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
                 }`}
               >
