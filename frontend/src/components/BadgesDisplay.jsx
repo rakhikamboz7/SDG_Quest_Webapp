@@ -86,4 +86,3 @@ BadgesDisplay.defaultProps = {
 
 export default BadgesDisplay;
 
-

@@ -4,9 +4,9 @@ const User = require("../models/user");
 exports.submitScore = async (req, res) => {
   console.log(req.body);
   try {
-    let { userId, quizId, score, goalId, totalQuestions } = req.body;
+    let { userId, quizId, score, goalId, totalQuestions } = req.body;   //extracted required details to submit score
 
-    console.log("Goal ID Type:", typeof goalId, "Value:", goalId);
+    // console.log("Goal ID Type:", typeof goalId, "Value:", goalId);
 
     if (!userId || !quizId || score === undefined || !totalQuestions || !goalId) {
       return res.status(400).json({ error: "All fields (including goalId) are required" });
@@ -18,14 +18,14 @@ exports.submitScore = async (req, res) => {
 
     // Find an existing score entry for the same user, quiz, and goal
     let existingScore = await Score.findOne({ userId, quizId, goalId });
-
+//find the user in the database 
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ error: "User not found" });
 
     if (existingScore) {
       // Adjust reward points by subtracting the previous score's points
-      const previousPoints = existingScore.score * 10;
-      user.rewardPoints -= previousPoints;
+      // const previousPoints = existingScore.score * 10;
+      // user.currentPoints -= previousPoints;
 
       // Update the existing score
       existingScore.score = score;
@@ -37,8 +37,7 @@ exports.submitScore = async (req, res) => {
       await newScore.save();
     }
 
-    // Add new reward points
-    user.rewardPoints += score * 10;
+ 
     await user.save();
 
     res.json({
@@ -51,12 +50,6 @@ exports.submitScore = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
-
-
-
-
-
 
 exports.getScores = async (req, res) => {
   try {

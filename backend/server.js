@@ -25,7 +25,7 @@ app.use("/api", require("./routes/scoreRoutes"));
 
 app.get("/", (req, res) => res.send("API is running..."));
 
-app.get("*", (req, res) => {
+app.get("*", (req, res) => {     //catch undefined routes
   console.log("url : ", req.url);
   res.status(404).json({ message: "Route not found", url : req.url });
 });

@@ -11,7 +11,6 @@ exports.getAllQuizzes = async (req, res) => {
 };
 
 
-
 exports.getQuestionsByGoalId = async (req, res) => {
   // console.log("dfghjkl",req)
     try {

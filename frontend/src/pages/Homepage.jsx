@@ -85,10 +85,10 @@ const MissionSection = () => {
       </p>
       <motion.button
         onClick={() => navigate("/about")}
-        className="mt-4 md:mt-5 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-800 transition-all duration-300"
+        className="mt-4 md:mt-5 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-800 duration-300"
         whileHover={{ scale: 1.05 }}
       >
-        Learn More
+          Learn More
       </motion.button>
 
       {/* Services Grid */}
@@ -208,7 +208,7 @@ const ResourceCarousel = () => {
                 title={video.title}
                 src={`https://www.youtube.com/embed/${video.id}`}
                 frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
                 className="w-full h-48 rounded-lg shadow-lg"
               />

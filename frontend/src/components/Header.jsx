@@ -54,8 +54,7 @@ const Header = () => {
     if (nextQuizId <= 17) {
       navigate(`/quiz/${nextQuizId}`);
     } else {
-      // If all quizzes are completed, navigate to a summary or congratulatory page
-      navigate("/summary");
+      navigate("/profile");
     }
   };
 
@@ -137,8 +136,7 @@ const Header = () => {
           {user ? (
             <div className="flex flex-col items-center space-y-2">
               <Link to="/profile" className="text-gray-700 hover:bg-gray-100 py-2 px-4 rounded" onClick={() => setIsMobileMenuOpen(false)}>Profile</Link>
-              <Link to="/settings" className="text-gray-700 hover:bg-gray-100 py-2 px-4 rounded" onClick={() => setIsMobileMenuOpen(false)}>Settings</Link>
-              <button 
+               <button 
                 className="bg-red-500 text-white px-4 py-2 rounded" 
                 onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
               >
