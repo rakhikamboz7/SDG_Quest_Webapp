@@ -128,8 +128,8 @@ function AboutUs() {
       <section className="mb-12 bg-yellow-50 p-6 rounded-lg shadow-md text-center">
         <h2 className="text-3xl font-semibold mb-4 text-yellow-700">Join Us in Our Journey!</h2>
         <p className="mb-6 text-gray-700">
-          Whether you're a student, educator, business, or NGO, SDG Quest is your platform to take meaningful action
-          toward a sustainable future. Let's create impact, one quest at a time!
+          Whether you&apos;re a student, educator, business, or NGO, SDG Quest is your platform to take meaningful action
+          toward a sustainable future. Let&apos;s create impact, one quest at a time!
         </p>
         <Link
           to="/contact" // React Router Update

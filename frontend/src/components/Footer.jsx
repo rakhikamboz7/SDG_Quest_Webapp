@@ -2,9 +2,9 @@ import logo from "../assets/logo.svg";
 
 const Footer = () => {
   return (
-    <footer className="bg-white text-teal-700 shadow-md py-6 px-4 md:px-8 lg:px-16 flex flex-col items-center w-full">
+    <footer className="bg-white text-teal-700 shadow-md py-6 px-4 md:px-8 lg:px-16 w-full">
       {/* Main Footer Content */}
-      <div className="w-full flex flex-col md:flex-row justify-between items-center md:items-start space-y-6 md:space-y-0">
+      <div className="w-full flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
         {/* Left Side: Logo and Tagline */}
         <div className="flex flex-col items-center md:items-start space-y-4 text-center md:text-left">
           <div className="flex items-center space-x-4">
@@ -14,7 +14,7 @@ const Footer = () => {
               className="w-16 h-12 md:w-20 md:h-16 lg:w-24 lg:h-20"
             />
             <div>
-              <h2 className="text-base md:text-lg lg:text-xl font-medium">
+              <h2 className="text-base md:text-lg lg:text-xl font-small">
                 Learn, Maintain, Support, Uphold
               </h2>
               <p className="text-sm md:text-base lg:text-lg font-semibold mt-1">
@@ -25,31 +25,19 @@ const Footer = () => {
         </div>
 
         {/* Navigation Links */}
-        <div className="w-full md:w-auto flex justify-center md:justify-start text-align-left md:text-left">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-left md:text-left text-sm md:text-base">
-            <a href="/about" className="hover:text-green-800 transition">
-              About
-            </a>
-            <a href="/profile" className="hover:text-green-800 transition">
-              Dashboard
-            </a>
-            <a href="/contact" className="hover:text-green-800 transition">
-              Contact Us
-            </a>
-            <a href="/home" className="hover:text-green-800 transition">
-              Learn Goals
-            </a>
-            <a href="/privacy" className="hover:text-green-800 transition">
-              Privacy Policy
-            </a>
-            <a href="/play-quiz" className="hover:text-green-800 transition">
-              Play Quiz
-            </a>
+        <div className="w-full md:w-auto flex justify-center md:justify-start">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-left text-sm md:text-base">
+            <a href="/about" className="hover:text-green-800 transition">About</a>
+            <a href="/profile" className="hover:text-green-800 transition">Dashboard</a>
+            <a href="/contact" className="hover:text-green-800 transition">Contact Us</a>
+            <a href="/home" className="hover:text-green-800 transition">Learn Goals</a>
+            <a href="/privacy" className="hover:text-green-800 transition">Privacy Policy</a>
+            <a href="/play-quiz" className="hover:text-green-800 transition">Play Quiz</a>
           </div>
         </div>
 
-        {/* Social Media Links */}
-        <div className="flex flex-col items-center md:items-start space-y-2 text-center md:text-left">
+        {/* Right Side: Social Media Links */}
+        <div className="flex flex-col items-center md:items-end space-y-3 text-center md:text-right">
           <h3 className="text-sm md:text-lg font-semibold">Let&#39;s Chat!</h3>
           <div className="flex space-x-3 md:space-x-4">
             <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">

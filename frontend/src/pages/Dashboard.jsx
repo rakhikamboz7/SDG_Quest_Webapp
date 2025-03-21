@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bar, Doughnut } from "react-chartjs-2";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -157,12 +159,16 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
+    <div>
+      <Header />
+      <br/>
+    
+    <div className="flex py-12 flex-col md:flex-row min-h-screen bg-gray-100">
       {/* Sidebar */}
-      <div className="w-full md:w-64 bg-white shadow-lg">
-        <div className="p-6 space-y-4">
+      <div className="w-full mb-8 md:w-64 bg-white shadow-lg">
+        <div className="p-6 space-y-6">
           <div className="flex flex-col items-center">
-            <div className="relative w-32 h-32 mb-4">
+            <div className="relative w-32 h-32 mt-4 mb-5">
               <img
                 src={profileImage}
                 alt="Profile"
@@ -282,6 +288,8 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+    </div>
+    <Footer />
     </div>
   );
 };

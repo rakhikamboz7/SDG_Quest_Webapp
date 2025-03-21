@@ -12,9 +12,10 @@ const KnowledgeBites = () => {
     <div
       className="cursor-pointer transform transition-transform hover:scale-105 mx-auto flex flex-col items-center justify-center"
       onClick={() => setSelectedGoal(goal)}
+      title={goal.title} // Shows title on hover
     >
       <div
-        className="w-24 h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-full border-4 p-2 flex items-center justify-center hover:animate-pulse"
+        className="w-20 h-20 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-full border-4 p-2 flex items-center justify-center hover:animate-pulse"
         style={{ borderColor: goal.color }}
       >
         <img
@@ -23,7 +24,6 @@ const KnowledgeBites = () => {
           className="w-full h-full object-cover rounded-full"
         />
       </div>
-      <p className="text-center mt-2 font-semibold text-sm md:text-base">{goal.title}</p>
     </div>
   );
 
@@ -39,7 +39,7 @@ const KnowledgeBites = () => {
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <Header />
       <div className="container mx-auto px-4 py-25 flex-1">
-        <div className="text-left p-6 rounded-lg mb-10">
+        <div className="text-center p-6 rounded-lg mb-10">
           <h1 className="text-3xl md:text-4xl font-bold text-yellow-500 mb-4">
             Welcome to SDG Knowledge Hub!
           </h1>
@@ -50,7 +50,7 @@ const KnowledgeBites = () => {
         </div>
 
         {/* Responsive Grid */}
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-5 gap-6 place-items-center mb-12">
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6 place-items-center">
           {knowledgeBites.map((goal) => (
             <GoalCard key={goal.id} goal={goal} />
           ))}

@@ -3,16 +3,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import BadgesDisplay from "../components/BadgesDisplay";
 
-
 const BACKEND_URL =
  import.meta.env.VITE_API_BASE_URL || "http://localhost:10000";
 
+ function QuizPage() {
 
-function QuizPage() {
  const { goalId } = useParams();
  const navigate = useNavigate();
-
-
  const [quizScores, setQuizScores] = useState([]); //past score store
  const [badgesEarned, setBadgesEarned] = useState([]); //
  const [quiz, setQuiz] = useState(null);
@@ -22,7 +19,7 @@ function QuizPage() {
  const [score, setScore] = useState(0);
  const [showResult, setShowResult] = useState(false);
  const [allQuizzes, setAllQuizzes] = useState([]);
-
+ const [showPopup, setShowPopup] = useState(false);
 
  useEffect(() => {
  setCurrentQuestion(0);
@@ -34,7 +31,6 @@ function QuizPage() {
  // eslint-disable-next-line react-hooks/exhaustive-deps
  }, [goalId]);
 
-
  const assignBadges = (scores) => {
  const totalPoints = scores.reduce((acc, quiz) => acc + quiz.score, 0);
  const earnedBadges = [];
@@ -43,7 +39,6 @@ function QuizPage() {
  if (totalPoints >= 5) earnedBadges.push("Bronze");
  return earnedBadges;
  };
-
 
  const fetchScores = async () => {
  try {
@@ -57,13 +52,11 @@ function QuizPage() {
  }
  };
 
-
  useEffect(() => {
  const fetchQuizzes = async () => {
  try {
  const response = await axios.get(`${BACKEND_URL}/api/quizzes`);
  setAllQuizzes(response.data);
-
 
  const foundQuiz = response.data.find(
  (q) => String(q.goalId) === String(goalId)
@@ -81,10 +74,8 @@ function QuizPage() {
  }
  };
 
-
  fetchQuizzes();
  }, [goalId]);
-
 
  const handleOptionSelect = (option) => {
  setSelectedOption(option);
@@ -92,7 +83,6 @@ function QuizPage() {
  setScore((prevScore) => prevScore + 1);
  }
  };
-
 
  const handleNext = async () => {
  if (quiz && currentQuestion < quiz.questions.length - 1) {
@@ -104,17 +94,20 @@ function QuizPage() {
  }
  };
 
-
  const saveScore = async (quizScore) => {
- try {
- const token = localStorage.getItem("token");
- const userId = localStorage.getItem("userId");
- if (!token || !userId) {
- alert("User not authenticated!");
- navigate("/login");
- return;
- }
+    try {
+      const token = localStorage.getItem("token");
+      const userId = localStorage.getItem("userId");
 
+      const currentQuizIndex = allQuizzes.findIndex(
+        (q) => String(q.goalId) === String(goalId)
+      );
+
+      // If user is not authenticated and tries the 2nd quiz (index 1), show popup
+      if ((!token || !userId) && currentQuizIndex === 1) {
+        setShowPopup(true);
+        return;
+      }
 
  const response = await axios.post(
  `${BACKEND_URL}/api/scores/submit`,
@@ -136,10 +129,10 @@ function QuizPage() {
  await fetchScores(); // Refresh scores after saving new score
  } catch (error) {
  console.error("Error saving score:", error);
- alert("Error saving score. Please try again later.");
+//  alert("Error saving score. Please try again later.");
  }
- };
-
+ 
+};
 
  const handleNextQuiz = () => {
  const currentQuizIndex = allQuizzes.findIndex(
@@ -152,7 +145,6 @@ function QuizPage() {
  navigate("/");
  }
  };
-
 
  if (loading) {
  return <div className="text-center p-4">Loading...</div>;
@@ -175,6 +167,7 @@ function QuizPage() {
 
 
  return (
+    
  <div className="p-4 md:p-6 lg:p-8 flex flex-col items-center mt-8 md:mt-12 max-w-md md:max-w-lg lg:max-w-xl mx-auto bg-white shadow-lg rounded-lg">
  <h1 className="text-2xl md:text-3xl font-bold text-center mb-4">Quiz for Goal {goalId}</h1>
  <div className="w-full">
@@ -241,7 +234,6 @@ function QuizPage() {
  showProgress={true}
  />
 
-
  <div className="mt-6 space-x-2 md:space-x-4">
  <button
  onClick={handleNextQuiz}
@@ -258,9 +250,20 @@ function QuizPage() {
  </div>
  </div>
  )}
+ {showPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+            <h2 className="text-lg font-bold">Sign in to Continue</h2>
+            <p>You need to sign in to access more quizzes.</p>
+            <div className="mt-4 ml-11 flex space-x-4">
+              <button onClick={() => navigate("/signin")} className="bg-teal-700 text-white px-4 py-2 rounded-lg">Sign In</button>
+              <button onClick={() => navigate("/")} className="bg-gray-500 text-white px-4 py-2 rounded-lg">Go to Home</button>
+            </div>
+          </div>
+        </div>
+      )}
  </div>
  );
 }
-
 
 export default QuizPage;

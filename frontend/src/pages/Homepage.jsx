@@ -23,20 +23,61 @@ const videos = [
 const flashcards = [
   {
     question: "Which SDG aims to achieve zero hunger?",
-    image: "https://www.orfonline.org/public/uploads/posts/image/Malnutrition-in-india.jpg",
+    image: "/src/assets/hunger.jpg",
     hint: "SDG 2 focuses on ending hunger and promoting sustainable agriculture."
   },
   {
     question: "What does SDG 13 advocate for?",
-    image: "src/assets/wmremove-transformed.jpeg",
+    image: "/src/assets/about_us-removebg-preview.png",
     hint: "It's all about taking urgent action to combat climate change."
   },
   {
     question: "Which goal promotes gender equality?",
-    image: "src/assets/sngine_dcb0169096430d9a40dd0a232003d1c7.jpg",
+    image: "/src/assets/sngine_dcb0169096430d9a40dd0a232003d1c7.jpg",
     hint: "SDG 5 aims to achieve gender equality and empower all women and girls."
+  },
+  {
+    question: "Which SDG focuses on quality education?",
+    image: "/src/assets/quality-education.webp",
+    hint: "SDG 4 ensures inclusive and equitable quality education and promotes lifelong learning opportunities."
+  },
+  {
+    question: "What is the main objective of SDG 6?",
+    image: "/src/assets/clean-water.jpg",
+    hint: "It aims to ensure availability and sustainable management of water and sanitation for all."
+  },
+  {
+    question: "Which SDG emphasizes affordable and clean energy?",
+    image: "/src/assets/clean-energy.jpg",
+    hint: "SDG 7 focuses on ensuring access to affordable, reliable, sustainable, and modern energy for all."
+  },
+  {
+    question: "What is the focus of SDG 8?",
+    image: "/src/assets/economic-growth.jpg",
+    hint: "It promotes sustained, inclusive, and sustainable economic growth, full and productive employment, and decent work for all."
+  },
+  {
+    question: "Which SDG is dedicated to responsible consumption and production?",
+    image: "/src/assets/sustainable-consumption.jpg",
+    hint: "SDG 12 ensures sustainable consumption and production patterns."
+  },
+  {
+    question: "Which SDG aims to protect life below water?",
+    image: "/src/assets/clean-water.jpg",
+    hint: "SDG 14 is about conserving and sustainably using the oceans, seas, and marine resources."
+  },
+  {
+    question: "What is the main goal of SDG 15?",
+    image: "/src/assets/managing-forests.jpg",
+    hint: "It focuses on protecting, restoring, and promoting sustainable use of terrestrial ecosystems, managing forests, and halting biodiversity loss."
+  },
+  {
+    question: "Which SDG promotes peace, justice, and strong institutions?",
+    image: "/src/assets/peace-justice.jpg",
+    hint: "SDG 16 aims to promote peaceful and inclusive societies, provide access to justice, and build effective, accountable institutions."
   }
 ];
+
 
 const MissionSection = () => {
   const containerVariants = {

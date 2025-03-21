@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-``
+// const bcrypt = require("bcrypt");
+// const { check, validationResult } = require("express-validator");
 const protect = async (req, res, next) => {
   let token = req.headers.authorization;
   if (!token || !token.startsWith("Bearer ")) {

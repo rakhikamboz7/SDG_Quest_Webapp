@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { FaGoogle, FaFacebook, FaGithub, FaLinkedin } from "react-icons/fa";
+// import { FaGoogle, FaFacebook, FaGithub, FaLinkedin } from "react-icons/fa";
 
 const BACKEND_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -158,19 +158,19 @@ function LoginSignup() {
             <div className="flex flex-col md:flex-row w-full">
               {/* Sign In Form */}
               <div
-                className={`flex flex-col items-center justify-center p-15 w-full md:w-1/2 transition-opacity duration-500 ${
+                className={`flex flex-col mb-20 items-center justify-center p-15 w-full md:w-1/2 transition-opacity duration-500 ${
                   isSignUp ? "opacity-0 pointer-events-none" : "opacity-100 pointer-events-auto"
                 }`}
               >
-                <img src="logo.svg" alt="Logo" className="w-15 h-25 mb-4 rounded-full" />
+                <img src="logo.svg" alt="Logo" className="w-15 h-25 rounded-full" />
                 <h1 className="text-2xl mb-5 font-semibold">Sign In</h1>
-                <div className="flex justify-center mb-4 space-x-4">
+                {/* <div className="flex justify-center mb-4 space-x-4">
                   <button className="text-2xl cursor-pointer"><FaGoogle /></button>
                   <button className="text-2xl cursor-pointer"><FaFacebook /></button>
                   <button className="text-2xl cursor-pointer"><FaGithub /></button>
                   <button className="text-2xl cursor-pointer"><FaLinkedin /></button>
-                </div>
-                <p className="text-sm mb-2 text-gray-500">Or use your email for login</p>
+                </div> */}
+                {/* <p className="text-sm mb-2 text-gray-500">Or use your email for login</p> */}
                 {error && <p className="text-red-500 mb-2">{error}</p>}
                 <form onSubmit={handleLogin}>
                   <input
@@ -190,7 +190,7 @@ function LoginSignup() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="bg-teal-700 text-white px-6 py-2 rounded-md focus:outline-none hover:bg-teal-600 disabled:opacity-50 ml-21"
+                    className="bg-teal-700 text-white px-6 py-2 rounded-md focus:outline-none hover:bg-teal-600 disabled:opacity-50 ml-18"
                   >
                     {loading ? 'Signing In...' : 'Sign In'}
                   </button>
@@ -205,13 +205,13 @@ function LoginSignup() {
               >
                 <img src="/logo.svg" alt="Logo" className="w-15 h-20 mt-0" />
                 <h1 className="text-2xl mb-5 font-semibold">Create an Account</h1>
-                <div className="flex justify-center mb-4 space-x-4">
+                {/* <div className="flex justify-center mb-4 space-x-4">
                   <button className="text-2xl cursor-pointer"><FaGoogle /></button>
                   <button className="text-2xl cursor-pointer"><FaFacebook /></button>
                   <button className="text-2xl cursor-pointer"><FaGithub /></button>
                   <button className="text-2xl cursor-pointer"><FaLinkedin /></button>
-                </div>
-                <p className="text-sm mb-2 text-gray-500">Or provide us with your info!</p>
+                </div> */}
+                {/* <p className="text-sm mb-2 text-gray-500">Or provide us with your info!</p> */}
                 {error && <p className="text-red-500 mb-2">{error}</p>}
                 <form onSubmit={handleRegister} encType="multipart/form-data">
                   <input
@@ -245,7 +245,7 @@ function LoginSignup() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="bg-teal-700 text-white px-6 py-2 rounded-md focus:outline-none hover:bg-teal-600 disabled:opacity-50 ml-22 justify-center"
+                    className="bg-teal-700 text-white px-6 py-2 rounded-md focus:outline-none hover:bg-teal-600 disabled:opacity-50 ml-18 justify-center"
                   >
                     {loading ? 'Signing Up...' : 'Sign Up'}
                   </button>
