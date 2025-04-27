@@ -4,7 +4,8 @@ import { useState, useRef, useEffect } from "react"
 import { motion, useAnimation } from "framer-motion"
 import { ChevronRight } from "lucide-react"
 import { Link } from "react-router-dom"
-
+import Header from '../components/Header'
+import Footer from '../components/Footer'
 // With these imports:
 import goal1 from "../assets/goal1.ico"
 import goal2 from "../assets/goal2.ico"
@@ -202,7 +203,7 @@ const SDGWheel = () => {
     // The key fix: We need to rotate the wheel so that the goal is at the top (0 degrees)
     // Since the wheel rotates clockwise, we need to use a negative angle
     // We also need to offset by half a segment to center the goal at the triangle
-    return -((goalId +3 ) * segmentAngle + segmentAngle / 2)
+    return -((goalId +4 ) * segmentAngle + segmentAngle / 2)
   }
 
   // Function to handle spinning the wheel
@@ -336,7 +337,8 @@ const SDGWheel = () => {
   const textColor = "#000000" // Black
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen p-4 overflow-hidden bg-white">
+    <><Header />
+    <div className="relative flex flex-col items-center justify-center min-h-screen p-4 overflow-hidden bg-white"> 
       <motion.h1
         className="mb-8 text-4xl font-bold text-center"
         style={{ color: primaryColor }}
@@ -683,7 +685,8 @@ const SDGWheel = () => {
           </motion.div>
         </div>
       </div>
-    </div>
+      
+    </div><Footer /></>
   )
 }
 

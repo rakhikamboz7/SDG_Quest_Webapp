@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import { knowledgeBites } from '../knowledgeBites';
 import PropTypes from 'prop-types';
 import { motion } from 'framer-motion';
@@ -37,7 +35,7 @@ const KnowledgeBites = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
-      <Header />
+      {/* <Header /> */}
       <div className="container mx-auto px-4 py-25 flex-1">
         <div className="text-center p-6 rounded-lg mb-10">
           <h1 className="text-3xl md:text-4xl font-bold text-yellow-500 mb-4">
@@ -101,7 +99,7 @@ const KnowledgeBites = () => {
           </div>
         )}
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };
