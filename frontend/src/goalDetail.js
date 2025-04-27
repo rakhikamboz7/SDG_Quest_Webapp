@@ -1,24 +1,24 @@
-import poverty from "./assets/poverty.svg.ico";
-import Hunger from "./assets/Hunger.ico";
-import Health from "./assets/Health.ico";
-import education from "./assets/education.svg.ico";
-import gender from "./assets/gender.svg.ico";
-import goal6 from "./assets/goal6.svg.ico";
-import goal7 from "./assets/goal7.png.ico";
-import goal8 from "./assets/goal8.svg.ico";
-import goal9 from "./assets/goal9.svg.ico";
-import goal10 from "./assets/goal10.png.ico";
-import goal11 from "./assets/goal11.svg.ico";
-import goal12 from "./assets/goal12.svg.ico";
-import goal13 from "./assets/goal13.svg.ico";
-import goal14 from "./assets/goal14.svg.ico";
-import goal15 from "./assets/goal15.svg.ico";
-import goal16 from "./assets/goal16.svg.ico";
-import goal17 from "./assets/goal17.svg.ico";
+import goal1 from "./assets/goal1.ico";
+import goal2 from "./assets/goal2.ico";
+import goal3 from "./assets/goal3.ico";
+import goal4 from "./assets/goal4.svg.ico";
+import goal5 from "./assets/goal5.svg.ico";
+import goal6 from "./assets/goal6.svg.ico"
+import goal7 from "./assets/goal7.png.ico"
+import goal8 from "./assets/goal8.svg.ico"
+import goal9 from "./assets/goal9.svg.ico"
+import goal10 from "./assets/goal10.png.ico"
+import goal11 from "./assets/goal11.svg.ico"
+import goal12 from "./assets/goal12.svg.ico"
+import goal13 from "./assets/goal13.svg.ico"
+import goal14 from "./assets/goal14.svg.ico"
+import goal15 from "./assets/goal15.svg.ico"
+import goal16 from "./assets/goal16.svg.ico"
+import goal17 from "./assets/goal17.svg.ico"
 
 export const goalDetails = {
   1: {
-    icon: poverty,
+    icon: goal1,
     title: "No Poverty",
     knowledgeBite: "Did you know? Around 700 million people still live in extreme poverty, surviving on less than $1.90 per day.",
     image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_MgHUfu0ELz0hIh7IKvz0YwEIv69MP1Vskw&s",
@@ -41,7 +41,7 @@ export const goalDetails = {
   2: {
     title: "Zero Hunger",
     image: "https://www.orfonline.org/public/uploads/posts/image/Malnutrition-in-india.jpg", 
-    icon: Hunger,
+    icon: goal2,
     knowledgeBite: "One in nine people in the world are undernourished, with poor nutrition causing 45% of deaths in children under five.",
     overview: "Goal 2 seeks sustainable solutions to end hunger, achieve food security and improved nutrition while promoting sustainable agriculture.",
     color: "#DDA63A",
@@ -61,7 +61,7 @@ export const goalDetails = {
   3: {
     title: "Good Health and Well-Being",
     image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqgUIIXMFzajo1jrseUk6KaVo3QPQ5iO_2eA&s",
-    icon: Health,
+    icon: goal3,
     knowledgeBite: "Every 2 seconds, a person aged 30-70 years dies prematurely from non-communicable diseases like cardiovascular disease or cancer.",
     
     overview: "Goal 3 ensures healthy lives and promotes well-being for all at all ages through improved healthcare and global health threat prevention.",
@@ -83,7 +83,7 @@ export const goalDetails = {
     title: "Quality Education",
     image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRoG_W8FUogwzgoVJcI9DdPrAyiy68AMpOGgQ&s",
     knowledgeBite: "617 million youth worldwide lack basic mathematics and literacy skills, despite many being in school.",
-    icon: education,
+    icon: goal4,
     overview: "Goal 4 ensures inclusive and equitable quality education and promotes lifelong learning opportunities for all.",
     color: "#C5192D",
     background:"rgba(197, 25, 45, 0.3)",
@@ -102,7 +102,7 @@ export const goalDetails = {
   5: {
     title: "Gender Equality",
     image: "https://www.shutterstock.com/image-vector/sdg-goal-5-gender-equality-260nw-2553618401.jpg",
-    icon: gender,
+    icon: goal5,
     knowledgeBite: "Women spend 2.5 times more time on unpaid care and domestic work than men, limiting their access to opportunities.",
  
     overview: "Goal 5 aims to achieve gender equality and empower all women and girls through eliminating discrimination and violence.",

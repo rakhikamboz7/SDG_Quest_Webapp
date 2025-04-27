@@ -57,11 +57,11 @@ const KnowledgeBites = () => {
         </div>
 
         {selectedGoal && (
-          <div className="mt-20 fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-md p-4">
+          <div className="mt-20 fixed inset-0 flex items-center bg-black/30 backdrop-blur-sm justify-center bg-opacity-20 p-4">
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 0.9 }}
+              exit={{ opacity: 0.5, scale: 0.8 }}
               transition={{ duration: 0.3, ease: 'easeOut' }}
               className="bg-white shadow-2xl rounded-2xl p-5 w-full max-w-lg sm:max-w-2xl overflow-y-auto"
             >

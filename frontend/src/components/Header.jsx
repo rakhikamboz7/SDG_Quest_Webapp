@@ -62,7 +62,7 @@
           {/* Navigation Links for Large Screens */}
           <nav className="hidden md:flex space-x-6">
             <Link to="/home" className="text-[#00786F] hover:text-green-800">Learn Goals</Link>
-            <Link to="/knowledge" className="text-[#00786F] hover:text-green-800">Knowledge Bites</Link>
+            <Link to="/knowledge" className="text-[#00786F] hover:text-green-800">Tips and Solutions</Link>
             <button onClick={handleStartQuiz} className="text-[#00786F] hover:text-green-800 rounded-md">
               Start Quiz
             </button>

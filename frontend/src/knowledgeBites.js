@@ -1,26 +1,26 @@
-import poverty from "./assets/poverty.svg.ico";
-import Hunger from "./assets/Hunger.ico";
-import Health from "./assets/Health.ico";
-import education from "./assets/education.svg.ico";
-import gender from "./assets/gender.svg.ico";
-import goal6 from "./assets/goal6.svg.ico";
-import goal7 from "./assets/goal7.png.ico";
-import goal8 from "./assets/goal8.svg.ico";
-import goal9 from "./assets/goal9.svg.ico";
-import goal10 from "./assets/goal10.png.ico";
-import goal11 from "./assets/goal11.svg.ico";
-import goal12 from "./assets/goal12.svg.ico";
-import goal13 from "./assets/goal13.svg.ico";
-import goal14 from "./assets/goal14.svg.ico";
-import goal15 from "./assets/goal15.svg.ico";
-import goal16 from "./assets/goal16.svg.ico";
-import goal17 from "./assets/goal17.svg.ico";
+import goal1 from "./assets/goal1.ico";
+import goal2 from "./assets/goal2.ico";
+import goal3 from "./assets/goal3.ico";
+import goal4 from "./assets/goal4.svg.ico";
+import goal5 from "./assets/goal5.svg.ico";
+import goal6 from "./assets/goal6.svg.ico"
+import goal7 from "./assets/goal7.png.ico"
+import goal8 from "./assets/goal8.svg.ico"
+import goal9 from "./assets/goal9.svg.ico"
+import goal10 from "./assets/goal10.png.ico"
+import goal11 from "./assets/goal11.svg.ico"
+import goal12 from "./assets/goal12.svg.ico"
+import goal13 from "./assets/goal13.svg.ico"
+import goal14 from "./assets/goal14.svg.ico"
+import goal15 from "./assets/goal15.svg.ico"
+import goal16 from "./assets/goal16.svg.ico"
+import goal17 from "./assets/goal17.svg.ico"
 
 // Changed from object to array structure for easier mapping
 export const knowledgeBites = [
   {
     id: 1,
-    icon: poverty,
+    icon: goal1,
     color: '#E5243B',
     title: 'No Poverty',
     tips: [
@@ -40,7 +40,7 @@ export const knowledgeBites = [
   },
   {
     id: 2,
-    icon: Hunger,
+    icon: goal2,
     color: '#DDA63A',
     title: 'Zero Hunger',
     tips: [
@@ -60,7 +60,7 @@ export const knowledgeBites = [
   },
   {
     id: 3,
-    icon: Health,
+    icon: goal3,
     color: '#4C9F38',
     title: 'Good Health and Well-being',
     tips: [
@@ -80,7 +80,7 @@ export const knowledgeBites = [
   },
   {
     id: 4,
-    icon: education,
+    icon: goal4,
     color: '#C5192D',
     title: 'Quality Education',
     tips: [
@@ -100,7 +100,7 @@ export const knowledgeBites = [
   },
   {
     id: 5,
-    icon: gender,
+    icon: goal5,
     color: '#FF3A21',
     title: 'Gender Equality',
     tips: [
