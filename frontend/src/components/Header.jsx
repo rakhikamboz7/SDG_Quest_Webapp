@@ -61,7 +61,7 @@
 
           {/* Navigation Links for Large Screens */}
           <nav className="hidden md:flex space-x-6">
-            <Link to="/home" className="text-[#00786F] hover:text-green-800">Learn Goals</Link>
+            <Link to="/sdg-wheel" className="text-[#00786F] hover:text-green-800">Learn Goals</Link>
             <Link to="/knowledge" className="text-[#00786F] hover:text-green-800">Tips and Solutions</Link>
             <button onClick={handleStartQuiz} className="text-[#00786F] hover:text-green-800 rounded-md">
               Start Quiz
@@ -96,7 +96,7 @@
                 {showProfileDropdown && (
                   <div className="absolute right-0 md:mt-30 mt-60 w-48 bg-white rounded-md shadow-xl border">
 
-                      <Link to="/home" className="md:hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Learn Goals</Link>
+                      <Link to="/sdg-wheel" className="md:hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Learn Goals</Link>
                       <Link to="/knowledge" className="md:hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Knowledge Bites</Link>
                       <Link to={handleStartQuiz} className="md:hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Start Quiz</Link>
                   
@@ -119,7 +119,7 @@
               </button>
             </div>
             <nav className="flex flex-col p-4 space-y-4">
-              <Link to="/home" className="text-[#00786F] hover:text-green-800" onClick={() => setIsSidebarOpen(false)}>Learn Goals</Link>
+              <Link to="/sdg-wheel" className="text-[#00786F] hover:text-green-800" onClick={() => setIsSidebarOpen(false)}>Learn Goals</Link>
               <Link to="/knowledge" className="text-[#00786F] hover:text-green-800" onClick={() => setIsSidebarOpen(false)}>Knowledge Bites</Link>
               <button onClick={() => { handleStartQuiz(); setIsSidebarOpen(false); }} className="bg-[#00786F] text-white hover:bg-green-800 rounded-md py-2">
                 Start Quiz

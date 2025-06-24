@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import Header from '../components/Header';
-import Footer from '../components/Footer'; // Update for React Router
+// import Header from '../components/Header';
+// import Footer from '../components/Footer'; // Update for React Router
 
 const sdgs = [
   { goal: "No Poverty", color: "bg-red-500" },
@@ -44,7 +44,7 @@ function AboutUs() {
 
   return (
     <div>
-          <Header/> 
+         
           <div className="py-39 max-w-6xl mx-auto">
         
     
@@ -140,7 +140,7 @@ function AboutUs() {
       </section>
       
     </div>
-    <Footer />
+  
     </div>
   );
 }
@@ -170,7 +170,7 @@ function AboutUs() {
   
     return (
         <div>
-            <Header />
+           
       <div className="py-30 max-w-2xl mx-auto">
         
         <h1 className="text-4xl font-bold mb-8 text-center text-teal-600">Contact Us</h1>
@@ -237,7 +237,7 @@ function AboutUs() {
         </div>
        
       </div>
-      <Footer />
+    
       </div>
     );
   }

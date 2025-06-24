@@ -18,4 +18,5 @@ export default defineConfig({
       '@': '/src', // This tells Vite that @ maps to the src directory
     },
   },
+  
 });

@@ -35,8 +35,8 @@ const KnowledgeBites = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
-      {/* <Header /> */}
-      <div className="container mx-auto px-4 py-25 flex-1">
+     
+      <div className="container mx-auto px-4 py-15 flex-1">
         <div className="text-center p-6 rounded-lg mb-10">
           <h1 className="text-3xl md:text-4xl font-bold text-yellow-500 mb-4">
             Welcome to SDG Knowledge Hub!
@@ -99,7 +99,7 @@ const KnowledgeBites = () => {
           </div>
         )}
       </div>
-      {/* <Footer /> */}
+ 
     </div>
   );
 };

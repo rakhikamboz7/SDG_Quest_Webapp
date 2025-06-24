@@ -1,287 +1,203 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { motion, useAnimation } from "framer-motion"
-import { ChevronRight } from "lucide-react"
+import { motion, useAnimation, AnimatePresence } from "framer-motion"
+import { ChevronRight, Play, Target, Users, Lightbulb, Trophy, Sparkles, Zap, BookOpen } from "lucide-react"
 import { Link } from "react-router-dom"
-import Header from '../components/Header'
-import Footer from '../components/Footer'
-// With these imports:
-import goal1 from "../assets/goal1.ico"
-import goal2 from "../assets/goal2.ico"
-import goal3 from "../assets/goal3.ico"
-import goal4 from "../assets/goal4.svg.ico"
-import goal5 from "../assets/goal5.svg.ico"
-import goal6 from "../assets/goal6.svg.ico"
-import goal7 from "../assets/goal7.png.ico"
-import goal8 from "../assets/goal8.svg.ico"
-import goal9 from "../assets/goal9.svg.ico"
-import goal10 from "../assets/goal10.png.ico"
-import goal11 from "../assets/goal11.svg.ico"
-import goal12 from "../assets/goal12.svg.ico"
-import goal13 from "../assets/goal13.svg.ico"
-import goal14 from "../assets/goal14.svg.ico"
-import goal15 from "../assets/goal15.svg.ico"
-import goal16 from "../assets/goal16.svg.ico"
-import goal17 from "../assets/goal17.svg.ico"
+import { getSDGGoals } from "../lib/sanity"
+import { goalDetails } from "../goalDetail"
 
-const goalsData = [
-  {
-    id: 1,
-    title: "No Poverty",
-    icon: goal1,
-    overview: "Goal 1 aims to end poverty in all its forms everywhere.",
-    color: "#E5243B", // Red
-    description:
-      "Poverty is more than the lack of income and resources to ensure a sustainable livelihood. Its manifestations include hunger and malnutrition, limited access to education and other basic services, social discrimination and exclusion as well as the lack of participation in decision-making.",
-  },
-  {
-    id: 2,
-    title: "Zero Hunger",
-    icon: goal2,
-    overview: "Goal 2 seeks sustainable solutions to end hunger and achieve food security for all.",
-    color: "#DDA63A", // Yellow
-    description:
-      "The food and agriculture sector offers key solutions for development, and is central for hunger and poverty eradication. It is time to rethink how we grow, share and consume our food.",
-  },
-  {
-    id: 3,
-    title: "Good Health and Well-Being",
-    icon: goal3,
-    overview: "Goal 3 ensures healthy lives and promotes well-being at all ages.",
-    color: "#4C9F38", // Green
-    description:
-      "Ensuring healthy lives and promoting well-being at all ages is essential to sustainable development. Currently, the world is facing a global health crisis unlike any other — COVID-19 is spreading human suffering, destabilizing the global economy and upending the lives of billions of people around the globe.",
-  },
-  {
-    id: 4,
-    title: "Quality Education",
-    icon: goal4,
-    overview: "Goal 4 ensures inclusive and equitable quality education.",
-    color: "#C5192D", // Red
-    description:
-      "Obtaining a quality education is the foundation to creating sustainable development. In addition to improving quality of life, access to inclusive education can help equip locals with the tools required to develop innovative solutions to the world's greatest problems.",
-  },
-  {
-    id: 5,
-    title: "Gender Equality",
-    icon: goal5,
-    overview: "Goal 5 aims to achieve gender equality and empower all women and girls.",
-    color: "#FF3A21", // Orange-Red
-    description:
-      "Gender equality is not only a fundamental human right, but a necessary foundation for a peaceful, prosperous and sustainable world. There has been progress over the last decades, but we're still far from a world where women and men are equal.",
-  },
-  {
-    id: 6,
-    title: "Clean Water and Sanitation",
-    icon: goal6,
-    overview: "Goal 6 aims to ensure availability and sustainable management of water and sanitation for all.",
-    color: "#26BDE2", // Light Blue
-    description:
-      "Clean, accessible water for all is an essential part of the world we want to live in and there is sufficient fresh water on the planet to achieve this. However, due to bad economics or poor infrastructure, millions of people die every year from diseases associated with inadequate water supply, sanitation and hygiene.",
-  },
-  {
-    id: 7,
-    title: "Affordable and Clean Energy",
-    icon: goal7,
-    overview: "Goal 7 ensures access to affordable, reliable, sustainable, and modern energy for all.",
-    color: "#FCC30B", // Yellow
-    description:
-      "Energy is central to nearly every major challenge and opportunity the world faces today. Be it for jobs, security, climate change, food production or increasing incomes, access to energy for all is essential.",
-  },
-  {
-    id: 8,
-    title: "Decent Work and Economic Growth",
-    icon: goal8,
-    overview: "Goal 8 promotes sustained, inclusive economic growth.",
-    color: "#A21942", // Burgundy
-    description:
-      "Sustained and inclusive economic growth can drive progress, create decent jobs for all and improve living standards. COVID-19 has disrupted billions of lives and endangered the global economy. The International Monetary Fund (IMF) expects a global recession as bad as or worse than in 2009.",
-  },
-  {
-    id: 9,
-    title: "Industry, Innovation and Infrastructure",
-    icon: goal9,
-    overview: "Goal 9 focuses on building resilient infrastructure and fostering innovation.",
-    color: "#FD6925", // Orange
-    description:
-      "Investments in infrastructure – transport, irrigation, energy and information and communication technology – are crucial to achieving sustainable development and empowering communities in many countries.",
-  },
-  {
-    id: 10,
-    title: "Reduced Inequalities",
-    icon: goal10,
-    overview: "Goal 10 aims to reduce inequalities within and among countries.",
-    color: "#DD1367", // Pink
-    description:
-      "Reducing inequalities and ensuring no one is left behind are integral to achieving the Sustainable Development Goals. Inequality within and among countries is a persistent cause for concern.",
-  },
-  {
-    id: 11,
-    title: "Sustainable Cities and Communities",
-    icon: goal11,
-    overview: "Goal 11 seeks to make cities inclusive, safe, resilient, and sustainable.",
-    color: "#FD9D24", // Orange
-    description:
-      "The world is becoming increasingly urbanized. Since 2007, more than half the world's population has been living in cities, and that share is projected to rise to 60% by 2030. Cities and metropolitan areas are powerhouses of economic growth.",
-  },
-  {
-    id: 12,
-    title: "Responsible Consumption and Production",
-    icon: goal12,
-    overview: "Goal 12 promotes sustainable consumption and production patterns.",
-    color: "#BF8B2E", // Gold
-    description:
-      "Sustainable consumption and production is about doing more and better with less. It is also about decoupling economic growth from environmental degradation, increasing resource efficiency and promoting sustainable lifestyles.",
-  },
-  {
-    id: 13,
-    title: "Climate Action",
-    icon: goal13,
-    overview: "Goal 13 calls for urgent action to combat climate change.",
-    color: "#3F7E44", // Green
-    description:
-      "Climate change is affecting every country on every continent. It is disrupting national economies and affecting lives. Weather patterns are changing, sea levels are rising, and weather events are becoming more extreme.",
-  },
-  {
-    id: 14,
-    title: "Life Below Water",
-    icon: goal14,
-    overview: "Goal 14 aims to conserve and sustainably use oceans and seas.",
-    color: "#0A97D9", // Blue
-    description:
-      "The world's oceans – their temperature, chemistry, currents and life – drive global systems that make the Earth habitable for humankind. Our rainwater, drinking water, weather, climate, coastlines, much of our food, and even the oxygen in the air we breathe, are all ultimately provided and regulated by the sea.",
-  },
-  {
-    id: 15,
-    title: "Life on Land",
-    icon: goal15,
-    overview: "Goal 15 focuses on protecting terrestrial ecosystems.",
-    color: "#56C02B", // Green
-    description:
-      "Nature is critical to our survival: nature provides us with our oxygen, regulates our weather patterns, pollinates our crops, produces our food, feed and fibre. But it is under increasing stress.",
-  },
-  {
-    id: 16,
-    title: "Peace, Justice, and Strong Institutions",
-    icon: goal16,
-    overview: "Goal 16 promotes peaceful societies.",
-    color: "#00689D", // Blue
-    description:
-      "Conflict, insecurity, weak institutions and limited access to justice remain a great threat to sustainable development. The number of people fleeing war, persecution and conflict exceeded 70 million in 2018, the highest level recorded by the UN refugee agency (UNHCR) in almost 70 years.",
-  },
-  {
-    id: 17,
-    title: "Partnerships for the Goals",
-    icon: goal17,
-    overview: "Goal 17 emphasizes strengthening global partnerships.",
-    color: "#19486A", // Dark Blue
-    description:
-      "The SDGs can only be realized with strong global partnerships and cooperation. A successful development agenda requires inclusive partnerships — at the global, regional, national and local levels — built upon principles and values, and upon a shared vision and shared goals placing people and the planet at the centre.",
-  },
-]
-
-const SDGWheel = () => {
+const EnhancedSDGWheel = () => {
+  const [goals, setGoals] = useState(Object.values(goalDetails))
   const [isSpinning, setIsSpinning] = useState(false)
   const [selectedGoal, setSelectedGoal] = useState(null)
   const [wheelRotation, setWheelRotation] = useState(0)
   const [showContent, setShowContent] = useState(false)
-  const [, setSpinCount] = useState(0)
+  const [spinCount, setSpinCount] = useState(0)
   const [spinHistory, setSpinHistory] = useState([])
-  const [spinSpeed] = useState(3) // Default spin duration
-  const [spinButtonText, setSpinButtonText] = useState("Spin the Wheel")
+  const [userProgress, setUserProgress] = useState(new Set())
+  const [showCelebration, setShowCelebration] = useState(false)
+  const [showKnowledgeBite, setShowKnowledgeBite] = useState(false)
+  const [currentKnowledgeBite, setCurrentKnowledgeBite] = useState("")
+  const [streakCount, setStreakCount] = useState(0)
+  const [showStreak, setShowStreak] = useState(false)
+  const [achievements, setAchievements] = useState([])
+  const [showAchievement, setShowAchievement] = useState(false)
+  const [currentAchievement, setCurrentAchievement] = useState(null)
+  const [spinButtonText, setSpinButtonText] = useState("🎯 Spin the Wheel!")
+  const [isHovering, setIsHovering] = useState(false)
+  const [hoveredGoal, setHoveredGoal] = useState(null)
+
   const wheelRef = useRef(null)
   const contentControls = useAnimation()
 
-  // Refs for the wheel container and content panel
-  const wheelContainerRef = useRef(null)
-  const contentPanelRef = useRef(null)
+  // Load goals from Sanity with fallback
+  useEffect(() => {
+    const loadGoals = async () => {
+      try {
+        const fetchedGoals = await getSDGGoals()
+        if (fetchedGoals && fetchedGoals.length > 0) {
+          setGoals(fetchedGoals)
+        } else {
+          // Use static data as fallback
+          setGoals(Object.values(goalDetails))
+        }
+      } catch (error) {
+        console.error("Error loading SDG goals, using static data:", error)
+        // Use static data as fallback
+        setGoals(Object.values(goalDetails))
+      }
+    }
+    loadGoals()
+  }, [])
 
-  // Function to calculate the rotation needed to align a goal with the triangle
-  const calculateRotationForGoal = (goalId) => {
-    const segmentAngle = 360 / 17
-    // The key fix: We need to rotate the wheel so that the goal is at the top (0 degrees)
-    // Since the wheel rotates clockwise, we need to use a negative angle
-    // We also need to offset by half a segment to center the goal at the triangle
-    return -((goalId +4 ) * segmentAngle + segmentAngle / 2)
+  // Achievement system
+  const checkAchievements = (newSpinCount, newProgressSize) => {
+    const newAchievements = []
+
+    if (newSpinCount === 1)
+      newAchievements.push({
+        id: "first-spin",
+        title: "First Spin!",
+        icon: "🎯",
+        description: "Welcome to your SDG journey!",
+      })
+    if (newSpinCount === 5)
+      newAchievements.push({ id: "explorer", title: "Explorer", icon: "🗺️", description: "You've spun 5 times!" })
+    if (newSpinCount === 10)
+      newAchievements.push({
+        id: "adventurer",
+        title: "Adventurer",
+        icon: "⭐",
+        description: "Double digits - 10 spins!",
+      })
+    if (newProgressSize === 5)
+      newAchievements.push({
+        id: "learner",
+        title: "Quick Learner",
+        icon: "📚",
+        description: "Discovered 5 different goals!",
+      })
+    if (newProgressSize === 10)
+      newAchievements.push({ id: "scholar", title: "SDG Scholar", icon: "🎓", description: "Explored 10 goals!" })
+    if (newProgressSize === 17)
+      newAchievements.push({
+        id: "master",
+        title: "SDG Master!",
+        icon: "👑",
+        description: "You've discovered all 17 goals!",
+      })
+
+    newAchievements.forEach((achievement) => {
+      if (!achievements.find((a) => a.id === achievement.id)) {
+        setAchievements((prev) => [...prev, achievement])
+        setCurrentAchievement(achievement)
+        setShowAchievement(true)
+        setTimeout(() => setShowAchievement(false), 4000)
+      }
+    })
   }
 
-  // Function to handle spinning the wheel
+  const calculateRotationForGoal = (goalNumber) => {
+    const segmentAngle = 360 / 17
+    return -((goalNumber + 4) * segmentAngle + segmentAngle / 2)
+  }
+
   const spinWheel = () => {
-    if (isSpinning) return
+    if (isSpinning || goals.length === 0) return
 
-    // Update spin button text
-    setSpinButtonText("Spinning...")
-
-    // Start spinning state
+    setSpinButtonText("🌟 Spinning...")
     setIsSpinning(true)
     setShowContent(false)
 
-    // Generate a random goal ID (1-17)
-    const newGoalId = Math.floor(Math.random() * 17) + 1
-
-    // Calculate the exact rotation needed to align the selected goal with the triangle
-    const targetRotation = calculateRotationForGoal(newGoalId)
-
-    // Add multiple full rotations for visual effect (2-4 rotations)
-    const fullRotations = -(2 + Math.floor(Math.random() * 3)) * 360
+    const newGoalNumber = Math.floor(Math.random() * 17) + 1
+    const targetRotation = calculateRotationForGoal(newGoalNumber)
+    const fullRotations = -(3 + Math.floor(Math.random() * 3)) * 360
     const newRotation = fullRotations + targetRotation
 
     setWheelRotation(newRotation)
 
-    // Update spin history
+    // Update history and progress
     const updatedHistory = [...spinHistory]
-    if (updatedHistory.length >= 5) updatedHistory.shift() // Keep only last 5 spins
-    updatedHistory.push(newGoalId)
+    if (updatedHistory.length >= 5) updatedHistory.shift()
+    updatedHistory.push(newGoalNumber)
     setSpinHistory(updatedHistory)
 
-    // Increment spin counter
-    setSpinCount((prevCount) => prevCount + 1)
+    const newSpinCount = spinCount + 1
+    setSpinCount(newSpinCount)
 
-    // After spinning animation completes, show the goal info
+    // Show knowledge bite during spin
+    const selectedGoalData = goals.find((g) => g.goalNumber === newGoalNumber)
+    if (selectedGoalData?.knowledgeBite) {
+      setTimeout(() => {
+        setCurrentKnowledgeBite(selectedGoalData.knowledgeBite)
+        setShowKnowledgeBite(true)
+      }, 3000)
+    }
+
     setTimeout(() => {
       setIsSpinning(false)
-      setSelectedGoal(newGoalId)
+      setSelectedGoal(newGoalNumber)
       setShowContent(true)
-      setSpinButtonText("Spin Again")
-    }, spinSpeed * 1000)
+      setSpinButtonText("🎯 Spin Again!")
+
+      const newProgress = new Set([...userProgress, newGoalNumber])
+      setUserProgress(newProgress)
+
+      // Check for achievements
+      checkAchievements(newSpinCount, newProgress.size)
+
+      // Show celebration
+      setShowCelebration(true)
+      setTimeout(() => setShowCelebration(false), 2000)
+
+      // Update streak
+      if (
+        updatedHistory.length >= 2 &&
+        updatedHistory[updatedHistory.length - 1] !== updatedHistory[updatedHistory.length - 2]
+      ) {
+        setStreakCount((prev) => prev + 1)
+        if (streakCount > 0 && streakCount % 3 === 0) {
+          setShowStreak(true)
+          setTimeout(() => setShowStreak(false), 3000)
+        }
+      }
+
+      setTimeout(() => setShowKnowledgeBite(false), 6000)
+    }, 3500)
   }
 
-  // Function to handle clicking on a specific goal
-  const handleGoalClick = (goalId, e) => {
+  const handleGoalClick = (goalNumber, e) => {
     e.preventDefault()
+    if (isSpinning || goals.length === 0) return
 
-    if (isSpinning) return
-
-    if (selectedGoal === goalId) {
-      // Already selected, just toggle content visibility
+    if (selectedGoal === goalNumber) {
       setShowContent(!showContent)
       return
     }
 
     setIsSpinning(true)
     setShowContent(false)
-    setSpinButtonText("Spinning...")
+    setSpinButtonText("🌟 Spinning...")
 
-    // Calculate rotation to align the selected goal with the triangle at the top
-    const targetRotation = calculateRotationForGoal(goalId)
-
-    // Add a full rotation for visual effect
+    const targetRotation = calculateRotationForGoal(goalNumber)
     const fullRotation = -360
     const newRotation = fullRotation + targetRotation
 
     setWheelRotation(newRotation)
 
-    // After spinning animation completes, show the goal info
     setTimeout(() => {
       setIsSpinning(false)
-      setSelectedGoal(goalId)
+      setSelectedGoal(goalNumber)
       setShowContent(true)
-      setSpinButtonText("Spin Again")
+      setSpinButtonText("🎯 Spin Again!")
+      setUserProgress((prev) => new Set([...prev, goalNumber]))
+
+      setShowCelebration(true)
+      setTimeout(() => setShowCelebration(false), 2000)
     }, 1500)
   }
 
-  // Animate content when it becomes visible
   useEffect(() => {
     if (showContent) {
       contentControls.start("visible")
@@ -290,79 +206,167 @@ const SDGWheel = () => {
     }
   }, [showContent, contentControls])
 
-  // Content animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.3,
-      },
-    },
-  }
+  const currentGoal = selectedGoal ? goals.find((goal) => goal.goalNumber === selectedGoal) : null
+  const primaryColor = "#005f5a"
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
+  // Floating particles animation
+  const particleVariants = {
+    animate: {
+      y: [0, -20, 0],
+      x: [0, Math.random() * 20 - 10, 0],
+      opacity: [0, 1, 0],
+      scale: [0, 1, 0],
       transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 10,
-      },
-    },
-  }
-
-  // Highlight animation for the selected segment
-  const highlightVariants = {
-    initial: { scale: 1, filter: "brightness(1)" },
-    highlight: {
-      scale: 1.05,
-      filter: "brightness(1.2) drop-shadow(0 0 10px rgba(255,255,255,0.5))",
-      transition: {
+        duration: 2,
         repeat: Number.POSITIVE_INFINITY,
-        repeatType: "reverse",
-        duration: 1,
+        delay: Math.random() * 2,
       },
     },
   }
-
-  // Get the currently selected goal data
-  const currentGoal = selectedGoal ? goalsData.find((goal) => goal.id === selectedGoal) : null
-
-  // Primary website colors
-  const primaryColor = "#005f5a" // Primary teal color
-  const textColor = "#000000" // Black
 
   return (
-    <><Header />
-    <div className="relative flex flex-col items-center justify-center min-h-screen p-4 overflow-hidden bg-white"> 
+    <div className="relative flex flex-col items-center justify-center min-h-screen p-4 py-8 overflow-hidden bg-gradient-to-br from-blue-50 via-white to-green-50">
+      {/* Floating Celebration Particles */}
+      <AnimatePresence>
+        {showCelebration && (
+          <div className="fixed inset-0 pointer-events-none z-50">
+            {Array.from({ length: 20 }).map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute text-2xl"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                }}
+                variants={particleVariants}
+                animate="animate"
+              >
+                {["🎉", "✨", "🌟", "🎊", "💫"][Math.floor(Math.random() * 5)]}
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Achievement Notification */}
+      <AnimatePresence>
+        {showAchievement && currentAchievement && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5, y: -100 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.5, y: -100 }}
+            className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-xl shadow-2xl p-6 max-w-sm border-4 border-yellow-300"
+          >
+            <div className="text-center">
+              <div className="text-4xl mb-2">{currentAchievement.icon}</div>
+              <h3 className="text-xl font-bold mb-1">🏆 Achievement Unlocked!</h3>
+              <h4 className="text-lg font-semibold">{currentAchievement.title}</h4>
+              <p className="text-sm opacity-90">{currentAchievement.description}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Streak Notification */}
+      <AnimatePresence>
+        {showStreak && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, x: 100 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            exit={{ opacity: 0, scale: 0.8, x: 100 }}
+            className="fixed top-32 right-8 z-50 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg shadow-xl p-4"
+          >
+            <div className="flex items-center space-x-2">
+              <Zap className="text-yellow-300" size={24} />
+              <div>
+                <h4 className="font-bold">🔥 Streak: {streakCount}</h4>
+                <p className="text-sm">You're on fire!</p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Knowledge Bite */}
+      <AnimatePresence>
+        {showKnowledgeBite && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, y: -50 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: -50 }}
+            className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-white rounded-xl shadow-2xl p-6 max-w-md border-l-4 border-yellow-400"
+          >
+            <div className="flex items-start space-x-3">
+              <motion.div
+                animate={{ rotate: [0, 10, -10, 0] }}
+                transition={{ repeat: Number.POSITIVE_INFINITY, duration: 2 }}
+              >
+                <Lightbulb className="text-yellow-500 mt-1 flex-shrink-0" size={24} />
+              </motion.div>
+              <div>
+                <h4 className="font-semibold text-gray-800 mb-1">💡 Did you know?</h4>
+                <p className="text-sm text-gray-600">{currentKnowledgeBite}</p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Progress and Stats Bar */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-6 bg-white rounded-xl shadow-lg p-4 flex items-center justify-between w-full max-w-4xl"
+      >
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            <Trophy className="text-yellow-500" size={20} />
+            <span className="text-sm font-medium text-gray-700">Progress: {userProgress.size}/17</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Target className="text-blue-500" size={20} />
+            <span className="text-sm font-medium text-gray-700">Spins: {spinCount}</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Zap className="text-purple-500" size={20} />
+            <span className="text-sm font-medium text-gray-700">Streak: {streakCount}</span>
+          </div>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <div className="flex-1 bg-gray-200 rounded-full h-3 w-32">
+            <motion.div
+              className="bg-gradient-to-r from-green-400 to-blue-500 h-3 rounded-full"
+              initial={{ width: 0 }}
+              animate={{ width: `${(userProgress.size / 17) * 100}%` }}
+              transition={{ duration: 0.5 }}
+            />
+          </div>
+          <span className="text-xs text-gray-500 font-medium">{Math.round((userProgress.size / 17) * 100)}%</span>
+        </div>
+      </motion.div>
+
+      {/* Main Title */}
       <motion.h1
-        className="mb-8 text-4xl font-bold text-center"
-        style={{ color: primaryColor }}
+        className="mb-8 text-4xl font-bold text-center bg-gradient-to-r from-teal-600 to-green-600 bg-clip-text text-transparent"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.8 }}
       >
         Sustainable Development Goals
       </motion.h1>
-
+s
       <div className="relative w-full max-w-6xl mx-auto">
         <div className="flex flex-col items-start lg:flex-row lg:items-start lg:justify-between">
-          {/* SDG Wheel Container - reduced left margin */}
-          <div
-            ref={wheelContainerRef}
-            className="relative flex items-center justify-center w-full max-w-md lg:w-2/5 mb-8 lg:mb-0 lg:ml-0"
-          >
-            {/* Wheel Background Glow */}
+          {/* SDG Wheel Container */}
+          <div className="relative flex items-center justify-center w-full max-w-md lg:w-2/5 mb-8 lg:mb-0">
+            {/* Magical Background Effects */}
             <motion.div
-              className="absolute inset-0 rounded-full opacity-10 blur-xl"
+              className="absolute inset-0 rounded-full opacity-20 blur-xl"
               style={{ background: `radial-gradient(circle, ${primaryColor} 0%, transparent 70%)` }}
               animate={{
-                scale: [1, 1.05, 1],
-                opacity: [0.1, 0.15, 0.1],
+                scale: [1, 1.1, 1],
+                opacity: [0.1, 0.3, 0.1],
               }}
               transition={{
                 duration: 4,
@@ -371,7 +375,7 @@ const SDGWheel = () => {
               }}
             />
 
-            {/* SDG Wheel */}
+            {/* Spinning Wheel */}
             <motion.div
               className="relative"
               style={{ width: "min(100%, 400px)", height: "min(100%, 400px)" }}
@@ -380,11 +384,13 @@ const SDGWheel = () => {
                 rotate: wheelRotation,
                 transition: {
                   type: isSpinning ? "spring" : "tween",
-                  duration: isSpinning ? spinSpeed : 1.5,
+                  duration: isSpinning ? 3.5 : 1.5,
                   ease: isSpinning ? "easeOut" : [0.42, 0, 0.58, 1],
                   bounce: isSpinning ? 0.25 : 0,
                 },
               }}
+              onHoverStart={() => setIsHovering(true)}
+              onHoverEnd={() => setIsHovering(false)}
             >
               <svg
                 ref={wheelRef}
@@ -393,12 +399,9 @@ const SDGWheel = () => {
                 className="w-full h-full transition-transform duration-1000 ease-in-out"
               >
                 <g transform="translate(250, 250)">
-                  {/* Create segments for all 17 SDGs */}
-                  {goalsData.map((goal, index) => {
+                  {goals.map((goal, index) => {
                     const innerRadius = 80
                     const outerRadius = 200
-
-                    // Calculate coordinates for the segment path
                     const startAngle = ((index * 360) / 17) * (Math.PI / 180)
                     const endAngle = (((index + 1) * 360) / 17) * (Math.PI / 180)
 
@@ -412,18 +415,15 @@ const SDGWheel = () => {
                     const outerEndX = outerRadius * Math.cos(endAngle)
                     const outerEndY = outerRadius * Math.sin(endAngle)
 
-                    // Calculate icon position (centered in the segment)
                     const iconAngle = (startAngle + endAngle) / 2
                     const iconRadius = (innerRadius + outerRadius) / 2
                     const iconX = iconRadius * Math.cos(iconAngle)
                     const iconY = iconRadius * Math.sin(iconAngle)
 
-                    // Calculate text position for the goal number
                     const textRadius = outerRadius - 25
                     const textX = textRadius * Math.cos(iconAngle)
                     const textY = textRadius * Math.sin(iconAngle)
 
-                    // Create the segment path
                     const path = [
                       `M ${innerStartX} ${innerStartY}`,
                       `L ${outerStartX} ${outerStartY}`,
@@ -433,18 +433,49 @@ const SDGWheel = () => {
                       "Z",
                     ].join(" ")
 
+                    const isExplored = userProgress.has(goal.goalNumber)
+                    const isSelected = selectedGoal === goal.goalNumber
+                    const isHovered = hoveredGoal === goal.goalNumber
+
                     return (
                       <motion.g
-                        key={goal.id}
+                        key={goal.goalNumber}
                         className="transition-all duration-300 hover:opacity-90 cursor-pointer"
-                        onClick={(e) => handleGoalClick(goal.id, e)}
-                        variants={highlightVariants}
-                        initial="initial"
-                        animate={selectedGoal === goal.id ? "highlight" : "initial"}
+                        onClick={(e) => handleGoalClick(goal.goalNumber, e)}
+                        onMouseEnter={() => setHoveredGoal(goal.goalNumber)}
+                        onMouseLeave={() => setHoveredGoal(null)}
+                        whileHover={{ scale: 1.02 }}
                       >
-                        <path d={path} fill={goal.color} stroke="white" strokeWidth="1" />
+                        <motion.path
+                          d={path}
+                          fill={goal.color}
+                          stroke="white"
+                          strokeWidth={isSelected ? "3" : isHovered ? "2" : "1"}
+                          opacity={isExplored ? 1 : 0.8}
+                          animate={{
+                            filter: isSelected
+                              ? "brightness(1.2) drop-shadow(0 0 10px rgba(255,255,255,0.8))"
+                              : isHovered
+                                ? "brightness(1.1) drop-shadow(0 0 5px rgba(255,255,255,0.5))"
+                                : "brightness(1)",
+                          }}
+                        />
 
-                        {/* Goal number */}
+                        {/* Progress indicator */}
+                        {isExplored && (
+                          <motion.circle
+                            cx={textX}
+                            cy={textY - 15}
+                            r="4"
+                            fill="white"
+                            stroke={goal.color}
+                            strokeWidth="2"
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                          />
+                        )}
+
                         <text
                           x={textX}
                           y={textY}
@@ -455,35 +486,47 @@ const SDGWheel = () => {
                           dominantBaseline="middle"
                           style={{ pointerEvents: "none" }}
                         >
-                          {goal.id}
+                          {goal.goalNumber}
                         </text>
 
-                        {/* Icon */}
-                        <foreignObject
-                          x={iconX - 15}
-                          y={iconY - 15}
-                          width="30"
-                          height="30"
-                          style={{ pointerEvents: "none" }}
-                        >
-                          <div className="w-full h-full flex items-center justify-center">
-                            <img
-                              src={goal.icon || "/placeholder.svg"}
-                              alt={`Goal ${goal.id}`}
-                              width="24"
-                              height="24"
-                              className="object-contain"
-                            />
-                          </div>
-                        </foreignObject>
+                        {goal.icon && (
+                          <foreignObject
+                            x={iconX - 15}
+                            y={iconY - 15}
+                            width="30"
+                            height="30"
+                            style={{ pointerEvents: "none" }}
+                          >
+                            <div className="w-full h-full flex items-center justify-center">
+                              <img
+                                src={goal.icon || "/placeholder.svg"}
+                                alt={`Goal ${goal.goalNumber}`}
+                                width="24"
+                                height="24"
+                                className="object-contain"
+                                crossOrigin="anonymous"
+                              />
+                            </div>
+                          </foreignObject>
+                        )}
 
-                        <title>{`Goal ${goal.id}: ${goal.title}`}</title>
+                        <title>{`Goal ${goal.goalNumber}: ${goal.title}`}</title>
                       </motion.g>
                     )
                   })}
 
-                  {/* Center circle */}
-                  <circle cx="0" cy="0" r="80" fill={primaryColor} />
+                  {/* Enhanced Center Circle */}
+                  <motion.circle
+                    cx="0"
+                    cy="0"
+                    r="80"
+                    fill={primaryColor}
+                    animate={{
+                      filter: isSpinning
+                        ? "drop-shadow(0 0 20px rgba(0,95,90,0.8))"
+                        : "drop-shadow(0 0 10px rgba(0,95,90,0.3))",
+                    }}
+                  />
                   <circle cx="0" cy="0" r="70" fill="white" stroke={primaryColor} strokeWidth="2" />
                   <text
                     x="0"
@@ -512,182 +555,346 @@ const SDGWheel = () => {
               </svg>
             </motion.div>
 
-            {/* Indicator triangle at top - made more prominent */}
+            {/* Enhanced Indicator */}
             <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2 z-10">
               <motion.div
-                className="w-0 h-0"
-                style={{
-                  borderLeft: "12px solid transparent",
-                  borderRight: "12px solid transparent",
-                  borderBottom: `18px solid ${primaryColor}`,
-                }}
+                className="relative"
                 animate={{
-                  scale: isSpinning ? [1, 1.2, 1] : 1,
+                  scale: isSpinning ? [1, 1.3, 1] : 1,
+                  rotate: isSpinning ? [0, 10, -10, 0] : 0,
                 }}
                 transition={{
                   repeat: isSpinning ? Number.POSITIVE_INFINITY : 0,
                   duration: 0.5,
                 }}
-              />
+              >
+                <div
+                  className="w-0 h-0"
+                  style={{
+                    borderLeft: "15px solid transparent",
+                    borderRight: "15px solid transparent",
+                    borderBottom: `20px solid ${primaryColor}`,
+                    filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.2))",
+                  }}
+                />
+                {isSpinning && (
+                  <motion.div
+                    className="absolute -top-1 left-1/2 transform -translate-x-1/2"
+                    animate={{ opacity: [0, 1, 0] }}
+                    transition={{ repeat: Number.POSITIVE_INFINITY, duration: 1 }}
+                  >
+                    <Sparkles className="w-4 h-4 text-yellow-400" />
+                  </motion.div>
+                )}
+              </motion.div>
             </div>
 
-            {/* Spin Button */}
+            {/* Enhanced Spin Button */}
             <motion.button
               onClick={spinWheel}
               disabled={isSpinning}
-              className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 text-white px-6 py-2 rounded-full font-medium shadow-lg hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ backgroundColor: primaryColor }}
-              whileHover={{ scale: 1.05 }}
+              className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 text-white px-8 py-3 rounded-full font-medium shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+              style={{
+                background: isSpinning
+                  ? `linear-gradient(45deg, ${primaryColor}, #007a73)`
+                  : `linear-gradient(45deg, ${primaryColor}, #004d47)`,
+              }}
+              whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
+              animate={{
+                boxShadow: isSpinning ? "0 0 30px rgba(0,95,90,0.6)" : "0 10px 25px rgba(0,0,0,0.2)",
+              }}
             >
-              {spinButtonText}
+              <div className="flex items-center space-x-2">
+                {isSpinning ? (
+                  <>
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ repeat: Number.POSITIVE_INFINITY, duration: 1, ease: "linear" }}
+                    >
+                      <Sparkles size={20} />
+                    </motion.div>
+                    <span>Spinning...</span>
+                  </>
+                ) : (
+                  <>
+                    <Play size={20} />
+                    <span>{spinButtonText}</span>
+                  </>
+                )}
+              </div>
             </motion.button>
 
-            {/* Previous spins history */}
+            {/* Spin History */}
             {spinHistory.length > 0 && (
-              <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                <span className="text-xs" style={{ color: primaryColor }}>
-                  Previous:{" "}
-                </span>
-                {spinHistory.map((id, idx) => (
-                  <motion.div
-                    key={idx}
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: idx * 0.1 }}
-                    className="w-5 h-5 rounded-full flex items-center justify-center text-xs text-white"
-                    style={{ backgroundColor: goalsData.find((g) => g.id === id)?.color || "#888" }}
-                    onClick={(e) => handleGoalClick(id, e)}
-                  >
-                    {id}
-                  </motion.div>
-                ))}
-              </div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="absolute -bottom-20 left-1/2 transform -translate-x-1/2 flex items-center space-x-3"
+              >
+                <span className="text-xs text-gray-600 font-medium">Recent:</span>
+                <div className="flex space-x-1">
+                  {spinHistory.map((goalNumber, idx) => {
+                    const goal = goals.find((g) => g.goalNumber === goalNumber)
+                    return (
+                      <motion.button
+                        key={idx}
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: idx * 0.1 }}
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-xs text-white font-bold shadow-md hover:scale-110 transition-transform"
+                        style={{ backgroundColor: goal?.color || "#888" }}
+                        onClick={(e) => handleGoalClick(goalNumber, e)}
+                        title={`Goal ${goalNumber}: ${goal?.title}`}
+                        whileHover={{ scale: 1.2, y: -2 }}
+                      >
+                        {goalNumber}
+                      </motion.button>
+                    )
+                  })}
+                </div>
+              </motion.div>
             )}
           </div>
 
-          {/* Goal Information Panel - increased spacing and width */}
+          {/* Enhanced Goal Information Panel */}
           <motion.div
-            ref={contentPanelRef}
-            className="w-full lg:w-3/5 lg:pl-12 lg:pr-0"
-            variants={containerVariants}
+            className="w-full lg:w-3/5 lg:pl-12"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.1,
+                  delayChildren: 0.3,
+                },
+              },
+            }}
             initial="hidden"
             animate={contentControls}
           >
             {currentGoal ? (
-              <>
-                <motion.div
-                  className="p-6 rounded-lg shadow-xl border-l-4"
-                  style={{
-                    borderLeftColor: currentGoal.color,
-                    backgroundColor: "white",
-                    color: textColor,
-                  }}
-                  variants={itemVariants}
-                >
-                  <div className="flex items-center mb-4">
-                    <div
-                      className="w-12 h-12 rounded-full flex items-center justify-center mr-4 shadow-lg"
-                      style={{ backgroundColor: currentGoal.color }}
-                    >
-                      <img
-                        src={currentGoal.icon || "/placeholder.svg"}
-                        alt={`Goal ${currentGoal.id}`}
-                        width="24"
-                        height="24"
-                        className="object-contain"
-                      />
+              <motion.div
+                className="bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-100"
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0 },
+                }}
+                whileHover={{ y: -5, boxShadow: "0 25px 50px rgba(0,0,0,0.15)" }}
+              >
+                {/* Goal Header */}
+                <div className="p-6 text-white relative overflow-hidden" style={{ backgroundColor: currentGoal.color }}>
+                  <div className="absolute inset-0 bg-black bg-opacity-10" />
+                  <motion.div
+                    className="absolute inset-0 opacity-20"
+                    animate={{
+                      background: [
+                        `radial-gradient(circle at 20% 50%, rgba(255,255,255,0.3) 0%, transparent 50%)`,
+                        `radial-gradient(circle at 80% 50%, rgba(255,255,255,0.3) 0%, transparent 50%)`,
+                        `radial-gradient(circle at 20% 50%, rgba(255,255,255,0.3) 0%, transparent 50%)`,
+                      ],
+                    }}
+                    transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY }}
+                  />
+                  <div className="relative z-10">
+                    <div className="flex items-center mb-4">
+                      <motion.div
+                        className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4 backdrop-blur-sm"
+                        whileHover={{ scale: 1.1, rotate: 5 }}
+                      >
+                        {currentGoal.icon && (
+                          <img
+                            src={currentGoal.icon || "/placeholder.svg"}
+                            alt={`Goal ${currentGoal.goalNumber}`}
+                            width="32"
+                            height="32"
+                            className="object-contain"
+                          />
+                        )}
+                      </motion.div>
+                      <div>
+                        <motion.h2
+                          className="text-3xl font-bold"
+                          initial={{ x: -20, opacity: 0 }}
+                          animate={{ x: 0, opacity: 1 }}
+                        >
+                          Goal {currentGoal.goalNumber}
+                        </motion.h2>
+                        <motion.h3
+                          className="text-xl font-medium opacity-90"
+                          initial={{ x: -20, opacity: 0 }}
+                          animate={{ x: 0, opacity: 1 }}
+                          transition={{ delay: 0.1 }}
+                        >
+                          {currentGoal.title}
+                        </motion.h3>
+                      </div>
                     </div>
-                    <h2 className="text-2xl font-bold" style={{ color: primaryColor }}>
-                      Goal {currentGoal.id}: {currentGoal.title}
-                    </h2>
+
+                    <motion.p
+                      className="text-lg opacity-90 leading-relaxed"
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.2 }}
+                    >
+                      {currentGoal.description}
+                    </motion.p>
                   </div>
+                </div>
 
-                  <motion.p className="text-lg mb-4" variants={itemVariants}>
-                    {currentGoal.overview}
-                  </motion.p>
-
-                  <motion.div className="mt-6" variants={itemVariants}>
-                    <h3 className="text-xl font-semibold mb-2" style={{ color: primaryColor }}>
-                      Description:
-                    </h3>
-                    <p>{currentGoal.description}</p>
+                {/* Goal Content */}
+                <div className="p-6">
+                  <motion.div
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      visible: { opacity: 1, y: 0 },
+                    }}
+                    className="mb-6"
+                  >
+                    <p className="text-gray-700 leading-relaxed">{currentGoal.description}</p>
                   </motion.div>
 
-                  {/* Navigation buttons */}
-                  <motion.div className="mt-6 flex justify-between" variants={itemVariants}>
-                    <button
-                      onClick={() => {
-                        // Find previous goal (wrap around to 17 if at the beginning)
-                        const prevGoalId = currentGoal.id === 1 ? 17 : currentGoal.id - 1
-                        handleGoalClick(prevGoalId, { preventDefault: () => {} })
-                      }}
-                      className="flex items-center hover:underline"
-                      style={{ color: primaryColor }}
+                  {/* Interactive Action Cards */}
+                  <motion.div
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      visible: { opacity: 1, y: 0 },
+                    }}
+                    className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"
+                  >
+                    <motion.div
+                      className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg text-center cursor-pointer border border-blue-200"
+                      whileHover={{ scale: 1.05, y: -2 }}
+                      whileTap={{ scale: 0.95 }}
                     >
-                      <ChevronRight size={16} className="transform rotate-180 mr-1" /> Previous
-                    </button>
+                       <Link
+                         to={`/goal/${currentGoal.goalNumber}`}
+                        className="text-blue-700 font-semibold duration-300 hover:scale-105"
+                      
+                      >
+                        <BookOpen className="text-blue-600 mx-auto mb-2" size={24} />                     
+                        Learn more
+                      </Link>
+                      <p className="text-sm text-blue-600">Detailed information</p>
+                    </motion.div>
 
-                    <button
-                      onClick={() => {
-                        // Find next goal (wrap around to 1 if at the end)
-                        const nextGoalId = currentGoal.id === 17 ? 1 : currentGoal.id + 1
-                        handleGoalClick(nextGoalId, { preventDefault: () => {} })
-                      }}
-                      className="flex items-center hover:underline"
-                      style={{ color: primaryColor }}
-                    >
-                      Next <ChevronRight size={16} className="ml-1" />
-                    </button>
-                  </motion.div>
-
-                  {/* Read more button */}
-                  <motion.div className="mt-4 flex justify-center" variants={itemVariants}>
-                    <Link
-                      to={`/goal/${currentGoal.id}`}
-                      className="inline-flex items-center justify-center px-6 py-2 text-white rounded-full font-medium shadow-lg hover:bg-opacity-90 transition-colors"
-                      style={{ backgroundColor: primaryColor }}
-                    >
-                      Read more about this goal
+                    <Link to={`/quiz/${currentGoal.goalNumber}`}>
+                      <motion.div
+                        className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg text-center cursor-pointer border border-green-200"
+                        whileHover={{ scale: 1.05, y: -2 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Target className="text-green-600 mx-auto mb-2" size={24} />
+                        <h4 className="font-semibold text-green-800 mb-1">🎯 Take Quiz</h4>
+                        <p className="text-sm text-green-600">Test your knowledge</p>
+                      </motion.div>
                     </Link>
+
+                    <motion.div
+                      className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-lg text-center cursor-pointer border border-purple-200"
+                      whileHover={{ scale: 1.05, y: -2 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Users className="text-purple-600 mx-auto mb-2" size={24} />
+                      <h4 className="font-semibold text-purple-800 mb-1">🤝 Take Action</h4>
+                      <p className="text-sm text-purple-600">Make a difference</p>
+                    </motion.div>
                   </motion.div>
-                </motion.div>
-              </>
+
+                  {/* Navigation and Actions */}
+                  <motion.div
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      visible: { opacity: 1, y: 0 },
+                    }}
+                    className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0"
+                  >
+                    <div className="flex space-x-4">
+                      <motion.button
+                        onClick={() => {
+                          const prevGoalId = currentGoal.goalNumber === 1 ? 17 : currentGoal.goalNumber - 1
+                          handleGoalClick(prevGoalId, { preventDefault: () => {} })
+                        }}
+                        className="flex items-center text-gray-600 hover:text-gray-800 transition-colors"
+                        whileHover={{ x: -2 }}
+                      >
+                        <ChevronRight size={16} className="transform rotate-180 mr-1" />
+                        Previous
+                      </motion.button>
+
+                      <motion.button
+                        onClick={() => {
+                          const nextGoalId = currentGoal.goalNumber === 17 ? 1 : currentGoal.goalNumber + 1
+                          handleGoalClick(nextGoalId, { preventDefault: () => {} })
+                        }}
+                        className="flex items-center text-gray-600 hover:text-gray-800 transition-colors"
+                        whileHover={{ x: 2 }}
+                      >
+                        Next
+                        <ChevronRight size={16} className="ml-1" />
+                      </motion.button>
+                    </div>                
+
+                  
+                  </motion.div>
+                </div>
+              </motion.div>
             ) : (
               <motion.div
-                className="p-6 rounded-lg shadow-xl text-center"
-                style={{ backgroundColor: "white", color: textColor }}
-                variants={itemVariants}
+                className="bg-white rounded-xl shadow-xl p-8 text-center border border-gray-100"
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0 },
+                }}
               >
-                <h2 className="text-2xl font-bold mb-4" style={{ color: primaryColor }}>
-                  UN Sustainable Development Goals
-                </h2>
-                <p className="mb-4">
-                  Spin the wheel or click on a segment to learn about each of the 17 UN Sustainable Development Goals.
-                  These global goals were established to create a better future for all by addressing the world&apos;s most
-                  pressing challenges.
-                </p>
-                <div className="grid grid-cols-5 gap-2 mt-4">
-                  {Array.from({ length: 17 }).map((_, idx) => (
-                    <motion.div
-                      key={idx}
-                      whileHover={{ scale: 1.1 }}
-                      className="w-8 h-8 rounded-full flex items-center justify-center cursor-pointer text-white"
-                      style={{ backgroundColor: goalsData[idx].color }}
-                      onClick={(e) => handleGoalClick(idx + 1, e)}
+                <div className="mb-6">
+                  <motion.div
+                    className="w-20 h-20 bg-gradient-to-br from-blue-500 to-green-500 rounded-full flex items-center justify-center mx-auto mb-4"
+                    animate={{ rotate: [0, 5, -5, 0] }}
+                    transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY }}
+                  >
+                    <span className="text-3xl">🌍</span>
+                  </motion.div>
+                  <h2 className="text-3xl font-bold text-gray-800 mb-4">🌟 UN Sustainable Development Goals</h2>
+                  <p className="text-gray-600 text-lg leading-relaxed mb-6">
+                    🎯 Explore the 17 interconnected global goals designed to create a better future for all! Each goal
+                    addresses critical challenges facing humanity and our planet.
+                    <br />
+                    <strong>🎮 Ready to start your learning adventure?</strong>
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-5 gap-3 mb-6">
+                  {goals.slice(0, 17).map((goal, idx) => (
+                    <motion.button
+                      key={goal.goalNumber}
+                      whileHover={{ scale: 1.2, y: -5 }}
+                      whileTap={{ scale: 0.9 }}
+                      className="w-12 h-12 rounded-full flex items-center justify-center cursor-pointer text-white font-bold shadow-lg hover:shadow-xl transition-all duration-300"
+                      style={{ backgroundColor: goal.color }}
+                      onClick={(e) => handleGoalClick(goal.goalNumber, e)}
+                      title={`Goal ${goal.goalNumber}: ${goal.title}`}
                     >
-                      {idx + 1}
-                    </motion.div>
+                      {goal.goalNumber}
+                    </motion.button>
                   ))}
                 </div>
+
+                <motion.button
+                  onClick={spinWheel}
+                  className="inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-blue-600 to-green-600 text-white rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Play size={20} className="mr-2" />🚀 Start Your Adventure!
+                </motion.button>
               </motion.div>
             )}
           </motion.div>
         </div>
       </div>
-      
-    </div><Footer /></>
+    </div>
   )
 }
 
-export default SDGWheel
+export default EnhancedSDGWheel

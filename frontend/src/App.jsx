@@ -12,32 +12,47 @@ import { AboutUs, ContactUs } from "./pages/about";
 import Header from "./components/Header"; 
 import Footer from "./components/Footer"; 
 import SDGWheel from "./pages/Home";
+import ProtectedRoute from "./components/ProtectedRoute";
+import AdminDashboard from "./pages/AdminDashboard";
 
 const App = () => {
   const location = useLocation();
-  const isAuthPage = location.pathname === "/signin";
-  const isQuzPage = location.pathname === "/quiz/:goalId";
+  const path = location.pathname;
+
+  // Paths where Header/Footer should be hidden
+  const shouldHideLayout =
+    path === "/signin" ||
+    path === "/admin-dashboard" ||
+    path.startsWith("/quiz");
 
   return (
     <MantineProvider withGlobalStyles withNormalizeCSS>
-      {" "}
-      {!isAuthPage && isQuzPage && <Header />}{" "}
+      {!shouldHideLayout && <Header />}
+      <br/><br/><br/>
+
       <main>
-        {" "}
         <Routes>
-          {" "}
-          <Route path="/" element={<HomePage />} />{" "}
-          <Route path="/home" element={<SDGWheel />}/>{" "}          
-          <Route path="/dashboard" element={<ProfilePage />} />{" "}
-          <Route path="/goal/:id" element={<GoalContent />} />{" "}
-          <Route path="/quiz/:goalId" element={<SDGQuiz />} />{" "}
-          <Route path="/knowledge" element={<KnowledgeBites />} />{" "}
-          <Route path="/signin" element={<LoginSignup />} />{" "}
-          <Route path="/about" element={<AboutUs />} />{" "}
-          <Route path="/contact" element={<ContactUs />} />{" "}
-        </Routes>{" "}
-      </main>{" "}
-      {!isAuthPage && isQuzPage && <Footer />}{" "}
+          <Route path="/" element={<HomePage />} />
+          <Route path="/sdg-wheel" element={<SDGWheel />} />       
+          <Route path="/dashboard" element={<ProfilePage />} />
+          <Route path="/goal/:id" element={<GoalContent />} />
+          <Route path="/quiz/:goalId" element={<SDGQuiz />} />
+          <Route path="/knowledge" element={<KnowledgeBites />} />
+          <Route path="/signin" element={<LoginSignup />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/contact" element={<ContactUs />} />
+          <Route
+            path="/admin-dashboard"
+            element={
+              <ProtectedRoute adminOnly={true}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </main>
+
+      {!shouldHideLayout && <Footer />}
     </MantineProvider>
   );
 };

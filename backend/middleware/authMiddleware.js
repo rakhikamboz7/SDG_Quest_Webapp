@@ -1,20 +1,47 @@
-const jwt = require("jsonwebtoken");
-const User = require("../models/user");
-// const bcrypt = require("bcrypt");
-// const { check, validationResult } = require("express-validator");
+const jwt = require("jsonwebtoken")
+const User = require("../models/user")
+
 const protect = async (req, res, next) => {
-  let token = req.headers.authorization;
-  if (!token || !token.startsWith("Bearer ")) {
-    return res.status(401).json({ error: "Unauthorized, no token" });
+  let token
+
+  // Check for token in Authorization header
+  if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+    try {
+      // Get token from header
+      token = req.headers.authorization.split(" ")[1]
+
+      // Verify token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET)
+
+      // Get user from token (excluding password)
+      const user = await User.findById(decoded.id).select("-password")
+
+      if (!user) {
+        return res.status(401).json({ error: "User not found" })
+      }
+
+      if (!user.isActive) {
+        return res.status(401).json({ error: "Account is deactivated" })
+      }
+
+      // Add user to request object
+      req.user = {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      }
+
+      next()
+    } catch (err) {
+      console.error("Auth middleware error:", err)
+      res.status(401).json({ error: "Not authorized, token failed" })
+    }
   }
 
-  try {
-    const decoded = jwt.verify(token.split(" ")[1], process.env.JWT_SECRET);
-    req.user = await User.findById(decoded.id).select("-password");
-    next();
-  } catch (error) {
-    res.status(401).json({ error: "Unauthorized, invalid token" });
+  if (!token) {
+    res.status(401).json({ error: "Not authorized, no token" })
   }
-};
+}
 
-module.exports = protect;
+module.exports = protect

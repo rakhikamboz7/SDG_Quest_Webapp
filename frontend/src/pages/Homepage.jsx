@@ -5,8 +5,7 @@ import { FaShuffle, FaLightbulb, FaChevronLeft, FaChevronRight } from "react-ico
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "@mantine/core/styles.css";
-import Footer from "../components/Footer";
-import Header from "../components/Header";
+
 import homeImg from "../assets/home6.jpg";
 import missionImage1 from "../assets/home2.jpg";
 import missionImage2 from "../assets/home6.jpg";
@@ -336,7 +335,7 @@ const ShuffleCard = () => {
 function HomePage() {
   return (
     <>
-      <Header /><br/><br/>
+      
       <div className="w-full py-15 bg-gray-100 md:py-20">
         <div className="w-full px-4 md:px-8 flex flex-col items-center">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center w-full max-w-7xl">
@@ -369,7 +368,7 @@ function HomePage() {
           <ResourceCarousel />
         </div>
       </div>
-      <Footer />
+   
     </>
   );
 }
