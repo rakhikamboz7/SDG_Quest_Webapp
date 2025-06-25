@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import BadgesDisplay from "../components/BadgesDisplay";
-
+import { motion, useAnimation, AnimatePresence } from "framer-motion"
 const BACKEND_URL =
  import.meta.env.VITE_API_BASE_URL || "http://localhost:10000";
 
@@ -17,6 +17,7 @@ const BACKEND_URL =
  const [currentQuestion, setCurrentQuestion] = useState(0);
  const [selectedOption, setSelectedOption] = useState(null);
  const [score, setScore] = useState(0);
+ const [showCelebration, setShowCelebration] = useState(false);
  const [showResult, setShowResult] = useState(false);
  const [allQuizzes, setAllQuizzes] = useState([]);
  const [showPopup, setShowPopup] = useState(false);
@@ -164,11 +165,43 @@ const BACKEND_URL =
  </div>
  );
  }
-
+  const particleVariants = {
+    animate: {
+      y: [0, -20, 0],
+      x: [0, Math.random() * 20 - 10, 0],
+      opacity: [0, 1, 0],
+      scale: [0, 1, 0],
+      transition: {
+        duration: 2,
+        repeat: Number.POSITIVE_INFINITY,
+        delay: Math.random() * 2,
+      },
+    },
+  }
 
  return (
     
  <div className="p-4 md:p-6 lg:p-8 flex flex-col items-center mt-8 md:mt-12 max-w-md md:max-w-lg lg:max-w-xl mx-auto bg-white shadow-lg rounded-lg">
+   <AnimatePresence>
+         {showCelebration && (
+           <div className="fixed inset-0 pointer-events-none z-50">
+             {Array.from({ length: 20 }).map((_, i) => (
+               <motion.div
+                 key={i}
+                 className="absolute text-2xl"
+                 style={{
+                   left: `${Math.random() * 100}%`,
+                   top: `${Math.random() * 100}%`,
+                 }}
+                 variants={particleVariants}
+                 animate="animate"
+               >
+                 {["🎉", "✨", "🌟", "🎊", "💫"][Math.floor(Math.random() * 5)]}
+               </motion.div>
+             ))}
+           </div>
+         )}
+       </AnimatePresence>
  <h1 className="text-2xl md:text-3xl font-bold text-center mb-4">Quiz for Goal {goalId}</h1>
  <div className="w-full">
  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">

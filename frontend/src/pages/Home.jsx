@@ -7,7 +7,7 @@ import { Link } from "react-router-dom"
 import { getSDGGoals } from "../lib/sanity"
 import { goalDetails } from "../goalDetail"
 
-const EnhancedSDGWheel = () => {
+const SDGWheel = () => {
   const [goals, setGoals] = useState(Object.values(goalDetails))
   const [isSpinning, setIsSpinning] = useState(false)
   const [selectedGoal, setSelectedGoal] = useState(null)
@@ -16,7 +16,7 @@ const EnhancedSDGWheel = () => {
   const [spinCount, setSpinCount] = useState(0)
   const [spinHistory, setSpinHistory] = useState([])
   const [userProgress, setUserProgress] = useState(new Set())
-  const [showCelebration, setShowCelebration] = useState(false)
+
   const [showKnowledgeBite, setShowKnowledgeBite] = useState(false)
   const [currentKnowledgeBite, setCurrentKnowledgeBite] = useState("")
   const [streakCount, setStreakCount] = useState(0)
@@ -210,43 +210,12 @@ const EnhancedSDGWheel = () => {
   const primaryColor = "#005f5a"
 
   // Floating particles animation
-  const particleVariants = {
-    animate: {
-      y: [0, -20, 0],
-      x: [0, Math.random() * 20 - 10, 0],
-      opacity: [0, 1, 0],
-      scale: [0, 1, 0],
-      transition: {
-        duration: 2,
-        repeat: Number.POSITIVE_INFINITY,
-        delay: Math.random() * 2,
-      },
-    },
-  }
+
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen p-4 py-8 overflow-hidden bg-gradient-to-br from-blue-50 via-white to-green-50">
       {/* Floating Celebration Particles */}
-      <AnimatePresence>
-        {showCelebration && (
-          <div className="fixed inset-0 pointer-events-none z-50">
-            {Array.from({ length: 20 }).map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute text-2xl"
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                }}
-                variants={particleVariants}
-                animate="animate"
-              >
-                {["🎉", "✨", "🌟", "🎊", "💫"][Math.floor(Math.random() * 5)]}
-              </motion.div>
-            ))}
-          </div>
-        )}
-      </AnimatePresence>
+    
 
       {/* Achievement Notification */}
       <AnimatePresence>
@@ -897,4 +866,4 @@ s
   )
 }
 
-export default EnhancedSDGWheel
+export default SDGWheel
