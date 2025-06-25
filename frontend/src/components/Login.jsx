@@ -168,9 +168,9 @@ function LoginSignup() {
         {/* Mobile View */}
         <div className="md:hidden p-8">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-r from-teal-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl">🌍</span>
-            </div>
+             <div className="w-50 h-20 rounded-full flex items-center justify-center mb-6">
+               <img src="/logo.svg" alt="Logo" className="w-20 h-20" />
+              </div>
             <h1 className="text-3xl font-bold text-gray-800 mb-2">{isSignUp ? "Join SDG Quest" : "Welcome Back"}</h1>
             <p className="text-gray-600">
               {isSignUp ? "Create your account to start your journey" : "Sign in to continue your SDG journey"}
@@ -252,7 +252,7 @@ function LoginSignup() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-teal-500 to-blue-500 text-white py-3 rounded-lg font-medium hover:from-teal-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+              className="w-full bg-gradient-to-r from-teal-500 to-teal-700 text-white py-3 rounded-lg font-medium hover:from-teal-600 hover:to-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >
               {loading ? (
                 <div className="flex items-center justify-center">
@@ -287,8 +287,8 @@ function LoginSignup() {
                 isSignUp ? "opacity-0 pointer-events-none" : "opacity-100 pointer-events-auto"
               }`}
             >
-              <div className="w-20 h-20 bg-gradient-to-r from-teal-500 to-blue-500 rounded-full flex items-center justify-center mb-6">
-                <span className="text-3xl">🌍</span>
+              <div className="w-50 h-20 rounded-full flex items-center justify-center mb-6">
+               <img src="/logo.svg" alt="Logo" className="w-20 h-20" />
               </div>
               <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome Back</h1>
               <p className="text-gray-600 mb-8 text-center">Sign in to continue your SDG journey</p>
@@ -340,7 +340,7 @@ function LoginSignup() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-gradient-to-r from-teal-500 to-blue-500 text-white py-3 rounded-lg font-medium hover:from-teal-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                  className="w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white py-3 rounded-lg font-medium hover:from-teal-600 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                 >
                   {loading ? (
                     <div className="flex items-center justify-center">
@@ -359,9 +359,8 @@ function LoginSignup() {
               className={`flex flex-col items-center justify-center w-1/2 p-12 transition-opacity duration-500 ${
                 isSignUp ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
               }`}
-            >
-              <div className="w-20 h-20 bg-gradient-to-r from-teal-500 to-blue-500 rounded-full flex items-center justify-center mb-6">
-                <span className="text-3xl">🌍</span>
+            > <div className="w-50 h-20 rounded-full flex items-center justify-center mb-6">
+               <img src="/logo.svg" alt="Logo" className="w-20 h-20" />
               </div>
               <h1 className="text-3xl font-bold text-gray-800 mb-2">Join SDG Quest</h1>
               <p className="text-gray-600 mb-8 text-center">Create your account to start your journey</p>
@@ -437,7 +436,7 @@ function LoginSignup() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-gradient-to-r from-teal-500 to-blue-500 text-white py-3 rounded-lg font-medium hover:from-teal-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                  className="w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white py-3 rounded-lg font-medium hover:from-teal-600 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                 >
                   {loading ? (
                     <div className="flex items-center justify-center">
@@ -453,7 +452,7 @@ function LoginSignup() {
 
             {/* Toggle Panel */}
             <div
-              className={`absolute top-0 right-0 w-1/2 h-full bg-gradient-to-br from-teal-600 via-teal-700 to-blue-700 text-white flex flex-col items-center justify-center transition-transform duration-700 ease-in-out ${
+              className={`absolute top-0 right-0 w-1/2 h-full bg-gradient-to-br from-teal-600 via-teal-700 to-teal-800 text-white flex flex-col items-center justify-center transition-transform duration-700 ease-in-out ${
                 isSignUp ? "transform -translate-x-full" : ""
               }`}
             >

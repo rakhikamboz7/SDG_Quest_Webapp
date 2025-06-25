@@ -172,7 +172,7 @@ const GoalContent = () => {
               onClick={() => navigate("/sdg-wheel")}
               className="mr-6 p-3 bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 transition-all duration-300 backdrop-blur-sm border border-white border-opacity-30"
             >
-              <ArrowLeft className="text-white" size={24} />
+              <ArrowLeft className="text-black" size={24} />
             </button>
 
             <div className="flex items-center space-x-6 flex-1">
@@ -270,7 +270,7 @@ const GoalContent = () => {
                   }}
                 >
                   <Target size={24} style={{ color: goal.color }} />
-                  <span>🎯 Take Quiz</span>
+                  <span>Take Quiz</span>
                 </motion.button>
 
                 {/* <Link to={`/goal/${goal.goalNumber}`}>

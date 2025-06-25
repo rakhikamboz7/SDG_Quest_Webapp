@@ -684,7 +684,7 @@ s
               >
                 {/* Goal Header */}
                 <div className="p-6 text-white relative overflow-hidden" style={{ backgroundColor: currentGoal.color }}>
-                  <div className="absolute inset-0 bg-black bg-opacity-10" />
+                  <div className="absolute inset-0 bg-opacity-10" />
                   <motion.div
                     className="absolute inset-0 opacity-20"
                     animate={{
@@ -694,7 +694,7 @@ s
                         `radial-gradient(circle at 20% 50%, rgba(255,255,255,0.3) 0%, transparent 50%)`,
                       ],
                     }}
-                    transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY }}
+                    // transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY }}
                   />
                   <div className="relative z-10">
                     <div className="flex items-center mb-4">
