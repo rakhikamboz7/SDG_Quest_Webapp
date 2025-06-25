@@ -24,7 +24,7 @@ const SDGWheel = () => {
   const [achievements, setAchievements] = useState([])
   const [showAchievement, setShowAchievement] = useState(false)
   const [currentAchievement, setCurrentAchievement] = useState(null)
-  const [spinButtonText, setSpinButtonText] = useState("🎯 Spin the Wheel!")
+  const [spinButtonText, setSpinButtonText] = useState("Spin the Wheel!")
   const [isHovering, setIsHovering] = useState(false)
   const [hoveredGoal, setHoveredGoal] = useState(null)
 
@@ -147,9 +147,9 @@ const SDGWheel = () => {
       // Check for achievements
       checkAchievements(newSpinCount, newProgress.size)
 
-      // Show celebration
-      setShowCelebration(true)
-      setTimeout(() => setShowCelebration(false), 2000)
+      // // Show celebration
+      // setShowCelebration(true)
+      // setTimeout(() => setShowCelebration(false), 2000)
 
       // Update streak
       if (
@@ -193,8 +193,8 @@ const SDGWheel = () => {
       setSpinButtonText("🎯 Spin Again!")
       setUserProgress((prev) => new Set([...prev, goalNumber]))
 
-      setShowCelebration(true)
-      setTimeout(() => setShowCelebration(false), 2000)
+      // setShowCelebration(true)
+      // setTimeout(() => setShowCelebration(false), 2000)
     }, 1500)
   }
 
@@ -324,7 +324,7 @@ const SDGWheel = () => {
       >
         Sustainable Development Goals
       </motion.h1>
-s
+
       <div className="relative w-full max-w-6xl mx-auto">
         <div className="flex flex-col items-start lg:flex-row lg:items-start lg:justify-between">
           {/* SDG Wheel Container */}
@@ -562,7 +562,7 @@ s
             <motion.button
               onClick={spinWheel}
               disabled={isSpinning}
-              className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 text-white px-8 py-3 rounded-full font-medium shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+              className="absolute bottom-[-10px] left-1/3 ml-20 transform -translate-x-1/2 translate-y-1/2 text-white px-8 py-3 rounded-full font-medium shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
               style={{
                 background: isSpinning
                   ? `linear-gradient(45deg, ${primaryColor}, #007a73)`

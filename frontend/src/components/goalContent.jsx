@@ -351,7 +351,7 @@ const GoalContent = () => {
                     className="mb-8"
                   >
                     <img
-                      src={urlFor(goal.heroImage).width(800).height(400).url() || "/placeholder.svg"}
+                      src={goal.heroImage}
                       alt={goal.title}
                       className="w-full h-64 md:h-80 object-cover rounded-lg shadow-md"
                     />

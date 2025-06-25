@@ -51,10 +51,10 @@ export default {
     {
       name: "heroImage",
       title: "Hero Image",
-      type: "image",
-      options: {
-        hotspot: true,
-      },
+      type: "url",
+      description: "URL of the hero image for the goal",
+      
+    
     },
     {
       name: "knowledgeBite",

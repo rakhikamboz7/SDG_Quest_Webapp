@@ -33,10 +33,17 @@ export const uploadImage = async (file, filename) => {
     const asset = await client.assets.upload("image", file, {
       filename: filename || file.name,
     })
-    return asset
-  } catch (error) {
+     return {
+    _type: 'image',
+    asset: {
+      _type: 'reference',
+      _ref: asset._id,
+    },
+  }
+}
+  catch(error){
     console.error("Error uploading image:", error)
-    throw error
+    throw new Error("Image upload failed")
   }
 }
 

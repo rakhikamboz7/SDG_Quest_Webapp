@@ -86,10 +86,10 @@
               <div className="relative flex items-center">
                 <button onClick={() => setShowProfileDropdown(!showProfileDropdown)} className="flex items-center focus:outline-none">
                   {/* Circular styled div for the user's first letter */}
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#00786F] text-white text-lg font-bold">
-                    {user.name.charAt(0)}
+                  <div className="flex items-center justify-center w-11 h-11 rounded-full bg-[#00786F] text-white text-2xl font-bold">
+                    {user.name.charAt(0).toUpperCase()}
                   </div>
-                  <svg className={`ml-2 h-4 w-4 transition-transform duration-200 ${showProfileDropdown ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className={`ml-2 h-10 w-5 transition-transform duration-200 ${showProfileDropdown ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
