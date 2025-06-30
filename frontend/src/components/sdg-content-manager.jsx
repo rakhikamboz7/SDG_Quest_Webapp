@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Plus, Edit, Save, X, Eye, Trash2, AlertCircle, CheckCircle, Shield } from "lucide-react"
 import { client, getSDGGoals, testPermissions } from "../lib/sanity"
-import { Breadcrumb } from "../components/ui/breadcrumbs"
 
 const SDGContentManager = () => {
   const [goals, setGoals] = useState([])
@@ -22,12 +21,10 @@ const SDGContentManager = () => {
   const checkPermissionsAndLoad = async () => {
     try {
       setLoading(true)
-
       // Test permissions first
       await testPermissions()
       setPermissionsChecked(true)
       showMessage("success", "✅ Sanity connection successful!")
-
       // Load goals
       await loadGoals()
     } catch (error) {
@@ -68,33 +65,52 @@ const SDGContentManager = () => {
 
     try {
       setSaving(true)
+      console.log("Saving goal data:", goalData)
 
       // Handle image uploads
       let iconAsset = goalData.icon
       let heroImageAsset = goalData.heroImage
 
       // Upload icon if it's a file
-      if (goalData.icon && typeof goalData.icon !== "string" && goalData.icon instanceof File) {
+      if (goalData.icon && goalData.icon instanceof File) {
         try {
-          iconAsset = await client.assets.upload("image", goalData.icon, {
+          console.log("Uploading icon...")
+          const uploadedIcon = await client.assets.upload("image", goalData.icon, {
             filename: `goal-${goalData.goalNumber}-icon.${goalData.icon.name.split(".").pop()}`,
           })
+          iconAsset = {
+            _type: "image",
+            asset: {
+              _type: "reference",
+              _ref: uploadedIcon._id,
+            },
+          }
+          console.log("Icon uploaded successfully:", uploadedIcon)
         } catch (error) {
           console.error("Error uploading icon:", error)
-          showMessage("error", "❌ Failed to upload icon image")
+          showMessage("error", `❌ Failed to upload icon: ${error.message}`)
           return
         }
       }
 
       // Upload hero image if it's a file
-      if (goalData.heroImage && typeof goalData.heroImage !== "string" && goalData.heroImage instanceof File) {
+      if (goalData.heroImage && goalData.heroImage instanceof File) {
         try {
-          heroImageAsset = await client.assets.upload("image", goalData.heroImage, {
+          console.log("Uploading hero image...")
+          const uploadedHero = await client.assets.upload("image", goalData.heroImage, {
             filename: `goal-${goalData.goalNumber}-hero.${goalData.heroImage.name.split(".").pop()}`,
           })
+          heroImageAsset = {
+            _type: "image",
+            asset: {
+              _type: "reference",
+              _ref: uploadedHero._id,
+            },
+          }
+          console.log("Hero image uploaded successfully:", uploadedHero)
         } catch (error) {
           console.error("Error uploading hero image:", error)
-          showMessage("error", "❌ Failed to upload hero image")
+          showMessage("error", `❌ Failed to upload hero image: ${error.message}`)
           return
         }
       }
@@ -114,36 +130,28 @@ const SDGContentManager = () => {
       }
 
       // Add image references if they exist
-      if (iconAsset) {
-        cleanData.icon = {
-          _type: "image",
-          asset: {
-            _type: "reference",
-            _ref: typeof iconAsset === "string" ? iconAsset : iconAsset._id,
-          },
-        }
+      if (iconAsset && typeof iconAsset === "object") {
+        cleanData.icon = iconAsset
       }
 
-      if (heroImageAsset) {
-        cleanData.heroImage = {
-          _type: "image",
-          asset: {
-            _type: "reference",
-            _ref: typeof heroImageAsset === "string" ? heroImageAsset : heroImageAsset._id,
-          },
-        }
+      if (heroImageAsset && typeof heroImageAsset === "object") {
+        cleanData.heroImage = heroImageAsset
       }
+
+      console.log("Clean data to save:", cleanData)
 
       if (goalData._id) {
         // Update existing goal
-        await client.patch(goalData._id).set(cleanData).commit()
+        const result = await client.patch(goalData._id).set(cleanData).commit()
+        console.log("Goal updated:", result)
         showMessage("success", "✅ Goal updated successfully!")
       } else {
         // Create new goal
-        await client.create({
+        const result = await client.create({
           _type: "sdgGoal",
           ...cleanData,
         })
+        console.log("Goal created:", result)
         showMessage("success", "✅ Goal created successfully!")
       }
 
@@ -152,8 +160,8 @@ const SDGContentManager = () => {
       setSelectedGoal(null)
     } catch (error) {
       console.error("Error saving goal:", error)
-      if (error.message.includes("Insufficient permissions")) {
-        showMessage("error", "❌ Insufficient permissions. Please use an Editor token.")
+      if (error.message.includes("Insufficient permissions") || error.message.includes("permission")) {
+        showMessage("error", "❌ Insufficient permissions. Please check your API token has Editor/Admin rights.")
       } else {
         showMessage("error", `❌ Failed to save goal: ${error.message}`)
       }
@@ -203,6 +211,7 @@ const SDGContentManager = () => {
       resources: [],
       published: false,
     }
+
     setSelectedGoal(newGoal)
     setIsEditing(true)
   }
@@ -257,9 +266,6 @@ const SDGContentManager = () => {
           </motion.button>
         </div>
       </div>
-
-      {/* Breadcrumb Navigation */}
-      <Breadcrumb items={[{ label: "Admin Dashboard" }, { label: "SDG Content Management", active: true }]} />
 
       {/* Permission Warning */}
       {!permissionsChecked && (
@@ -366,7 +372,7 @@ const SDGContentManager = () => {
             <div className="space-y-3 max-h-96 overflow-y-auto">
               {goals.map((goal) => (
                 <motion.div
-                  key={goal._id}
+                  key={goal._id || goal.goalNumber} // Fixed: Added unique key
                   onClick={() => setSelectedGoal(goal)}
                   className={`p-3 rounded-lg cursor-pointer transition-colors border-2 ${
                     selectedGoal?._id === goal._id
@@ -502,7 +508,7 @@ const SDGContentManager = () => {
   )
 }
 
-// Goal Editor Component (unchanged)
+// Goal Editor Component - Fixed controlled/uncontrolled inputs
 const GoalEditor = ({ goal, onChange }) => {
   const updateField = (field, value) => {
     onChange({ ...goal, [field]: value })
@@ -528,11 +534,11 @@ const GoalEditor = ({ goal, onChange }) => {
   }
 
   const addKeyPoint = () => {
-    updateField("keyPoints", [...goal.keyPoints, ""])
+    updateField("keyPoints", [...(goal.keyPoints || []), ""])
   }
 
   const updateKeyPoint = (index, value) => {
-    const newKeyPoints = [...goal.keyPoints]
+    const newKeyPoints = [...(goal.keyPoints || [])]
     newKeyPoints[index] = value
     updateField("keyPoints", newKeyPoints)
   }
@@ -540,7 +546,7 @@ const GoalEditor = ({ goal, onChange }) => {
   const removeKeyPoint = (index) => {
     updateField(
       "keyPoints",
-      goal.keyPoints.filter((_, i) => i !== index),
+      (goal.keyPoints || []).filter((_, i) => i !== index),
     )
   }
 
@@ -554,8 +560,8 @@ const GoalEditor = ({ goal, onChange }) => {
             type="number"
             min="1"
             max="17"
-            value={goal.goalNumber}
-            onChange={(e) => updateField("goalNumber", Number.parseInt(e.target.value))}
+            value={goal.goalNumber || ""}
+            onChange={(e) => updateField("goalNumber", Number.parseInt(e.target.value) || "")}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
@@ -564,13 +570,13 @@ const GoalEditor = ({ goal, onChange }) => {
           <label className="block text-sm font-medium text-gray-700 mb-2">Color</label>
           <input
             type="color"
-            value={goal.color}
+            value={goal.color || "#000000"}
             onChange={(e) => updateField("color", e.target.value)}
             className="w-full h-10 border border-gray-300 rounded-lg"
           />
         </div>
 
-        {/* Add these new image upload fields */}
+        {/* Goal Icon Upload */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Goal Icon</label>
           <input
@@ -597,6 +603,7 @@ const GoalEditor = ({ goal, onChange }) => {
           )}
         </div>
 
+        {/* Hero Image Upload */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Hero Image</label>
           <input
@@ -628,7 +635,7 @@ const GoalEditor = ({ goal, onChange }) => {
         <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
         <input
           type="text"
-          value={goal.title}
+          value={goal.title || ""}
           onChange={(e) => updateField("title", e.target.value)}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           placeholder="Enter goal title"
@@ -638,7 +645,7 @@ const GoalEditor = ({ goal, onChange }) => {
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">Short Description</label>
         <textarea
-          value={goal.shortDescription}
+          value={goal.shortDescription || ""}
           onChange={(e) => updateField("shortDescription", e.target.value)}
           rows={2}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -649,7 +656,7 @@ const GoalEditor = ({ goal, onChange }) => {
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">Overview</label>
         <textarea
-          value={goal.overview}
+          value={goal.overview || ""}
           onChange={(e) => updateField("overview", e.target.value)}
           rows={3}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -660,7 +667,7 @@ const GoalEditor = ({ goal, onChange }) => {
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">Knowledge Bite</label>
         <textarea
-          value={goal.knowledgeBite}
+          value={goal.knowledgeBite || ""}
           onChange={(e) => updateField("knowledgeBite", e.target.value)}
           rows={2}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -680,13 +687,12 @@ const GoalEditor = ({ goal, onChange }) => {
             Add Point
           </button>
         </div>
-
         <div className="space-y-2">
-          {goal.keyPoints.map((point, index) => (
+          {(goal.keyPoints || []).map((point, index) => (
             <div key={index} className="flex items-center space-x-2">
               <input
                 type="text"
-                value={point}
+                value={point || ""}
                 onChange={(e) => updateKeyPoint(index, e.target.value)}
                 className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder={`Key point ${index + 1}`}
@@ -707,7 +713,7 @@ const GoalEditor = ({ goal, onChange }) => {
         <input
           type="checkbox"
           id="published"
-          checked={goal.published}
+          checked={goal.published || false}
           onChange={(e) => updateField("published", e.target.checked)}
           className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
         />
@@ -719,7 +725,7 @@ const GoalEditor = ({ goal, onChange }) => {
   )
 }
 
-// Goal Viewer Component (unchanged)
+// Goal Viewer Component
 const GoalViewer = ({ goal }) => {
   return (
     <div className="space-y-6">
@@ -752,7 +758,7 @@ const GoalViewer = ({ goal }) => {
         </div>
       </div>
 
-      {/* Add image display sections */}
+      {/* Images Display */}
       {(goal.icon || goal.heroImage) && (
         <div>
           <h4 className="font-medium text-gray-900 mb-2">Images</h4>
@@ -797,9 +803,9 @@ const GoalViewer = ({ goal }) => {
       </div>
 
       <div>
-        <h4 className="font-medium text-gray-900 mb-2">Key Points ({goal.keyPoints.length})</h4>
+        <h4 className="font-medium text-gray-900 mb-2">Key Points ({(goal.keyPoints || []).length})</h4>
         <ul className="space-y-1">
-          {goal.keyPoints.map((point, index) => (
+          {(goal.keyPoints || []).map((point, index) => (
             <li key={index} className="flex items-start space-x-2">
               <span className="text-blue-600 font-bold text-sm mt-1">{index + 1}.</span>
               <span className="text-gray-700 text-sm">{point}</span>

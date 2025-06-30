@@ -28,11 +28,11 @@ const Footer = () => {
         <div className="w-full md:w-auto flex justify-center md:justify-start">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-left text-sm md:text-base">
             <a href="/about" className="hover:text-green-800 transition">About</a>
-            <a href="/profile" className="hover:text-green-800 transition">Dashboard</a>
+            <a href="/dashboard" className="hover:text-green-800 transition">Dashboard</a>
             <a href="/contact" className="hover:text-green-800 transition">Contact Us</a>
             <a href="/sdg-wheel" className="hover:text-green-800 transition">Learn Goals</a>
             <a href="/privacy" className="hover:text-green-800 transition">Privacy Policy</a>
-            <a href="/play-quiz" className="hover:text-green-800 transition">Play Quiz</a>
+            <a href="/quiz/:goalId" className="hover:text-green-800 transition">Play Quiz</a>
           </div>
         </div>
 

@@ -51,10 +51,10 @@ export default {
     {
       name: "heroImage",
       title: "Hero Image",
-      type: "url",
-      description: "URL of the hero image for the goal",
-      
-    
+      type: "image",
+      options: {
+        hotspot: true,
+      },
     },
     {
       name: "knowledgeBite",
@@ -172,10 +172,10 @@ export default {
       media: "icon",
     },
     prepare(selection) {
-      const { title, goalNumber } = selection;
+      const { title, goalNumber } = selection
       return {
         title: `Goal ${goalNumber}: ${title}`,
-      };
+      }
     },
   },
-};
+}

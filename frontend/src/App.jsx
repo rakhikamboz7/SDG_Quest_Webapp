@@ -14,6 +14,7 @@ import Footer from "./components/Footer";
 import SDGWheel from "./pages/Home";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminDashboard from "./pages/AdminDashboard";
+import SDGActionPlatform from "./components/SdgActionPlatform";
 
 const App = () => {
   const location = useLocation();
@@ -33,7 +34,8 @@ const App = () => {
       <main>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/sdg-wheel" element={<SDGWheel />} />       
+          <Route path="/sdg-wheel" element={<SDGWheel />} />
+          <Route path="/sdg-actions" element={<SDGActionPlatform />} />       
           <Route path="/dashboard" element={<ProfilePage />} />
           <Route path="/goal/:id" element={<GoalContent />} />
           <Route path="/quiz/:goalId" element={<SDGQuiz />} />

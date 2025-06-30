@@ -7,7 +7,7 @@ import { Link } from "react-router-dom"
 import { getSDGGoals } from "../lib/sanity"
 import { goalDetails } from "../goalDetail"
 
-const SDGWheel = () => {
+const EnhancedSDGWheel = () => {
   const [goals, setGoals] = useState(Object.values(goalDetails))
   const [isSpinning, setIsSpinning] = useState(false)
   const [selectedGoal, setSelectedGoal] = useState(null)
@@ -16,7 +16,7 @@ const SDGWheel = () => {
   const [spinCount, setSpinCount] = useState(0)
   const [spinHistory, setSpinHistory] = useState([])
   const [userProgress, setUserProgress] = useState(new Set())
-
+  const [showCelebration, setShowCelebration] = useState(false)
   const [showKnowledgeBite, setShowKnowledgeBite] = useState(false)
   const [currentKnowledgeBite, setCurrentKnowledgeBite] = useState("")
   const [streakCount, setStreakCount] = useState(0)
@@ -100,7 +100,7 @@ const SDGWheel = () => {
 
   const calculateRotationForGoal = (goalNumber) => {
     const segmentAngle = 360 / 17
-    return -((goalNumber + 4) * segmentAngle + segmentAngle / 2)
+    return -((goalNumber + 3) * segmentAngle + segmentAngle / 2)
   }
 
   const spinWheel = () => {
@@ -139,7 +139,7 @@ const SDGWheel = () => {
       setIsSpinning(false)
       setSelectedGoal(newGoalNumber)
       setShowContent(true)
-      setSpinButtonText("🎯 Spin Again!")
+      setSpinButtonText("Spin Again!")
 
       const newProgress = new Set([...userProgress, newGoalNumber])
       setUserProgress(newProgress)
@@ -147,9 +147,7 @@ const SDGWheel = () => {
       // Check for achievements
       checkAchievements(newSpinCount, newProgress.size)
 
-      // // Show celebration
-      // setShowCelebration(true)
-      // setTimeout(() => setShowCelebration(false), 2000)
+   
 
       // Update streak
       if (
@@ -190,11 +188,11 @@ const SDGWheel = () => {
       setIsSpinning(false)
       setSelectedGoal(goalNumber)
       setShowContent(true)
-      setSpinButtonText("🎯 Spin Again!")
+      setSpinButtonText("Spin Again!")
       setUserProgress((prev) => new Set([...prev, goalNumber]))
 
-      // setShowCelebration(true)
-      // setTimeout(() => setShowCelebration(false), 2000)
+      setShowCelebration(true)
+      setTimeout(() => setShowCelebration(false), 2000)
     }, 1500)
   }
 
@@ -209,14 +207,12 @@ const SDGWheel = () => {
   const currentGoal = selectedGoal ? goals.find((goal) => goal.goalNumber === selectedGoal) : null
   const primaryColor = "#005f5a"
 
-  // Floating particles animation
 
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen p-4 py-8 overflow-hidden bg-gradient-to-br from-blue-50 via-white to-green-50">
       {/* Floating Celebration Particles */}
-    
-
+     
       {/* Achievement Notification */}
       <AnimatePresence>
         {showAchievement && currentAchievement && (
@@ -562,7 +558,7 @@ const SDGWheel = () => {
             <motion.button
               onClick={spinWheel}
               disabled={isSpinning}
-              className="absolute bottom-[-10px] left-1/3 ml-20 transform -translate-x-1/2 translate-y-1/2 text-white px-8 py-3 rounded-full font-medium shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+              className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 text-white px-8 py-3 rounded-full font-medium shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
               style={{
                 background: isSpinning
                   ? `linear-gradient(45deg, ${primaryColor}, #007a73)`
@@ -706,7 +702,7 @@ const SDGWheel = () => {
                       animate={{ y: 0, opacity: 1 }}
                       transition={{ delay: 0.2 }}
                     >
-                      {currentGoal.description}
+                      {currentGoal.description || goalDetails[currentGoal.goalNumber].description}
                     </motion.p>
                   </div>
                 </div>
@@ -866,4 +862,4 @@ const SDGWheel = () => {
   )
 }
 
-export default SDGWheel
+export default EnhancedSDGWheel

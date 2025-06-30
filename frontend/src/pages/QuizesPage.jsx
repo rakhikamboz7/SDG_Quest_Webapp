@@ -109,6 +109,9 @@ const BACKEND_URL =
         setShowPopup(true);
         return;
       }
+         // Show celebration
+      setShowCelebration(true)
+      setTimeout(() => setShowCelebration(false), 3000)
 
  const response = await axios.post(
  `${BACKEND_URL}/api/scores/submit`,
@@ -172,7 +175,7 @@ const BACKEND_URL =
       opacity: [0, 1, 0],
       scale: [0, 1, 0],
       transition: {
-        duration: 2,
+        duration: 3,
         repeat: Number.POSITIVE_INFINITY,
         delay: Math.random() * 2,
       },
@@ -196,7 +199,7 @@ const BACKEND_URL =
                  variants={particleVariants}
                  animate="animate"
                >
-                 {["🎉", "✨", "🌟", "🎊", "💫"][Math.floor(Math.random() * 5)]}
+                 {["🎉","🎉", "✨", "🎊", "✨", "🎊", "💫"][Math.floor(Math.random() * 10)]}
                </motion.div>
              ))}
            </div>

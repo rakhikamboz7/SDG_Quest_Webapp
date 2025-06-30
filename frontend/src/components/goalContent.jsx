@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useParams, useNavigate, Link } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   ArrowLeft,
@@ -9,13 +9,14 @@ import {
   ExternalLink,
   BookOpen,
   Target,
-  Users,
   Lightbulb,
   CheckCircle,
   Globe,
   ChevronRight,
+  Award,
+  Users,
 } from "lucide-react"
-import { getSDGGoal, urlFor } from "../lib/sanity"
+import { getSDGGoal, renderRichText } from "../lib/sanity"
 
 const GoalContent = () => {
   const navigate = useNavigate()
@@ -116,77 +117,67 @@ const GoalContent = () => {
         animate={{ width: `${readingProgress}%` }}
       />
 
-      {/* Hero Section */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative overflow-hidden min-h-[500px]">
-        {/* Background Image */}
+      {/* Elegant Hero Section - No Image */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"
+      >
+        {/* Animated Background Pattern */}
         <div className="absolute inset-0">
-          <img
-            src={`/images/sdg-goals/goal-${goal.goalNumber}.${goal.goalNumber === 8 ? "webp" : "jpg"}`}
-            alt={goal.title}
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              // Fallback to placeholder if image fails to load
-              e.target.src = "/placeholder.svg?height=500&width=1200"
-            }}
-          />
-          {/* Enhanced Gradient Overlay */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background: `linear-gradient(135deg, 
-                ${goal.color}E6 0%, 
-                ${goal.color}CC 25%, 
-                ${goal.color}B3 50%, 
-                ${goal.color}CC 75%, 
-                ${goal.color}E6 100%
-              )`,
-            }}
-          />
-          {/* Additional texture overlay
-          <div className="absolute inset-0 bg-black bg-opacity-20" /> */}
-
-          {/* Animated Pattern Overlay */}
           <motion.div
             className="absolute inset-0 opacity-10"
             animate={{
               background: [
-                `radial-gradient(circle at 20% 20%, rgba(255,255,255,0.3) 0%, transparent 50%)`,
-                `radial-gradient(circle at 80% 80%, rgba(255,255,255,0.3) 0%, transparent 50%)`,
-                `radial-gradient(circle at 20% 80%, rgba(255,255,255,0.3) 0%, transparent 50%)`,
-                `radial-gradient(circle at 80% 20%, rgba(255,255,255,0.3) 0%, transparent 50%)`,
-                `radial-gradient(circle at 20% 20%, rgba(255,255,255,0.3) 0%, transparent 50%)`,
+                `radial-gradient(circle at 20% 20%, ${goal.color}40 0%, transparent 50%)`,
+                `radial-gradient(circle at 80% 80%, ${goal.color}40 0%, transparent 50%)`,
+                `radial-gradient(circle at 20% 80%, ${goal.color}40 0%, transparent 50%)`,
+                `radial-gradient(circle at 80% 20%, ${goal.color}40 0%, transparent 50%)`,
+                `radial-gradient(circle at 20% 20%, ${goal.color}40 0%, transparent 50%)`,
               ],
             }}
             transition={{ duration: 8, repeat: Number.POSITIVE_INFINITY }}
           />
+
+          {/* Geometric Pattern Overlay */}
+          <div className="absolute inset-0 opacity-5">
+            <div
+              className="w-full h-full"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fillRule='evenodd'%3E%3Cg fill='%23ffffff' fillOpacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+              }}
+            />
+          </div>
         </div>
 
-        <div className="relative z-10 container mx-auto px-4 py-16 min-h-[500px] flex items-center">
+        <div className="relative z-10 container mx-auto px-4 py-20">
           <motion.div
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="flex items-center mb-6 w-full"
+            className="flex items-center mb-8 w-full"
           >
             <button
               onClick={() => navigate("/sdg-wheel")}
-              className="mr-6 p-3 bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 transition-all duration-300 backdrop-blur-sm border border-white border-opacity-30"
+              className="mr-8 p-4 bg-white bg-opacity-10 rounded-full hover:bg-opacity-20 transition-all duration-300 backdrop-blur-sm border border-white border-opacity-20"
             >
-              <ArrowLeft className="text-black" size={24} />
+              <ArrowLeft className="text-white" size={24} />
             </button>
 
-            <div className="flex items-center space-x-6 flex-1">
+            <div className="flex items-center space-x-8 flex-1">
               <motion.button
                 onClick={handleShowTip}
-                className="relative w-24 h-24 rounded-full border-4 border-white flex justify-center items-center overflow-hidden hover:scale-105 transition-transform duration-300 bg-white bg-opacity-20 backdrop-blur-sm shadow-2xl"
-                whileHover={{ scale: 1.05 }}
+                className="relative w-28 h-28 rounded-full border-2 border-white border-opacity-30 flex justify-center items-center overflow-hidden hover:scale-105 transition-transform duration-300 bg-white bg-opacity-10 backdrop-blur-sm shadow-2xl"
+                whileHover={{ scale: 1.05, rotate: 5 }}
                 whileTap={{ scale: 0.95 }}
-                style={{ borderColor: "rgba(255,255,255,0.8)" }}
+                style={{
+                  boxShadow: `0 0 30px ${goal.color}40`,
+                }}
               >
                 <img
                   src={goal.icon || "/placeholder.svg"}
                   alt={goal.title}
-                  className="w-16 h-16 object-contain"
+                  className="w-16 h-16 object-contain filter brightness-0 invert"
                   crossOrigin="anonymous"
                 />
 
@@ -196,13 +187,13 @@ const GoalContent = () => {
                       initial={{ opacity: 0, scale: 0.8, y: 10 }}
                       animate={{ opacity: 1, scale: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.8, y: 10 }}
-                      className="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 bg-white text-gray-800 p-4 rounded-lg shadow-2xl w-80 border-l-4 z-20"
+                      className="absolute top-full left-1/2 transform -translate-x-1/2 mt-6 bg-white text-gray-800 p-6 rounded-xl shadow-2xl w-80 border-l-4 z-20"
                       style={{ borderLeftColor: goal.color }}
                     >
                       <div className="flex items-start space-x-3">
                         <Lightbulb className="text-yellow-500 mt-1 flex-shrink-0" size={20} />
                         <div>
-                          <h4 className="font-semibold mb-1">💡 Did you know?</h4>
+                          <h4 className="font-semibold mb-2">💡 Did you know?</h4>
                           <p className="text-sm text-gray-600">{goal.knowledgeBite}</p>
                         </div>
                       </div>
@@ -212,97 +203,107 @@ const GoalContent = () => {
               </motion.button>
 
               <div className="text-white flex-1">
+                <motion.div
+                  className="inline-flex items-center px-4 py-2 rounded-full bg-white bg-opacity-10 backdrop-blur-sm mb-4"
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  <Globe size={16} className="mr-2" />
+                  <span className="text-sm font-medium">UN Sustainable Development Goals 2030</span>
+                </motion.div>
+
                 <motion.h1
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.3 }}
-                  className="text-5xl md:text-6xl font-bold mb-3 text-shadow-lg"
-                  style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.5)" }}
+                  transition={{ delay: 0.4 }}
+                  className="text-6xl md:text-7xl font-bold mb-4"
+                  style={{
+                    background: `linear-gradient(135deg, white 0%, ${goal.color} 100%)`,
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                  }}
                 >
                   Goal {goal.goalNumber}
                 </motion.h1>
+
                 <motion.h2
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.4 }}
-                  className="text-2xl md:text-3xl font-medium mb-4 text-shadow"
-                  style={{ textShadow: "1px 1px 2px rgba(0,0,0,0.5)" }}
+                  transition={{ delay: 0.5 }}
+                  className="text-3xl md:text-4xl font-light mb-6 text-gray-200"
                 >
                   {goal.title}
                 </motion.h2>
 
-                {/* Add shortDescription here */}
                 <motion.p
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.45 }}
-                  className="text-lg md:text-xl font-medium mb-4 text-shadow opacity-90"
-                  style={{ textShadow: "1px 1px 2px rgba(0,0,0,0.5)" }}
+                  transition={{ delay: 0.6 }}
+                  className="text-xl md:text-2xl font-light text-gray-300 leading-relaxed max-w-3xl"
                 >
                   {goal.shortDescription}
                 </motion.p>
-
-                {/* <motion.p
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.5 }}
-                  className="text-lg md:text-xl leading-relaxed max-w-3xl text-shadow"
-                  style={{ textShadow: "1px 1px 2px rgba(0,0,0,0.5)" }}
-                >
-                  {goal.overview}
-                </motion.p> */}
               </div>
 
               <motion.div
                 initial={{ x: 20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.6 }}
+                transition={{ delay: 0.7 }}
                 className="flex flex-col space-y-4"
               >
                 <motion.button
                   onClick={() => navigate(`/quiz/${goal.goalNumber}`)}
-                  className="bg-white text-gray-800 font-bold px-8 py-4 rounded-full hover:bg-opacity-90 transition-all duration-300 shadow-2xl hover:shadow-3xl flex items-center space-x-3 border-2 border-white border-opacity-30"
+                  className="group relative overflow-hidden bg-white text-gray-900 font-bold px-8 py-4 rounded-full transition-all duration-300 shadow-xl hover:shadow-2xl"
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   style={{
-                    background: "rgba(255,255,255,0.95)",
-                    backdropFilter: "blur(10px)",
+                    background: `linear-gradient(135deg, white 0%, ${goal.color}20 100%)`,
                   }}
                 >
-                  <Target size={24} style={{ color: goal.color }} />
-                  <span>Take Quiz</span>
+                  <div className="flex items-center space-x-3">
+                    <Target size={24} style={{ color: goal.color }} />
+                    <span>Take Quiz</span>
+                  </div>
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20"
+                    animate={{ x: [-100, 100] }}
+                    transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY, repeatDelay: 2 }}
+                  />
                 </motion.button>
 
-                {/* <Link to={`/goal/${goal.goalNumber}`}>
-                  <motion.button
-                    className="bg-transparent border-2 border-white text-white font-bold px-8 py-4 rounded-full hover:bg-white hover:text-gray-800 transition-all duration-300 shadow-xl flex items-center space-x-3 backdrop-blur-sm"
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <BookOpen size={24} />
-                    <span>📚 Learn More</span>
-                  </motion.button>
-                </Link> */}
+                <motion.button
+                  onClick={() => navigate(`/action/${goal.goalNumber}`)}
+                  className="group bg-transparent border-2 border-white border-opacity-30 text-white font-medium px-8 py-4 rounded-full hover:bg-white hover:text-gray-900 transition-all duration-300 backdrop-blur-sm"
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <div className="flex items-center space-x-3">
+                    <Users size={24} />
+                    <span>Take Action</span>
+                  </div>
+                </motion.button>
               </motion.div>
             </div>
           </motion.div>
         </div>
 
-        {/* Floating Elements */}
-        <div className="absolute bottom-8 left-8 text-white opacity-75">
+        {/* Decorative Elements */}
+        <div className="absolute bottom-8 left-8 text-white opacity-60">
           <motion.div
             animate={{ y: [0, -10, 0] }}
             transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY }}
             className="flex items-center space-x-2 text-sm"
           >
-            <Globe size={16} />
-            <span>UN Sustainable Development Goals 2030</span>
+            <Award size={16} />
+            <span>Building a Better Future Together</span>
           </motion.div>
         </div>
       </motion.div>
 
       {/* Navigation Tabs */}
-      <div className="sticky top-0 bg-white shadow-md z-40">
+      <div className="sticky top-0 bg-white shadow-lg z-40 border-b border-gray-100">
         <div className="container mx-auto px-4">
           <div className="flex space-x-1 overflow-x-auto">
             {tabs.map((tab) => {
@@ -314,16 +315,28 @@ const GoalContent = () => {
                 <motion.button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center space-x-2 px-6 py-4 font-medium transition-all duration-300 border-b-2 whitespace-nowrap ${
+                  className={`flex items-center space-x-2 px-8 py-4 font-medium transition-all duration-300 border-b-3 whitespace-nowrap relative ${
                     isActive
-                      ? "border-blue-500 text-blue-600 bg-blue-50"
+                      ? "text-white shadow-lg"
                       : "border-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-50"
                   }`}
+                  style={{
+                    backgroundColor: isActive ? goal.color : "transparent",
+                    borderBottomColor: isActive ? goal.color : "transparent",
+                  }}
                   whileHover={{ y: -1 }}
                 >
                   <IconComponent size={18} />
                   <span>{tab.label}</span>
-                  {isCompleted && <CheckCircle size={16} className="text-green-500" />}
+                  {isCompleted && <CheckCircle size={16} className="text-green-400" />}
+
+                  {isActive && (
+                    <motion.div
+                      className="absolute inset-0 bg-white bg-opacity-10 rounded-t-lg"
+                      layoutId="activeTab"
+                      transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                    />
+                  )}
                 </motion.button>
               )
             })}
@@ -332,7 +345,7 @@ const GoalContent = () => {
       </div>
 
       {/* Content Sections */}
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-12">
         <AnimatePresence mode="wait">
           {activeTab === "overview" && (
             <motion.div
@@ -340,46 +353,147 @@ const GoalContent = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="max-w-4xl mx-auto"
+              className="max-w-7xl mx-auto"
             >
-              <div className="bg-white rounded-xl shadow-lg p-8">
-                {goal.heroImage && (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                {/* Main Content */}
+                <div className="lg:col-span-2">
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
-                    className="mb-8"
+                    onViewportEnter={() => markSectionComplete("overview")}
+                    className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100"
                   >
-                    <img
-                      src={goal.heroImage}
-                      alt={goal.title}
-                      className="w-full h-64 md:h-80 object-cover rounded-lg shadow-md"
-                    />
-                  </motion.div>
-                )}
+                    <div className="flex items-center mb-6">
+                      <div className="w-3 h-12 rounded-full mr-4" style={{ backgroundColor: goal.color }} />
+                      <h3 className="text-3xl font-bold text-gray-800">Overview</h3>
+                    </div>
 
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  onViewportEnter={() => markSectionComplete("overview")}
-                >
-                  <h3 className="text-2xl font-bold mb-4 text-gray-800">Overview</h3>
-                  <div className="prose prose-lg max-w-none text-gray-700">
-                    {goal.description && goal.description.length > 0 ? (
-                      // Render rich text from Sanity
-                      <div>
-                        {goal.description.map((block, index) => (
-                          <p key={index} className="mb-4 leading-relaxed">
-                            {block.children?.map((child) => child.text).join("")}
-                          </p>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="leading-relaxed">{goal.overview}</p>
+                    <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed">
+                      {goal.description && Array.isArray(goal.description) && goal.description.length > 0 ? (
+                        <div className="space-y-4">
+                          <p className="text-xl leading-relaxed">{renderRichText(goal.description)}</p>
+                        </div>
+                      ) : (
+                        <p className="text-xl leading-relaxed">{goal.overview}</p>
+                      )}
+                    </div>
+
+                    {/* Key Statistics or Facts */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4 }}
+                      className="mt-8 p-6 rounded-xl"
+                      style={{ backgroundColor: `${goal.color}10` }}
+                    >
+                      <h4 className="text-lg font-semibold mb-3" style={{ color: goal.color }}>
+                        💡 Key Insight
+                      </h4>
+                      <p className="text-gray-700 italic">
+                        {goal.knowledgeBite ||
+                          "This goal is essential for creating a sustainable and equitable future for all."}
+                      </p>
+                    </motion.div>
+                  </motion.div>
+                </div>
+
+                {/* Sidebar with Hero Image */}
+                <div className="lg:col-span-1">
+                  <motion.div
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="sticky top-24"
+                  >
+                    {/* Hero Image with Animation */}
+                    {goal.heroImage && (
+                      <motion.div
+                        className="relative overflow-hidden rounded-2xl shadow-2xl mb-6 group"
+                        whileHover={{ scale: 1.02 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <motion.img
+                          src={goal.heroImage}
+                          alt={goal.title}
+                          className="w-full h-80 object-cover transition-transform duration-700 group-hover:scale-110"
+                          initial={{ scale: 1.1, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          transition={{ duration: 0.8 }}
+                          onError={(e) => {
+                            console.error("Error loading hero image:", goal.heroImage)
+                            e.target.src = "/placeholder.svg?height=320&width=400"
+                          }}
+                        />
+
+                        {/* Rest of the hero image content */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
+
+                        <motion.div
+                          className="absolute top-4 right-4 bg-white bg-opacity-90 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg"
+                          initial={{ y: -20, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          transition={{ delay: 0.5 }}
+                        >
+                          <span className="text-sm font-bold" style={{ color: goal.color }}>
+                            SDG {goal.goalNumber}
+                          </span>
+                        </motion.div>
+
+                        <div className="absolute bottom-4 left-4 right-4">
+                          <h4 className="text-white font-bold text-lg leading-tight">{goal.title}</h4>
+                        </div>
+                      </motion.div>
                     )}
-                  </div>
-                </motion.div>
+
+                    {/* Action Cards */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.6 }}
+                      className="space-y-4"
+                    >
+                      <motion.div
+                        className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 cursor-pointer"
+                        whileHover={{ y: -2 }}
+                        onClick={() => navigate(`/quiz/${goal.goalNumber}`)}
+                      >
+                        <div className="flex items-center space-x-4">
+                          <div
+                            className="w-12 h-12 rounded-full flex items-center justify-center"
+                            style={{ backgroundColor: `${goal.color}20` }}
+                          >
+                            <Target size={24} style={{ color: goal.color }} />
+                          </div>
+                          <div>
+                            <h5 className="font-semibold text-gray-800">Test Knowledge</h5>
+                            <p className="text-sm text-gray-600">Take the interactive quiz</p>
+                          </div>
+                        </div>
+                      </motion.div>
+
+                      <motion.div
+                        className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 cursor-pointer"
+                        whileHover={{ y: -2 }}
+                        onClick={() => navigate(`/action/${goal.goalNumber}`)}
+                      >
+                        <div className="flex items-center space-x-4">
+                          <div
+                            className="w-12 h-12 rounded-full flex items-center justify-center"
+                            style={{ backgroundColor: `${goal.color}20` }}
+                          >
+                            <Users size={24} style={{ color: goal.color }} />
+                          </div>
+                          <div>
+                            <h5 className="font-semibold text-gray-800">Take Action</h5>
+                            <p className="text-sm text-gray-600">Make a real difference</p>
+                          </div>
+                        </div>
+                      </motion.div>
+                    </motion.div>
+                  </motion.div>
+                </div>
               </div>
             </motion.div>
           )}
@@ -392,30 +506,36 @@ const GoalContent = () => {
               exit={{ opacity: 0, y: -20 }}
               className="max-w-4xl mx-auto"
             >
-              <div className="bg-white rounded-xl shadow-lg p-8">
+              <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                   onViewportEnter={() => markSectionComplete("details")}
                 >
-                  <h3 className="text-2xl font-bold mb-6 text-gray-800">Key Objectives</h3>
-                  <div className="grid gap-4">
+                  <div className="flex items-center mb-8">
+                    <div className="w-3 h-12 rounded-full mr-4" style={{ backgroundColor: goal.color }} />
+                    <h3 className="text-3xl font-bold text-gray-800">Key Objectives</h3>
+                  </div>
+
+                  <div className="grid gap-6">
                     {goal.keyPoints?.map((point, index) => (
                       <motion.div
                         key={index}
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.1 }}
-                        className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                        className="flex items-start space-x-6 p-6 rounded-xl hover:shadow-lg transition-all duration-300"
+                        style={{ backgroundColor: `${goal.color}05` }}
+                        whileHover={{ x: 5 }}
                       >
                         <div
-                          className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
+                          className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0 shadow-lg"
                           style={{ backgroundColor: goal.color }}
                         >
                           {index + 1}
                         </div>
-                        <p className="text-gray-700 leading-relaxed">{point}</p>
+                        <p className="text-gray-700 leading-relaxed text-lg">{point}</p>
                       </motion.div>
                     ))}
                   </div>
@@ -432,25 +552,30 @@ const GoalContent = () => {
               exit={{ opacity: 0, y: -20 }}
               className="max-w-6xl mx-auto"
             >
-              <div className="bg-white rounded-xl shadow-lg p-8">
+              <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                   onViewportEnter={() => markSectionComplete("videos")}
                 >
-                  <h3 className="text-2xl font-bold mb-6 text-gray-800">Related Videos</h3>
+                  <div className="flex items-center mb-8">
+                    <div className="w-3 h-12 rounded-full mr-4" style={{ backgroundColor: goal.color }} />
+                    <h3 className="text-3xl font-bold text-gray-800">Related Videos</h3>
+                  </div>
+
                   {goal.videos && goal.videos.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       {goal.videos.map((video, index) => (
                         <motion.div
                           key={index}
                           initial={{ opacity: 0, scale: 0.95 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: index * 0.1 }}
-                          className="bg-gray-50 rounded-lg overflow-hidden hover:shadow-md transition-shadow"
+                          className="rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300"
+                          whileHover={{ y: -5 }}
                         >
-                          <div className="aspect-video">
+                          <div className="aspect-video relative">
                             <iframe
                               width="100%"
                               height="100%"
@@ -462,17 +587,18 @@ const GoalContent = () => {
                               className="w-full h-full"
                             />
                           </div>
-                          <div className="p-4">
-                            <h4 className="font-semibold text-gray-800 mb-2">{video.title}</h4>
-                            {video.description && <p className="text-sm text-gray-600">{video.description}</p>}
+                          <div className="p-6 bg-white">
+                            <h4 className="font-bold text-gray-800 mb-3 text-lg">{video.title}</h4>
+                            {video.description && <p className="text-gray-600 leading-relaxed">{video.description}</p>}
                           </div>
                         </motion.div>
                       ))}
                     </div>
                   ) : (
-                    <div className="text-center py-12">
-                      <Play className="mx-auto text-gray-400 mb-4" size={48} />
-                      <p className="text-gray-500">No videos available for this goal yet.</p>
+                    <div className="text-center py-16">
+                      <Play className="mx-auto text-gray-400 mb-6" size={64} />
+                      <h4 className="text-xl font-semibold text-gray-600 mb-2">No Videos Available</h4>
+                      <p className="text-gray-500">Educational videos for this goal will be added soon.</p>
                     </div>
                   )}
                 </motion.div>
@@ -488,14 +614,18 @@ const GoalContent = () => {
               exit={{ opacity: 0, y: -20 }}
               className="max-w-4xl mx-auto"
             >
-              <div className="bg-white rounded-xl shadow-lg p-8">
+              <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                   onViewportEnter={() => markSectionComplete("resources")}
                 >
-                  <h3 className="text-2xl font-bold mb-6 text-gray-800">Additional Resources</h3>
+                  <div className="flex items-center mb-8">
+                    <div className="w-3 h-12 rounded-full mr-4" style={{ backgroundColor: goal.color }} />
+                    <h3 className="text-3xl font-bold text-gray-800">Additional Resources</h3>
+                  </div>
+
                   {goal.resources && goal.resources.length > 0 ? (
                     <div className="space-y-4">
                       {goal.resources.map((resource, index) => (
@@ -507,112 +637,32 @@ const GoalContent = () => {
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: index * 0.1 }}
-                          className="block p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group"
+                          className="block p-6 rounded-xl hover:shadow-lg transition-all duration-300 group border border-gray-100"
+                          style={{ backgroundColor: `${goal.color}03` }}
+                          whileHover={{ x: 5 }}
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex-1">
-                              <h4 className="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
+                              <h4 className="font-bold text-gray-800 group-hover:text-blue-600 transition-colors text-lg mb-2">
                                 {resource.title}
                               </h4>
                               {resource.description && (
-                                <p className="text-sm text-gray-600 mt-1">{resource.description}</p>
+                                <p className="text-gray-600 leading-relaxed">{resource.description}</p>
                               )}
                             </div>
                             <ExternalLink
-                              className="text-gray-400 group-hover:text-blue-600 transition-colors"
-                              size={20}
+                              className="text-gray-400 group-hover:text-blue-600 transition-colors ml-4"
+                              size={24}
                             />
                           </div>
                         </motion.a>
                       ))}
                     </div>
                   ) : (
-                    <div className="text-center py-12">
-                      <ExternalLink className="mx-auto text-gray-400 mb-4" size={48} />
-                      <p className="text-gray-500">No additional resources available for this goal yet.</p>
-                    </div>
-                  )}
-                </motion.div>
-              </div>
-            </motion.div>
-          )}
-
-          {activeTab === "interactive" && (
-            <motion.div
-              key="interactive"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="max-w-4xl mx-auto"
-            >
-              <div className="bg-white rounded-xl shadow-lg p-8">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  onViewportEnter={() => markSectionComplete("interactive")}
-                >
-                  <h3 className="text-2xl font-bold mb-6 text-gray-800">Interactive Elements</h3>
-                  {goal.interactiveElements && goal.interactiveElements.length > 0 ? (
-                    <div className="space-y-6">
-                      {goal.interactiveElements.map((element, index) => (
-                        <motion.div
-                          key={index}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.1 }}
-                          className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
-                        >
-                          <div className="flex items-center space-x-3 mb-4">
-                            <div
-                              className="w-10 h-10 rounded-full flex items-center justify-center text-white"
-                              style={{ backgroundColor: goal.color }}
-                            >
-                              {element.type === "quiz" && <Target size={20} />}
-                              {element.type === "infographic" && <Globe size={20} />}
-                              {element.type === "challenge" && <Users size={20} />}
-                            </div>
-                            <div>
-                              <h4 className="font-semibold text-gray-800">{element.title}</h4>
-                              <span className="text-sm text-gray-500 capitalize">{element.type}</span>
-                            </div>
-                          </div>
-
-                          <div className="prose prose-sm max-w-none text-gray-700">
-                            {element.content?.map((block, blockIndex) => (
-                              <p key={blockIndex} className="mb-2">
-                                {block.children?.map((child) => child.text).join("")}
-                              </p>
-                            ))}
-                          </div>
-
-                          <motion.button
-                            className="mt-4 inline-flex items-center px-4 py-2 text-white rounded-lg font-medium hover:opacity-90 transition-opacity"
-                            style={{ backgroundColor: goal.color }}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                          >
-                            <Play size={16} className="mr-2" />
-                            Start{" "}
-                            {element.type === "quiz" ? "Quiz" : element.type === "challenge" ? "Challenge" : "Activity"}
-                          </motion.button>
-                        </motion.div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-12">
-                      <Users className="mx-auto text-gray-400 mb-4" size={48} />
-                      <p className="text-gray-500 mb-4">No interactive elements available for this goal yet.</p>
-                      <motion.button
-                        onClick={() => navigate(`/quiz/${goal.goalNumber}`)}
-                        className="inline-flex items-center px-6 py-3 text-white rounded-lg font-medium hover:opacity-90 transition-opacity"
-                        style={{ backgroundColor: goal.color }}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <Target size={20} className="mr-2" />
-                        Take Quiz Instead
-                      </motion.button>
+                    <div className="text-center py-16">
+                      <ExternalLink className="mx-auto text-gray-400 mb-6" size={64} />
+                      <h4 className="text-xl font-semibold text-gray-600 mb-2">No Resources Available</h4>
+                      <p className="text-gray-500">Additional learning resources will be added soon.</p>
                     </div>
                   )}
                 </motion.div>
@@ -626,43 +676,49 @@ const GoalContent = () => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white border-t border-gray-200 py-8"
+        className="bg-gradient-to-r from-gray-50 to-white border-t border-gray-200 py-12"
       >
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                  <CheckCircle className="text-green-600" size={24} />
+            <div className="flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0">
+              <div className="flex items-center space-x-6">
+                <div
+                  className="w-16 h-16 rounded-full flex items-center justify-center shadow-lg"
+                  style={{ backgroundColor: `${goal.color}20` }}
+                >
+                  <CheckCircle size={32} style={{ color: goal.color }} />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-800">Learning Progress</h4>
-                  <p className="text-sm text-gray-600">
+                  <h4 className="text-xl font-bold text-gray-800">Learning Progress</h4>
+                  <p className="text-gray-600">
                     {completedSections.size} of {tabs.length} sections completed
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center space-x-3">
-                <div className="flex space-x-1">
+              <div className="flex items-center space-x-6">
+                <div className="flex space-x-2">
                   {tabs.map((tab) => (
                     <div
                       key={tab.id}
-                      className={`w-3 h-3 rounded-full transition-colors ${
-                        completedSections.has(tab.id) ? "bg-green-500" : "bg-gray-300"
+                      className={`w-4 h-4 rounded-full transition-all duration-300 ${
+                        completedSections.has(tab.id) ? "shadow-lg" : "bg-gray-300"
                       }`}
+                      style={{
+                        backgroundColor: completedSections.has(tab.id) ? goal.color : undefined,
+                      }}
                     />
                   ))}
                 </div>
 
                 <motion.button
                   onClick={() => navigate(`/quiz/${goal.goalNumber}`)}
-                  className="inline-flex items-center px-6 py-3 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="inline-flex items-center px-8 py-4 text-white rounded-full font-bold shadow-xl hover:shadow-2xl transition-all duration-300"
                   style={{ backgroundColor: goal.color }}
-                  whileHover={{ scale: 1.02, y: -1 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <Target size={20} className="mr-2" />
+                  <Target size={24} className="mr-3" />
                   Test Your Knowledge
                 </motion.button>
               </div>
@@ -672,7 +728,7 @@ const GoalContent = () => {
       </motion.div>
 
       {/* Navigation Footer */}
-      <div className="bg-gray-50 py-6">
+      <div className="bg-white py-8 border-t border-gray-100">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto flex justify-between items-center">
             <motion.button
@@ -680,21 +736,21 @@ const GoalContent = () => {
                 const prevGoal = goal.goalNumber === 1 ? 17 : goal.goalNumber - 1
                 navigate(`/goal/${prevGoal}`)
               }}
-              className="flex items-center space-x-2 text-gray-600 hover:text-gray-800 transition-colors"
-              whileHover={{ x: -2 }}
+              className="flex items-center space-x-3 text-gray-600 hover:text-gray-800 transition-colors group"
+              whileHover={{ x: -5 }}
             >
-              <ArrowLeft size={20} />
-              <span>Previous Goal</span>
+              <ArrowLeft size={20} className="group-hover:animate-pulse" />
+              <span className="font-medium">Previous Goal</span>
             </motion.button>
 
             <motion.button
               onClick={() => navigate("/sdg-wheel")}
-              className="flex items-center space-x-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              className="flex items-center space-x-3 px-6 py-3 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               <Globe size={20} />
-              <span>Back to Wheel</span>
+              <span className="font-medium">Back to Wheel</span>
             </motion.button>
 
             <motion.button
@@ -702,11 +758,11 @@ const GoalContent = () => {
                 const nextGoal = goal.goalNumber === 17 ? 1 : goal.goalNumber + 1
                 navigate(`/goal/${nextGoal}`)
               }}
-              className="flex items-center space-x-2 text-gray-600 hover:text-gray-800 transition-colors"
-              whileHover={{ x: 2 }}
+              className="flex items-center space-x-3 text-gray-600 hover:text-gray-800 transition-colors group"
+              whileHover={{ x: 5 }}
             >
-              <span>Next Goal</span>
-              <ChevronRight size={20} />
+              <span className="font-medium">Next Goal</span>
+              <ChevronRight size={20} className="group-hover:animate-pulse" />
             </motion.button>
           </div>
         </div>
