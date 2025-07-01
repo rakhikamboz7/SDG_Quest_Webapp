@@ -123,10 +123,7 @@ const Header = () => {
                   <Link to="/sdg-actions" className="md:hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                     SDG Actions
                   </Link>
-                  <Link
-                    to={handleStartQuiz}
-                    className="md:hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
+                   <Link to={handleStartQuiz} className="md:hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                     Start Quiz
                   </Link>
 
