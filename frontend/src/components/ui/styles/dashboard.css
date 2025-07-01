@@ -13,15 +13,15 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: #005a54;
-  color: white;
+  background: #f3f3f3;
+  color: rgb(19, 16, 16);
 }
 
 .loading-spinner {
   width: 48px;
   height: 48px;
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  border-top: 4px solid white;
+  border: 4px solid rgba(52, 47, 47, 0.3);
+  border-top: 4px solid rgb(8, 8, 8);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 16px;
@@ -52,7 +52,7 @@
 .profile-section {
   padding: 32px 24px;
   text-align: center;
-  background: #005a54;
+  background: #015650;
   color: white;
 }
 
@@ -320,12 +320,13 @@
     .welcome-section {
     margin-bottom: 32px;
     text-align: center;
+    color:#024440
     }
 
     .welcome-title {
     font-size: 36px;
     font-weight: 800;
-    background: linear-gradient(135deg,#008080 10%, #008080 90%);
+    background: #01635d;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -717,11 +718,11 @@
 
     /* Achievement Summary */
     .achievement-summary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #005a54 100%);
     border-radius: 20px;
     padding: 32px;
     color: white;
-    box-shadow: 0 8px 30px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 8px 30px #005a54;
     }
 
     .summary-content {
