@@ -15,7 +15,7 @@ import SDGWheel from "./pages/Home";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminDashboard from "./pages/AdminDashboard";
 import SDGActionPlatform from "./components/SdgActionPlatform";
-
+import TakeActionPage from "./components/TakeActionPage";
 const App = () => {
   const location = useLocation();
   const path = location.pathname;
@@ -43,6 +43,7 @@ const App = () => {
           <Route path="/signin" element={<LoginSignup />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/contact" element={<ContactUs />} />
+           <Route path="/take-action" element={<TakeActionPage />} />
           <Route
             path="/admin-dashboard"
             element={

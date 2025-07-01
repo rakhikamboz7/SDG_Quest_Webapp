@@ -1,5 +1,5 @@
 import logo from "../assets/logo.svg";
-
+import { AboutUs } from "../pages/about";
 const Footer = () => {
   return (
     <footer className="bg-white text-teal-700 shadow-md py-6 px-4 md:px-8 lg:px-16 w-full">

@@ -12,7 +12,6 @@ import {
   Lightbulb,
   CheckCircle,
   Globe,
-  ChevronRight,
   Award,
   Users,
 } from "lucide-react"
@@ -111,17 +110,23 @@ const GoalContent = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
       {/* Reading Progress Bar */}
       <motion.div
-        className="fixed top-0 left-0 h-1 bg-gradient-to-r from-blue-500 to-green-500 z-50"
-        style={{ width: `${readingProgress}%` }}
+        className="fixed top-0 left-0 h-1 z-50"
+        style={{
+          width: `${readingProgress}%`,
+          background: `linear-gradient(135deg, ${goal.color || "#667eea"}, ${goal.color ? goal.color + "80" : "#764ba2"})`,
+        }}
         initial={{ width: 0 }}
         animate={{ width: `${readingProgress}%` }}
       />
 
-      {/* Elegant Hero Section - No Image */}
+      {/* Hero Section with Goal-Specific Colors */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"
+        className="relative overflow-hidden"
+        style={{
+          background: `linear-gradient(135deg, ${goal.color || "#667eea"} 0%, ${goal.color ? goal.color + "DD" : "#764ba2"} 100%)`,
+        }}
       >
         {/* Animated Background Pattern */}
         <div className="absolute inset-0">
@@ -129,11 +134,11 @@ const GoalContent = () => {
             className="absolute inset-0 opacity-10"
             animate={{
               background: [
-                `radial-gradient(circle at 20% 20%, ${goal.color}40 0%, transparent 50%)`,
-                `radial-gradient(circle at 80% 80%, ${goal.color}40 0%, transparent 50%)`,
-                `radial-gradient(circle at 20% 80%, ${goal.color}40 0%, transparent 50%)`,
-                `radial-gradient(circle at 80% 20%, ${goal.color}40 0%, transparent 50%)`,
-                `radial-gradient(circle at 20% 20%, ${goal.color}40 0%, transparent 50%)`,
+                `radial-gradient(circle at 20% 20%, ${goal.color || "#667eea"}40 0%, transparent 50%)`,
+                `radial-gradient(circle at 80% 80%, ${goal.color || "#667eea"}40 0%, transparent 50%)`,
+                `radial-gradient(circle at 20% 80%, ${goal.color || "#667eea"}40 0%, transparent 50%)`,
+                `radial-gradient(circle at 80% 20%, ${goal.color || "#667eea"}40 0%, transparent 50%)`,
+                `radial-gradient(circle at 20% 20%, ${goal.color || "#667eea"}40 0%, transparent 50%)`,
               ],
             }}
             transition={{ duration: 8, repeat: Number.POSITIVE_INFINITY }}
@@ -161,7 +166,7 @@ const GoalContent = () => {
               onClick={() => navigate("/sdg-wheel")}
               className="mr-8 p-4 bg-white bg-opacity-10 rounded-full hover:bg-opacity-20 transition-all duration-300 backdrop-blur-sm border border-white border-opacity-20"
             >
-              <ArrowLeft className="text-white" size={24} />
+              <ArrowLeft className="text-black" size={24} />
             </button>
 
             <div className="flex items-center space-x-8 flex-1">
@@ -171,15 +176,26 @@ const GoalContent = () => {
                 whileHover={{ scale: 1.05, rotate: 5 }}
                 whileTap={{ scale: 0.95 }}
                 style={{
-                  boxShadow: `0 0 30px ${goal.color}40`,
+                  boxShadow: `0 0 30px ${goal.color || "#667eea"}40`,
                 }}
               >
-                <img
-                  src={goal.icon || "/placeholder.svg"}
-                  alt={goal.title}
-                  className="w-16 h-16 object-contain filter brightness-0 invert"
-                  crossOrigin="anonymous"
-                />
+                {goal.icon ? (
+                  <img
+                    src={goal.icon || "/placeholder.svg"}
+                    alt={goal.title}
+                    className="w-16 h-16 object-contain"
+                    crossOrigin="anonymous"
+                    onError={(e) => {
+                      console.error("Error loading goal icon:", goal.icon)
+                      e.target.style.display = "none"
+                      e.target.parentNode.innerHTML = `<div class="w-16 h-16 flex items-center justify-center text-white text-2xl font-bold">${goal.goalNumber}</div>`
+                    }}
+                  />
+                ) : (
+                  <div className="w-16 h-16 flex items-center justify-center text-white text-2xl font-bold">
+                    {goal.goalNumber}
+                  </div>
+                )}
 
                 <AnimatePresence>
                   {showTip && (
@@ -188,7 +204,7 @@ const GoalContent = () => {
                       animate={{ opacity: 1, scale: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.8, y: 10 }}
                       className="absolute top-full left-1/2 transform -translate-x-1/2 mt-6 bg-white text-gray-800 p-6 rounded-xl shadow-2xl w-80 border-l-4 z-20"
-                      style={{ borderLeftColor: goal.color }}
+                      style={{ borderLeftColor: goal.color || "#667eea" }}
                     >
                       <div className="flex items-start space-x-3">
                         <Lightbulb className="text-yellow-500 mt-1 flex-shrink-0" size={20} />
@@ -217,13 +233,7 @@ const GoalContent = () => {
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.4 }}
-                  className="text-6xl md:text-7xl font-bold mb-4"
-                  style={{
-                    background: `linear-gradient(135deg, white 0%, ${goal.color} 100%)`,
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                  }}
+                  className="text-6xl md:text-7xl font-bold mb-4 text-white"
                 >
                   Goal {goal.goalNumber}
                 </motion.h1>
@@ -258,19 +268,11 @@ const GoalContent = () => {
                   className="group relative overflow-hidden bg-white text-gray-900 font-bold px-8 py-4 rounded-full transition-all duration-300 shadow-xl hover:shadow-2xl"
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  style={{
-                    background: `linear-gradient(135deg, white 0%, ${goal.color}20 100%)`,
-                  }}
                 >
                   <div className="flex items-center space-x-3">
-                    <Target size={24} style={{ color: goal.color }} />
+                    <Target size={24} style={{ color: goal.color || "#667eea" }} />
                     <span>Take Quiz</span>
                   </div>
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20"
-                    animate={{ x: [-100, 100] }}
-                    transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY, repeatDelay: 2 }}
-                  />
                 </motion.button>
 
                 <motion.button
@@ -321,15 +323,14 @@ const GoalContent = () => {
                       : "border-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-50"
                   }`}
                   style={{
-                    backgroundColor: isActive ? goal.color : "transparent",
-                    borderBottomColor: isActive ? goal.color : "transparent",
+                    backgroundColor: isActive ? goal.color || "#667eea" : "transparent",
+                    borderBottomColor: isActive ? goal.color || "#667eea" : "transparent",
                   }}
                   whileHover={{ y: -1 }}
                 >
                   <IconComponent size={18} />
-                  <span>{tab.label}</span>
+                  <span className={isActive ? "text-white" : ""}>{tab.label}</span>
                   {isCompleted && <CheckCircle size={16} className="text-green-400" />}
-
                   {isActive && (
                     <motion.div
                       className="absolute inset-0 bg-white bg-opacity-10 rounded-t-lg"
@@ -362,12 +363,33 @@ const GoalContent = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
-                    onViewportEnter={() => markSectionComplete("overview")}
                     className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100"
                   >
-                    <div className="flex items-center mb-6">
-                      <div className="w-3 h-12 rounded-full mr-4" style={{ backgroundColor: goal.color }} />
-                      <h3 className="text-3xl font-bold text-gray-800">Overview</h3>
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center">
+                        <div
+                          className="w-3 h-12 rounded-full mr-4"
+                          style={{ backgroundColor: goal.color || "#667eea" }}
+                        />
+                        <h3 className="text-3xl font-bold text-gray-800">Overview</h3>
+                      </div>
+                      <button
+                        onClick={() => markSectionComplete("overview")}
+                        className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+                          completedSections.has("overview")
+                            ? "bg-green-100 text-green-800 border border-green-200"
+                            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                        }`}
+                      >
+                        {completedSections.has("overview") ? (
+                          <>
+                            <CheckCircle size={16} className="inline mr-2" />
+                            Completed
+                          </>
+                        ) : (
+                          "Mark as Completed"
+                        )}
+                      </button>
                     </div>
 
                     <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed">
@@ -386,9 +408,9 @@ const GoalContent = () => {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 }}
                       className="mt-8 p-6 rounded-xl"
-                      style={{ backgroundColor: `${goal.color}10` }}
+                      style={{ backgroundColor: `${goal.color || "#667eea"}10` }}
                     >
-                      <h4 className="text-lg font-semibold mb-3" style={{ color: goal.color }}>
+                      <h4 className="text-lg font-semibold mb-3" style={{ color: goal.color || "#667eea" }}>
                         💡 Key Insight
                       </h4>
                       <p className="text-gray-700 italic">
@@ -427,16 +449,14 @@ const GoalContent = () => {
                           }}
                         />
 
-                        {/* Rest of the hero image content */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
-
                         <motion.div
                           className="absolute top-4 right-4 bg-white bg-opacity-90 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg"
                           initial={{ y: -20, opacity: 0 }}
                           animate={{ y: 0, opacity: 1 }}
                           transition={{ delay: 0.5 }}
                         >
-                          <span className="text-sm font-bold" style={{ color: goal.color }}>
+                          <span className="text-sm font-bold" style={{ color: goal.color || "#667eea" }}>
                             SDG {goal.goalNumber}
                           </span>
                         </motion.div>
@@ -462,9 +482,9 @@ const GoalContent = () => {
                         <div className="flex items-center space-x-4">
                           <div
                             className="w-12 h-12 rounded-full flex items-center justify-center"
-                            style={{ backgroundColor: `${goal.color}20` }}
+                            style={{ backgroundColor: `${goal.color || "#667eea"}20` }}
                           >
-                            <Target size={24} style={{ color: goal.color }} />
+                            <Target size={24} style={{ color: goal.color || "#667eea" }} />
                           </div>
                           <div>
                             <h5 className="font-semibold text-gray-800">Test Knowledge</h5>
@@ -481,9 +501,9 @@ const GoalContent = () => {
                         <div className="flex items-center space-x-4">
                           <div
                             className="w-12 h-12 rounded-full flex items-center justify-center"
-                            style={{ backgroundColor: `${goal.color}20` }}
+                            style={{ backgroundColor: `${goal.color || "#667eea"}20` }}
                           >
-                            <Users size={24} style={{ color: goal.color }} />
+                            <Users size={24} style={{ color: goal.color || "#667eea" }} />
                           </div>
                           <div>
                             <h5 className="font-semibold text-gray-800">Take Action</h5>
@@ -507,15 +527,32 @@ const GoalContent = () => {
               className="max-w-4xl mx-auto"
             >
               <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  onViewportEnter={() => markSectionComplete("details")}
-                >
-                  <div className="flex items-center mb-8">
-                    <div className="w-3 h-12 rounded-full mr-4" style={{ backgroundColor: goal.color }} />
-                    <h3 className="text-3xl font-bold text-gray-800">Key Objectives</h3>
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center">
+                      <div
+                        className="w-3 h-12 rounded-full mr-4"
+                        style={{ backgroundColor: goal.color || "#667eea" }}
+                      />
+                      <h3 className="text-3xl font-bold text-gray-800">Key Objectives</h3>
+                    </div>
+                    <button
+                      onClick={() => markSectionComplete("details")}
+                      className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+                        completedSections.has("details")
+                          ? "bg-green-100 text-green-800 border border-green-200"
+                          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      }`}
+                    >
+                      {completedSections.has("details") ? (
+                        <>
+                          <CheckCircle size={16} className="inline mr-2" />
+                          Completed
+                        </>
+                      ) : (
+                        "Mark as Completed"
+                      )}
+                    </button>
                   </div>
 
                   <div className="grid gap-6">
@@ -526,12 +563,12 @@ const GoalContent = () => {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.1 }}
                         className="flex items-start space-x-6 p-6 rounded-xl hover:shadow-lg transition-all duration-300"
-                        style={{ backgroundColor: `${goal.color}05` }}
+                        style={{ backgroundColor: `${goal.color || "#667eea"}05` }}
                         whileHover={{ x: 5 }}
                       >
                         <div
                           className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0 shadow-lg"
-                          style={{ backgroundColor: goal.color }}
+                          style={{ backgroundColor: goal.color || "#667eea" }}
                         >
                           {index + 1}
                         </div>
@@ -553,15 +590,32 @@ const GoalContent = () => {
               className="max-w-6xl mx-auto"
             >
               <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  onViewportEnter={() => markSectionComplete("videos")}
-                >
-                  <div className="flex items-center mb-8">
-                    <div className="w-3 h-12 rounded-full mr-4" style={{ backgroundColor: goal.color }} />
-                    <h3 className="text-3xl font-bold text-gray-800">Related Videos</h3>
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center">
+                      <div
+                        className="w-3 h-12 rounded-full mr-4"
+                        style={{ backgroundColor: goal.color || "#667eea" }}
+                      />
+                      <h3 className="text-3xl font-bold text-gray-800">Related Videos</h3>
+                    </div>
+                    <button
+                      onClick={() => markSectionComplete("videos")}
+                      className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+                        completedSections.has("videos")
+                          ? "bg-green-100 text-green-800 border border-green-200"
+                          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      }`}
+                    >
+                      {completedSections.has("videos") ? (
+                        <>
+                          <CheckCircle size={16} className="inline mr-2" />
+                          Completed
+                        </>
+                      ) : (
+                        "Mark as Completed"
+                      )}
+                    </button>
                   </div>
 
                   {goal.videos && goal.videos.length > 0 ? (
@@ -615,15 +669,32 @@ const GoalContent = () => {
               className="max-w-4xl mx-auto"
             >
               <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  onViewportEnter={() => markSectionComplete("resources")}
-                >
-                  <div className="flex items-center mb-8">
-                    <div className="w-3 h-12 rounded-full mr-4" style={{ backgroundColor: goal.color }} />
-                    <h3 className="text-3xl font-bold text-gray-800">Additional Resources</h3>
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center">
+                      <div
+                        className="w-3 h-12 rounded-full mr-4"
+                        style={{ backgroundColor: goal.color || "#667eea" }}
+                      />
+                      <h3 className="text-3xl font-bold text-gray-800">Additional Resources</h3>
+                    </div>
+                    <button
+                      onClick={() => markSectionComplete("resources")}
+                      className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+                        completedSections.has("resources")
+                          ? "bg-green-100 text-green-800 border border-green-200"
+                          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      }`}
+                    >
+                      {completedSections.has("resources") ? (
+                        <>
+                          <CheckCircle size={16} className="inline mr-2" />
+                          Completed
+                        </>
+                      ) : (
+                        "Mark as Completed"
+                      )}
+                    </button>
                   </div>
 
                   {goal.resources && goal.resources.length > 0 ? (
@@ -638,7 +709,7 @@ const GoalContent = () => {
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: index * 0.1 }}
                           className="block p-6 rounded-xl hover:shadow-lg transition-all duration-300 group border border-gray-100"
-                          style={{ backgroundColor: `${goal.color}03` }}
+                          style={{ backgroundColor: `${goal.color || "#667eea"}03` }}
                           whileHover={{ x: 5 }}
                         >
                           <div className="flex items-center justify-between">
@@ -670,102 +741,6 @@ const GoalContent = () => {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
-
-      {/* Progress Summary */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-gray-50 to-white border-t border-gray-200 py-12"
-      >
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0">
-              <div className="flex items-center space-x-6">
-                <div
-                  className="w-16 h-16 rounded-full flex items-center justify-center shadow-lg"
-                  style={{ backgroundColor: `${goal.color}20` }}
-                >
-                  <CheckCircle size={32} style={{ color: goal.color }} />
-                </div>
-                <div>
-                  <h4 className="text-xl font-bold text-gray-800">Learning Progress</h4>
-                  <p className="text-gray-600">
-                    {completedSections.size} of {tabs.length} sections completed
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-6">
-                <div className="flex space-x-2">
-                  {tabs.map((tab) => (
-                    <div
-                      key={tab.id}
-                      className={`w-4 h-4 rounded-full transition-all duration-300 ${
-                        completedSections.has(tab.id) ? "shadow-lg" : "bg-gray-300"
-                      }`}
-                      style={{
-                        backgroundColor: completedSections.has(tab.id) ? goal.color : undefined,
-                      }}
-                    />
-                  ))}
-                </div>
-
-                <motion.button
-                  onClick={() => navigate(`/quiz/${goal.goalNumber}`)}
-                  className="inline-flex items-center px-8 py-4 text-white rounded-full font-bold shadow-xl hover:shadow-2xl transition-all duration-300"
-                  style={{ backgroundColor: goal.color }}
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Target size={24} className="mr-3" />
-                  Test Your Knowledge
-                </motion.button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Navigation Footer */}
-      <div className="bg-white py-8 border-t border-gray-100">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto flex justify-between items-center">
-            <motion.button
-              onClick={() => {
-                const prevGoal = goal.goalNumber === 1 ? 17 : goal.goalNumber - 1
-                navigate(`/goal/${prevGoal}`)
-              }}
-              className="flex items-center space-x-3 text-gray-600 hover:text-gray-800 transition-colors group"
-              whileHover={{ x: -5 }}
-            >
-              <ArrowLeft size={20} className="group-hover:animate-pulse" />
-              <span className="font-medium">Previous Goal</span>
-            </motion.button>
-
-            <motion.button
-              onClick={() => navigate("/sdg-wheel")}
-              className="flex items-center space-x-3 px-6 py-3 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Globe size={20} />
-              <span className="font-medium">Back to Wheel</span>
-            </motion.button>
-
-            <motion.button
-              onClick={() => {
-                const nextGoal = goal.goalNumber === 17 ? 1 : goal.goalNumber + 1
-                navigate(`/goal/${nextGoal}`)
-              }}
-              className="flex items-center space-x-3 text-gray-600 hover:text-gray-800 transition-colors group"
-              whileHover={{ x: 5 }}
-            >
-              <span className="font-medium">Next Goal</span>
-              <ChevronRight size={20} className="group-hover:animate-pulse" />
-            </motion.button>
-          </div>
-        </div>
       </div>
     </div>
   )

@@ -454,6 +454,246 @@ export const renderRichText = (blocks) => {
     .join(" ")
 }
 
+// Pledge functions
+export const createPledge = async (data) => {
+  try {
+    const doc = {
+      _type: "pledge",
+      title: data.title,
+      description: data.description,
+      goalType: data.goalType,
+      author: data.author,
+      authorId: data.authorId,
+      authorEmail: data.authorEmail,
+      isPublic: data.isPublic || true,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      frequency: data.frequency,
+      targetValue: data.targetValue,
+      currentProgress: 0,
+      status: "active",
+      motivation: data.motivation,
+      relatedSDG: data.relatedSDG,
+      progressLog: [],
+      likes: 0,
+      comments: [],
+    }
+
+    return await client.create(doc)
+  } catch (error) {
+    console.error("Error creating pledge:", error)
+    throw error
+  }
+}
+
+export const fetchUserPledges = async (userId) => {
+  try {
+    const query = `
+      *[_type == "pledge" && authorId == $userId] | order(_createdAt desc) {
+        _id,
+        title,
+        description,
+        goalType,
+        author,
+        isPublic,
+        startDate,
+        endDate,
+        frequency,
+        targetValue,
+        currentProgress,
+        status,
+        motivation,
+        relatedSDG,
+        progressLog,
+        likes,
+        _createdAt
+      }
+    `
+
+    return await client.fetch(query, { userId })
+  } catch (error) {
+    console.error("Error fetching user pledges:", error)
+    throw error
+  }
+}
+
+export const fetchPublicPledges = async () => {
+  try {
+    const query = `
+      *[_type == "pledge" && isPublic == true] | order(_createdAt desc) {
+        _id,
+        title,
+        description,
+        goalType,
+        author,
+        startDate,
+        endDate,
+        frequency,
+        targetValue,
+        currentProgress,
+        status,
+        motivation,
+        relatedSDG,
+        likes,
+        _createdAt
+      }
+    `
+
+    return await client.fetch(query)
+  } catch (error) {
+    console.error("Error fetching public pledges:", error)
+    throw error
+  }
+}
+
+export const updatePledgeProgress = async (pledgeId, progressData) => {
+  try {
+    const pledge = await client.fetch(`*[_type == "pledge" && _id == $pledgeId][0]`, { pledgeId })
+    if (!pledge) throw new Error("Pledge not found")
+
+    const newProgress = pledge.currentProgress + 1
+    const newProgressLog = [
+      ...(pledge.progressLog || []),
+      {
+        date: new Date().toISOString().split("T")[0],
+        completed: true,
+        note: progressData.note || "",
+      },
+    ]
+
+    const isCompleted = newProgress >= pledge.targetValue
+    const newStatus = isCompleted ? "completed" : pledge.status
+
+    return await client
+      .patch(pledgeId)
+      .set({
+        currentProgress: newProgress,
+        progressLog: newProgressLog,
+        status: newStatus,
+      })
+      .commit()
+  } catch (error) {
+    console.error("Error updating pledge progress:", error)
+    throw error
+  }
+}
+
+// Comment functions
+export const createComment = async (data) => {
+  try {
+    const doc = {
+      _type: "comment",
+      text: data.text,
+      author: data.author,
+      authorId: data.authorId,
+      authorEmail: data.authorEmail,
+      parentType: data.parentType,
+      parentId: data.parentId,
+      likes: 0,
+      replies: [],
+    }
+
+    return await client.create(doc)
+  } catch (error) {
+    console.error("Error creating comment:", error)
+    throw error
+  }
+}
+
+export const fetchComments = async (parentType, parentId) => {
+  try {
+    const query = `
+      *[_type == "comment" && parentType == $parentType && parentId == $parentId] | order(_createdAt desc) {
+        _id,
+        text,
+        author,
+        authorId,
+        likes,
+        replies,
+        _createdAt
+      }
+    `
+
+    return await client.fetch(query, { parentType, parentId })
+  } catch (error) {
+    console.error("Error fetching comments:", error)
+    throw error
+  }
+}
+
+// Reaction functions
+export const createReaction = async (data) => {
+  try {
+    // Check if user already reacted
+    const existingReaction = await client.fetch(
+      `*[_type == "reaction" && userId == $userId && targetType == $targetType && targetId == $targetId && type == $type][0]`,
+      {
+        userId: data.userId,
+        targetType: data.targetType,
+        targetId: data.targetId,
+        type: data.type,
+      },
+    )
+
+    if (existingReaction) {
+      // Remove existing reaction
+      await client.delete(existingReaction._id)
+      return { action: "removed" }
+    } else {
+      // Create new reaction
+      const doc = {
+        _type: "reaction",
+        type: data.type,
+        userId: data.userId,
+        userName: data.userName,
+        targetType: data.targetType,
+        targetId: data.targetId,
+      }
+
+      await client.create(doc)
+      return { action: "added" }
+    }
+  } catch (error) {
+    console.error("Error creating reaction:", error)
+    throw error
+  }
+}
+
+export const fetchReactions = async (targetType, targetId) => {
+  try {
+    const query = `
+      *[_type == "reaction" && targetType == $targetType && targetId == $targetId] {
+        _id,
+        type,
+        userId,
+        userName,
+        _createdAt
+      }
+    `
+
+    return await client.fetch(query, { targetType, targetId })
+  } catch (error) {
+    console.error("Error fetching reactions:", error)
+    throw error
+  }
+}
+
+export const getReactionCounts = async (targetType, targetId) => {
+  try {
+    const reactions = await fetchReactions(targetType, targetId)
+    const counts = {}
+
+    reactions.forEach((reaction) => {
+      counts[reaction.type] = (counts[reaction.type] || 0) + 1
+    })
+
+    return counts
+  } catch (error) {
+    console.error("Error getting reaction counts:", error)
+    return {}
+  }
+}
+
 // Delete functions (for admin)
 export const deleteProblemSubmission = async (submissionId) => {
   try {

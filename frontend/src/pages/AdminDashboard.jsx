@@ -238,12 +238,12 @@ const AdminDashboard = () => {
       path: "analytics",
       description: "View platform statistics and insights",
     },
-    {
-      icon: FaCog,
-      label: "Settings",
-      path: "settings",
-      description: "Configure platform settings",
-    },
+    // {
+    //   icon: FaCog,
+    //   label: "Settings",
+    //   path: "settings",
+    //   description: "Configure platform settings",
+    // },
     {
       icon: () => <span className="text-xl">🌍</span>,
       label: "SDG Content",
@@ -544,12 +544,12 @@ const AdminDashboard = () => {
                           {submission.solutions.length > 0 && (
                             <div className="mb-3 p-3 bg-white rounded-md">
                               <h6 className="text-sm font-medium text-gray-700 mb-2">Solutions:</h6>
-                              {submission.solutions.map((solution) => (
+                              {/* {submission.solutions.map((solution) => (
                                 <div key={solution.id} className="text-sm text-gray-600">
                                   <p>• {solution.description}</p>
                                   <p className="text-xs text-gray-500 mt-1">By {solution.author}</p>
                                 </div>
-                              ))}
+                              ))} */}
                             </div>
                           )}
 

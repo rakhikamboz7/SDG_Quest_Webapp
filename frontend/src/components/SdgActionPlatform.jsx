@@ -1,8 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Plus, Search, Award, XCircle, Camera, Video, Eye, User, Calendar, MessageSquare } from "lucide-react"
+import { Plus, Search, Award, XCircle, Camera, Video } from "lucide-react"
 import { fetchProblemSubmissions, createProblemSubmission } from "../lib/sanity"
+import EnhancedSubmissionCard from "../components/SubmissionCard"
 
 // SDG Goals data
 const sdgGoals = [
@@ -26,13 +27,13 @@ const sdgGoals = [
 ]
 
 // User badges data
-const userBadges = [
-  { name: "Tree Planter", icon: "🌱", description: "Planted 10+ trees", earned: true },
-  { name: "Education Hero", icon: "📚", description: "Helped 5+ students", earned: true },
-  { name: "Hunger Warrior", icon: "🍽️", description: "Fed 20+ people", earned: false },
-  { name: "Water Guardian", icon: "💧", description: "Clean water initiatives", earned: true },
-  { name: "Climate Champion", icon: "🌍", description: "Climate action projects", earned: false },
-]
+// const userBadges = [
+//   { name: "Tree Planter", icon: "🌱", description: "Planted 10+ trees", earned: true },
+//   { name: "Education Hero", icon: "📚", description: "Helped 5+ students", earned: true },
+//   { name: "Hunger Warrior", icon: "🍽️", description: "Fed 20+ people", earned: false },
+//   { name: "Water Guardian", icon: "💧", description: "Clean water initiatives", earned: true },
+//   { name: "Climate Champion", icon: "🌍", description: "Climate action projects", earned: false },
+// ]
 
 const SDGActionPlatform = () => {
   const [problems, setProblems] = useState([])
@@ -310,82 +311,18 @@ const SDGActionPlatform = () => {
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {filteredProblems.map((problem) => {
-                    const goal = getGoalById(problem.goalId)
-                    return (
-                      <div
-                        key={problem.id}
-                        className="bg-white/70 backdrop-blur-sm rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-l-emerald-400 p-6"
-                      >
-                        <div className="flex items-start justify-between gap-3 mb-4">
-                          <div className="flex-1">
-                            <h3 className="text-lg font-semibold text-emerald-800 leading-tight mb-2">
-                              {problem.title}
-                            </h3>
-                            <p className="text-gray-600 text-sm line-clamp-3">{problem.description}</p>
-                          </div>
-                          {problem.hasMedia && (
-                            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded flex items-center gap-1">
-                              📸 Media
-                            </span>
-                          )}
-                        </div>
-
-                        <div className="flex items-center gap-2 mb-4">
-                          <span className={`${goal?.color} text-white text-xs px-2 py-1 rounded`}>
-                            {goal?.icon} Goal {problem.goalId}
-                          </span>
-                          <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded">✅ Approved</span>
-                          {problem.urgency && (
-                            <span
-                              className={`text-xs px-2 py-1 rounded ${
-                                problem.urgency === "high" || problem.urgency === "critical"
-                                  ? "bg-red-100 text-red-700"
-                                  : problem.urgency === "medium"
-                                    ? "bg-yellow-100 text-yellow-700"
-                                    : "bg-gray-100 text-gray-700"
-                              }`}
-                            >
-                              {problem.urgency} priority
-                            </span>
-                          )}
-                        </div>
-
-                        <div className="flex items-center justify-between text-sm text-gray-600 mb-4">
-                          <div className="flex items-center gap-1">
-                            <User className="h-3 w-3" />
-                            <span>By {problem.author}</span>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <div className="flex items-center gap-1">
-                              <MessageSquare className="h-3 w-3" />
-                              <span>{problem.solutions} solution(s)</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Calendar className="h-3 w-3" />
-                              <span>{problem.createdAt}</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {problem.location && (
-                          <div className="text-xs text-gray-500 mb-4 flex items-center gap-1">
-                            📍 {problem.location}
-                          </div>
-                        )}
-
-                        <div className="flex gap-2">
-                          <button className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md text-sm transition-colors">
-                            Take Action
-                          </button>
-                          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm transition-colors">
-                            <Eye className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </div>
-                    )
-                  })}
+                <div className="space-y-6">
+                  {filteredProblems.map((problem) => (
+                    <EnhancedSubmissionCard
+                      key={problem.id}
+                      problem={problem}
+                      onTakeAction={(problem) => {
+                        // Store problem context and navigate to take action
+                        localStorage.setItem("actionContext", JSON.stringify(problem))
+                        window.location.href = "/take-action"
+                      }}
+                    />
+                  ))}
                 </div>
               )}
             </div>
@@ -416,7 +353,7 @@ const SDGActionPlatform = () => {
             )}
 
             {/* User Badges */}
-            <div className="bg-white/70 backdrop-blur-sm rounded-lg shadow-md p-6">
+            {/* <div className="bg-white/70 backdrop-blur-sm rounded-lg shadow-md p-6">
               <h3 className="text-lg font-semibold text-emerald-800 mb-4 flex items-center gap-2">
                 <Award className="h-5 w-5" />
                 Impact Badges
@@ -437,10 +374,10 @@ const SDGActionPlatform = () => {
                   </div>
                 ))}
               </div>
-            </div>
+            </div> */}
 
             {/* SDG Goals Quick Reference */}
-            <div className="bg-white/70 backdrop-blur-sm rounded-lg shadow-md p-6">
+            {/* <div className="bg-white/70 backdrop-blur-sm rounded-lg shadow-md p-6">
               <h3 className="text-lg font-semibold text-emerald-800 mb-4">SDG Goals</h3>
               <div className="grid grid-cols-3 gap-2">
                 {sdgGoals.slice(0, 9).map((goal) => (
@@ -464,7 +401,7 @@ const SDGActionPlatform = () => {
               >
                 View All Goals
               </button>
-            </div>
+            </div> */}
 
             {/* Community Stats */}
             <div className="bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-lg shadow-md p-6">
