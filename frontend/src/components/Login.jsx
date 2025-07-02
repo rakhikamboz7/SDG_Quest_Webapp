@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import { FaUser, FaLock, FaEnvelope, FaEye, FaEyeSlash } from "react-icons/fa"
 
-// Use environment variable or fallback to a default URL
 const BACKEND_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:10000/api"
 
 function LoginSignup() {
@@ -13,7 +12,6 @@ function LoginSignup() {
   const [isSignUp, setIsSignUp] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
-  // Form states
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -21,7 +19,6 @@ function LoginSignup() {
     confirmPassword: "",
   })
 
-  // UI states
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
@@ -32,8 +29,6 @@ function LoginSignup() {
       ...prev,
       [name]: value,
     }))
-
-    // Clear errors when user types
     if (error) setError("")
   }
 
@@ -59,12 +54,10 @@ function LoginSignup() {
         setError("Name is required")
         return false
       }
-
       if (formData.password !== formData.confirmPassword) {
         setError("Passwords do not match")
         return false
       }
-
       if (formData.password.length < 6) {
         setError("Password must be at least 6 characters")
         return false
@@ -75,7 +68,6 @@ function LoginSignup() {
       setError("Email is required")
       return false
     }
-
     if (!formData.password.trim()) {
       setError("Password is required")
       return false
@@ -92,13 +84,12 @@ function LoginSignup() {
     setError("")
 
     try {
-      // Using the correct endpoint from your routes
+      // ✅ SECURE: No role sent from frontend
       await axios.post(`${BACKEND_URL}/register`, {
         name: formData.name,
         email: formData.email,
         password: formData.password,
-        // Role is always 'user' for registration through the UI
-        role: "user",
+        // ✅ No role field - users are always created as 'user'
       })
 
       setSuccess("Registration successful! Please sign in.")
@@ -122,7 +113,6 @@ function LoginSignup() {
     setError("")
 
     try {
-      // Using the correct endpoint from your routes
       const res = await axios.post(`${BACKEND_URL}/login`, {
         email: formData.email,
         password: formData.password,
@@ -134,7 +124,7 @@ function LoginSignup() {
       localStorage.setItem("token", token)
       localStorage.setItem("userId", userId)
 
-      // Get user data
+      // ✅ SECURE: Get user data from protected endpoint
       const userRes = await axios.get(`${BACKEND_URL}/user`, {
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -142,13 +132,13 @@ function LoginSignup() {
       const userData = {
         name: userRes.data.name,
         email: userRes.data.email,
-        role: userRes.data.role || "user",
+        role: userRes.data.role, // ✅ Role comes from server, not frontend
         profilePicture: userRes.data.image,
       }
 
       localStorage.setItem("user", JSON.stringify(userData))
 
-      // Redirect based on role
+      // ✅ SECURE: Role-based redirect using server-verified role
       if (userData.role === "admin") {
         navigate("/admin-dashboard")
       } else {
@@ -163,14 +153,14 @@ function LoginSignup() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="relative bg-white w-full max-w-4xl min-h-[600px] rounded-2xl shadow-2xl overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="relative bg-white w-full max-w-4xl min-h-[400px] rounded-2xl shadow-2xl overflow-hidden">
         {/* Mobile View */}
         <div className="md:hidden p-8">
           <div className="text-center mb-8">
-             <div className="w-50 h-20 rounded-full flex items-center justify-center mb-6">
-               <img src="/logo.svg" alt="Logo" className="w-20 h-20" />
-              </div>
+            <div className="w-50 h-20 rounded-full flex items-center justify-center mb-6">
+              <img src="/logo.svg" alt="Logo" className="w-20 h-20" />
+            </div>
             <h1 className="text-3xl font-bold text-gray-800 mb-2">{isSignUp ? "Join SDG Quest" : "Welcome Back"}</h1>
             <p className="text-gray-600">
               {isSignUp ? "Create your account to start your journey" : "Sign in to continue your SDG journey"}
@@ -278,8 +268,8 @@ function LoginSignup() {
           </form>
         </div>
 
-        {/* Desktop View */}
-        <div className="hidden md:block h-full">
+        {/* Desktop View - Similar structure with same security measures */}
+        <div className="hidden md:block">
           <div className="flex h-full">
             {/* Sign In Form */}
             <div
@@ -288,7 +278,7 @@ function LoginSignup() {
               }`}
             >
               <div className="w-50 h-20 rounded-full flex items-center justify-center mb-6">
-               <img src="/logo.svg" alt="Logo" className="w-20 h-20" />
+                <img src="/logo.svg" alt="Logo" className="w-20 h-20" />
               </div>
               <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome Back</h1>
               <p className="text-gray-600 mb-8 text-center">Sign in to continue your SDG journey</p>
@@ -359,8 +349,9 @@ function LoginSignup() {
               className={`flex flex-col items-center justify-center w-1/2 p-12 transition-opacity duration-500 ${
                 isSignUp ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
               }`}
-            > <div className="w-50 h-20 rounded-full flex items-center justify-center mb-6">
-               <img src="/logo.svg" alt="Logo" className="w-20 h-20" />
+            >
+              <div className="w-50 h-20 rounded-full flex items-center justify-center mb-6">
+                <img src="/logo.svg" alt="Logo" className="w-20 h-20" />
               </div>
               <h1 className="text-3xl font-bold text-gray-800 mb-2">Join SDG Quest</h1>
               <p className="text-gray-600 mb-8 text-center">Create your account to start your journey</p>

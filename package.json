@@ -2,7 +2,15 @@
   "devDependencies": {
     "vite": "^6.3.5"
   },
+  "name": "sdg-quest-admin-setup",
+  "version": "1.0.0",
+  "scripts": {
+    "create-admin": "node scripts/create-admin.js",
+    "create-admin-backend": "cd backend && node scripts/create-admin-local.js"
+  },
   "dependencies": {
+    "axios": "^1.10.0",
+    "dotenv": "^17.0.1",
     "jwt-decode": "^4.0.0"
   }
 }

@@ -6,12 +6,29 @@ import { Bar, Doughnut } from "react-chartjs-2"
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, BarElement, ArcElement, Tooltip } from "chart.js"
 import axios from "axios"
 import BadgesDisplay from "../components/BadgesDisplay"
-import { Target, CheckCircle, Clock, XCircle, Eye, Calendar, MessageSquare, Camera, Edit3, Save, X } from "lucide-react"
+import {
+  Target,
+  CheckCircle,
+  Clock,
+  XCircle,
+  Eye,
+  Calendar,
+  MessageSquare,
+  Camera,
+  Edit3,
+  Save,
+  X,
+  Home,
+  Award,
+  Activity,
+  TrendingUp,
+  LogOut,
+} from "lucide-react"
 import { fetchUserSubmissions, fetchUserPledges, uploadImage, client } from "../lib/sanity"
 import PledgeDashboard from "../components/PledgeDashboard"
-import "../components/ui/styles/dashboard.css"
 
 const BACKEND_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:10000"
+const PRIMARY_COLOR = "#005a54"
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, BarElement, ArcElement, Tooltip)
 
@@ -29,26 +46,36 @@ const Dashboard = () => {
   const [isEditingProfile, setIsEditingProfile] = useState(false)
   const [editedName, setEditedName] = useState("")
   const [isUploadingImage, setIsUploadingImage] = useState(false)
+  const [activeSection, setActiveSection] = useState("overview")
 
   // SDG Goals for reference
   const sdgGoals = [
-    { id: 1, name: "No Poverty", color: "bg-red-500", icon: "🏠" },
-    { id: 2, name: "Zero Hunger", color: "bg-yellow-500", icon: "🌾" },
-    { id: 3, name: "Good Health", color: "bg-green-500", icon: "🏥" },
-    { id: 4, name: "Quality Education", color: "bg-red-600", icon: "📚" },
-    { id: 5, name: "Gender Equality", color: "bg-orange-500", icon: "⚖️" },
-    { id: 6, name: "Clean Water", color: "bg-blue-400", icon: "💧" },
-    { id: 7, name: "Clean Energy", color: "bg-yellow-400", icon: "⚡" },
-    { id: 8, name: "Economic Growth", color: "bg-purple-500", icon: "📈" },
-    { id: 9, name: "Innovation", color: "bg-orange-600", icon: "🏭" },
-    { id: 10, name: "Reduced Inequalities", color: "bg-pink-500", icon: "🤝" },
-    { id: 11, name: "Sustainable Cities", color: "bg-orange-400", icon: "🏙️" },
-    { id: 12, name: "Responsible Consumption", color: "bg-yellow-600", icon: "♻️" },
-    { id: 13, name: "Climate Action", color: "bg-green-600", icon: "🌍" },
-    { id: 14, name: "Life Below Water", color: "bg-blue-500", icon: "🐟" },
-    { id: 15, name: "Life on Land", color: "bg-green-700", icon: "🌳" },
-    { id: 16, name: "Peace & Justice", color: "bg-blue-600", icon: "⚖️" },
-    { id: 17, name: "Partnerships", color: "bg-blue-800", icon: "🤝" },
+    { id: 1, name: "No Poverty", color: "#E5243B", icon: "🏠" },
+    { id: 2, name: "Zero Hunger", color: "#DDA63A", icon: "🌾" },
+    { id: 3, name: "Good Health", color: "#4C9F38", icon: "🏥" },
+    { id: 4, name: "Quality Education", color: "#C5192D", icon: "📚" },
+    { id: 5, name: "Gender Equality", color: "#FF3A21", icon: "⚖️" },
+    { id: 6, name: "Clean Water", color: "#26BDE2", icon: "💧" },
+    { id: 7, name: "Clean Energy", color: "#FCC30B", icon: "⚡" },
+    { id: 8, name: "Economic Growth", color: "#A21942", icon: "📈" },
+    { id: 9, name: "Innovation", color: "#FD6925", icon: "🏭" },
+    { id: 10, name: "Reduced Inequalities", color: "#DD1367", icon: "🤝" },
+    { id: 11, name: "Sustainable Cities", color: "#FD9D24", icon: "🏙️" },
+    { id: 12, name: "Responsible Consumption", color: "#BF8B2E", icon: "♻️" },
+    { id: 13, name: "Climate Action", color: "#3F7E44", icon: "🌍" },
+    { id: 14, name: "Life Below Water", color: "#0A97D9", icon: "🐟" },
+    { id: 15, name: "Life on Land", color: "#56C02B", icon: "🌳" },
+    { id: 16, name: "Peace & Justice", color: "#00689D", icon: "⚖️" },
+    { id: 17, name: "Partnerships", color: "#19486A", icon: "🤝" },
+  ]
+
+  // Navigation items
+  const navigationItems = [
+    { id: "overview", label: "Overview", icon: Home },
+    { id: "submissions", label: "My Actions", icon: Target },
+    { id: "pledges", label: "My Pledges", icon: Award },
+    { id: "progress", label: "Progress", icon: TrendingUp },
+    { id: "achievements", label: "Achievements", icon: Award },
   ]
 
   // Assign badges based on total quiz score and submissions
@@ -83,7 +110,6 @@ const Dashboard = () => {
   const fetchUserSubmissionsData = useCallback(async (userId) => {
     try {
       const submissions = await fetchUserSubmissions(userId)
-
       const transformedSubmissions = submissions.map((sub) => ({
         id: sub.id,
         title: sub.title,
@@ -95,7 +121,6 @@ const Dashboard = () => {
         solutions: sub.solutions?.length || 0,
         solutionDetails: sub.solutions || [],
       }))
-
       setUserSubmissions(transformedSubmissions)
       return transformedSubmissions
     } catch (error) {
@@ -133,7 +158,7 @@ const Dashboard = () => {
 
     const hour = new Date().getHours()
     const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening"
-    setWelcomeMessage(`${greeting}, ${userData.name}! 👋`)
+    setWelcomeMessage(`${greeting}, ${userData.name}!`)
 
     const loadData = async () => {
       const scores = await fetchScores(userId)
@@ -167,11 +192,9 @@ const Dashboard = () => {
     setUploadError("")
 
     try {
-      // Upload to Sanity
       const uploadedImage = await uploadImage(file, `profile-${user.id || Date.now()}.${file.type.split("/")[1]}`)
-
-      // Create or update user profile document in Sanity
       const userId = localStorage.getItem("userId")
+
       const userProfileDoc = {
         _type: "userProfile",
         userId: userId,
@@ -181,28 +204,22 @@ const Dashboard = () => {
         updatedAt: new Date().toISOString(),
       }
 
-      // Check if profile exists
       const existingProfile = await client.fetch(`*[_type == "userProfile" && userId == $userId][0]`, { userId })
 
-      let result
       if (existingProfile) {
-        result = await client
+        await client
           .patch(existingProfile._id)
           .set({ profileImage: uploadedImage, updatedAt: new Date().toISOString() })
           .commit()
       } else {
-        result = await client.create(userProfileDoc)
+        await client.create(userProfileDoc)
       }
 
-      // Update local state
       const imageUrl = uploadedImage.asset._ref
       setProfileImage(imageUrl)
-
       const updatedUser = { ...user, profilePicture: imageUrl }
       setUser(updatedUser)
       localStorage.setItem("user", JSON.stringify(updatedUser))
-
-      console.log("Profile image updated successfully!")
     } catch (error) {
       console.error("Error updating profile image:", error)
       setUploadError("Failed to update profile image.")
@@ -219,8 +236,6 @@ const Dashboard = () => {
 
     try {
       const userId = localStorage.getItem("userId")
-
-      // Update in Sanity
       const existingProfile = await client.fetch(`*[_type == "userProfile" && userId == $userId][0]`, { userId })
 
       if (existingProfile) {
@@ -238,14 +253,13 @@ const Dashboard = () => {
         })
       }
 
-      // Update local state
       const updatedUser = { ...user, name: editedName.trim() }
       setUser(updatedUser)
       localStorage.setItem("user", JSON.stringify(updatedUser))
 
       const hour = new Date().getHours()
       const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening"
-      setWelcomeMessage(`${greeting}, ${editedName.trim()}! 👋`)
+      setWelcomeMessage(`${greeting}, ${editedName.trim()}!`)
 
       setIsEditingProfile(false)
       setUploadError("")
@@ -278,7 +292,8 @@ const Dashboard = () => {
       {
         label: "Total Score per Goal",
         data: goalScores,
-        backgroundColor: "#008080",
+        backgroundColor: PRIMARY_COLOR,
+        borderRadius: 4,
       },
     ],
   }
@@ -291,7 +306,8 @@ const Dashboard = () => {
     datasets: [
       {
         data: [completedQuizzes, remainingQuizzes],
-        backgroundColor: ["#008080", "#f0b100"],
+        backgroundColor: [PRIMARY_COLOR, "#e5e7eb"],
+        borderWidth: 0,
       },
     ],
   }
@@ -299,11 +315,11 @@ const Dashboard = () => {
   const getStatusIcon = (status) => {
     switch (status) {
       case "approved":
-        return <CheckCircle className="h-4 w-4 text-green-500" />
+        return <CheckCircle className="h-4 w-4 text-green-600" />
       case "pending":
-        return <Clock className="h-4 w-4 text-yellow-500" />
+        return <Clock className="h-4 w-4 text-yellow-600" />
       case "rejected":
-        return <XCircle className="h-4 w-4 text-red-500" />
+        return <XCircle className="h-4 w-4 text-red-600" />
       default:
         return <Clock className="h-4 w-4 text-gray-500" />
     }
@@ -312,13 +328,13 @@ const Dashboard = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case "approved":
-        return "text-green-600 bg-green-50 border-green-200"
+        return "text-green-700 bg-green-50 border-green-200"
       case "pending":
-        return "text-yellow-600 bg-yellow-50 border-yellow-200"
+        return "text-yellow-700 bg-yellow-50 border-yellow-200"
       case "rejected":
-        return "text-red-600 bg-red-50 border-red-200"
+        return "text-red-700 bg-red-50 border-red-200"
       default:
-        return "text-gray-600 bg-gray-50 border-gray-200"
+        return "text-gray-700 bg-gray-50 border-gray-200"
     }
   }
 
@@ -333,300 +349,501 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="dashboard-loading">
-        <div className="loading-spinner"></div>
-        <p>Loading your dashboard...</p>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-gray-300 border-t-2 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading your dashboard...</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="dashboard-container">
-      {/* Sidebar */}
-      <div className="dashboard-sidebar">
-        <div className="profile-section">
-          <div className="profile-image-container">
-            <div className="profile-image-wrapper">
-              <img
-                src={profileImage.includes("http") ? profileImage : `/placeholder.svg?height=128&width=128`}
-                alt="Profile"
-                className="profile-image"
-              />
-              <label className="image-upload-button">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleProfileImageChange}
-                  className="hidden-input"
-                  disabled={isUploadingImage}
-                />
-                {isUploadingImage ? <div className="upload-spinner"></div> : <Camera size={16} />}
-              </label>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <div
+                className="w-8 h-8 rounded-full flex items-center justify-center mr-3"
+                style={{ backgroundColor: PRIMARY_COLOR }}
+              >
+                <span className="text-white text-sm font-bold">SDG</span>
+              </div>
+              <h1 className="text-xl font-semibold text-gray-900">Dashboard</h1>
+            </div>
+
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-gray-600 hidden sm:block">{welcomeMessage}</span>
+              <button
+                onClick={handleLogout}
+                className="flex items-center space-x-2 text-gray-500 hover:text-gray-700 transition-colors p-2 rounded-md hover:bg-gray-100"
+              >
+                <LogOut size={18} />
+                <span className="hidden sm:inline text-sm">Logout</span>
+              </button>
             </div>
           </div>
+        </div>
+      </header>
 
-          {user && (
-            <div className="profile-info">
-              {isEditingProfile ? (
-                <div className="edit-name-container">
-                  <input
-                    type="text"
-                    value={editedName}
-                    onChange={(e) => setEditedName(e.target.value)}
-                    className="name-input"
-                    placeholder="Enter your name"
-                  />
-                  <div className="edit-buttons">
-                    <button onClick={handleNameUpdate} className="save-button">
-                      <Save size={14} />
-                    </button>
-                    <button
-                      onClick={() => {
-                        setIsEditingProfile(false)
-                        setEditedName(user.name || "")
-                        setUploadError("")
-                      }}
-                      className="cancel-button"
-                    >
-                      <X size={14} />
-                    </button>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Sidebar */}
+          <div className="lg:w-80 flex-shrink-0">
+            {/* Profile Card */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+              <div className="text-center">
+                <div className="relative inline-block mb-4">
+                  <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-100 border-2 border-gray-200">
+                    <img
+                      src={profileImage.includes("http") ? profileImage : `/placeholder.svg?height=80&width=80`}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
+                  <label className="absolute bottom-0 right-0 w-6 h-6 bg-white rounded-full border border-gray-300 flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleProfileImageChange}
+                      className="hidden"
+                      disabled={isUploadingImage}
+                    />
+                    {isUploadingImage ? (
+                      <div className="w-3 h-3 border border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      <Camera size={12} className="text-gray-600" />
+                    )}
+                  </label>
                 </div>
-              ) : (
-                <div className="name-display">
-                  <h3 className="user-name">{user.name}</h3>
-                  <button onClick={() => setIsEditingProfile(true)} className="edit-name-button">
-                    <Edit3 size={14} />
-                  </button>
-                </div>
-              )}
-              <p className="user-email">{user.email}</p>
-            </div>
-          )}
 
-          {uploadError && <p className="error-message">{uploadError}</p>}
-        </div>
-
-        <div className="navigation-buttons">
-          <button onClick={() => navigate("/")} className="nav-button primary">
-            <svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-              />
-            </svg>
-            Home
-          </button>
-
-          <button onClick={() => navigate("/sdg-actions")} className="nav-button secondary">
-            <Target className="nav-icon" />
-            SDG Actions
-          </button>
-
-          <button onClick={() => navigate("/take-action")} className="nav-button tertiary">
-            <svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-            Take Action
-          </button>
-
-          <button onClick={handleLogout} className="nav-button logout">
-            Logout
-          </button>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="dashboard-main">
-        <div className="welcome-section">
-          <h1 className="welcome-title">{welcomeMessage}</h1>
-          <p className="welcome-subtitle">
-            Welcome to your personal dashboard. Track your progress and achieve your goals!
-          </p>
-        </div>
-
-        {/* Stats Overview */}
-        <div className="stats-overview">
-          <div className="stat-card primary">
-            <div className="stat-icon">🎯</div>
-            <div className="stat-content">
-              <h3>Total Points</h3>
-              <p className="stat-number">
-                {quizScores.reduce((acc, quiz) => acc + (quiz.score || 0), 0)}
-                <span className="stat-total">/85</span>
-              </p>
-            </div>
-          </div>
-
-          <div className="stat-card secondary">
-            <div className="stat-icon">📚</div>
-            <div className="stat-content">
-              <h3>Completed Goals</h3>
-              <p className="stat-number">
-                {completedQuizzes}
-                <span className="stat-total">/17</span>
-              </p>
-            </div>
-          </div>
-
-          <div className="stat-card tertiary">
-            <div className="stat-icon">🚀</div>
-            <div className="stat-content">
-              <h3>Actions Submitted</h3>
-              <p className="stat-number">{userSubmissions.length}</p>
-            </div>
-          </div>
-
-          <div className="stat-card quaternary">
-            <div className="stat-icon">✅</div>
-            <div className="stat-content">
-              <h3>Approved Actions</h3>
-              <p className="stat-number">{userSubmissions.filter((s) => s.status === "approved").length}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Enhanced Action Submissions Section */}
-        <div className="submissions-section">
-          <div className="section-header">
-            <h3 className="section-title">Your SDG Action Submissions</h3>
-            <div className="section-actions">
-              <span className="total-count">Total: {userSubmissions.length}</span>
-              <button onClick={refreshSubmissions} className="refresh-button">
-                <svg className="refresh-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                  />
-                </svg>
-              </button>
-              <button onClick={() => navigate("/sdg-actions")} className="submit-button">
-                Submit New Action
-              </button>
-            </div>
-          </div>
-
-          {userSubmissions.length > 0 ? (
-            <div className="submissions-grid">
-              {userSubmissions.map((submission) => {
-                const goal = getGoalById(submission.goalId)
-                return (
-                  <div key={submission.id} className="submission-card">
-                    <div className="submission-header">
-                      <h4 className="submission-title">{submission.title}</h4>
-                      <div className={`status-badge ${getStatusColor(submission.status)}`}>
-                        {getStatusIcon(submission.status)}
-                        <span>{submission.status.charAt(0).toUpperCase() + submission.status.slice(1)}</span>
+                {user && (
+                  <div>
+                    {isEditingProfile ? (
+                      <div className="space-y-3">
+                        <input
+                          type="text"
+                          value={editedName}
+                          onChange={(e) => setEditedName(e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="Enter your name"
+                        />
+                        <div className="flex space-x-2 justify-center">
+                          <button
+                            onClick={handleNameUpdate}
+                            className="flex items-center space-x-1 px-3 py-1 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition-colors"
+                          >
+                            <Save size={12} />
+                            <span>Save</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              setIsEditingProfile(false)
+                              setEditedName(user.name || "")
+                              setUploadError("")
+                            }}
+                            className="flex items-center space-x-1 px-3 py-1 bg-gray-600 text-white rounded-md text-sm hover:bg-gray-700 transition-colors"
+                          >
+                            <X size={12} />
+                            <span>Cancel</span>
+                          </button>
+                        </div>
                       </div>
-                    </div>
-
-                    <p className="submission-description">{submission.description}</p>
-
-                    <div className="submission-meta">
-                      {goal && (
-                        <span className={`goal-badge ${goal.color}`}>
-                          {goal.icon} Goal {submission.goalId}
-                        </span>
-                      )}
-                      <div className="meta-info">
-                        <Calendar size={12} />
-                        <span>Submitted: {submission.createdAt}</span>
+                    ) : (
+                      <div>
+                        <div className="flex items-center justify-center space-x-2 mb-1">
+                          <h3 className="text-lg font-semibold text-gray-900">{user.name}</h3>
+                          <button
+                            onClick={() => setIsEditingProfile(true)}
+                            className="text-gray-400 hover:text-gray-600 transition-colors"
+                          >
+                            <Edit3 size={14} />
+                          </button>
+                        </div>
+                        <p className="text-sm text-gray-600">{user.email}</p>
                       </div>
-                      <div className="meta-info">
-                        <MessageSquare size={12} />
-                        <span>{submission.solutions} solution(s)</span>
-                      </div>
-                    </div>
-
-                    {submission.status === "approved" && (
-                      <button onClick={() => navigate("/sdg-actions")} className="view-public-button">
-                        <Eye size={14} />
-                        View Public
-                      </button>
                     )}
                   </div>
-                )
-              })}
-            </div>
-          ) : (
-            <div className="empty-state">
-              <Target className="empty-icon" />
-              <h4>No SDG Actions Yet</h4>
-              <p>Ready to make a difference? Submit your first SDG action to help solve community problems.</p>
-              <button onClick={() => navigate("/sdg-actions")} className="cta-button">
-                Submit Your First Action
-              </button>
-            </div>
-          )}
-        </div>
+                )}
 
-        {/* Pledge Dashboard Section */}
-        <div className="pledges-section">
-          <PledgeDashboard userId={user?.id || localStorage.getItem("userId")} userName={user?.name} />
-        </div>
+                {uploadError && <p className="text-red-600 text-xs mt-2">{uploadError}</p>}
+              </div>
+            </div>
 
-        {/* Charts Section */}
-        <div className="charts-section">
-          <div className="chart-container">
-            <h3 className="chart-title">Quizzes Progress (Grouped by Goal)</h3>
-            <div className="chart-wrapper">
-              <Bar
-                data={quizzesData}
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  scales: {
-                    y: {
-                      beginAtZero: true,
-                      max: 5,
-                      ticks: { stepSize: 1 },
-                    },
-                  },
-                }}
-              />
+            {/* Navigation */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+              <nav className="space-y-1">
+                {navigationItems.map((item) => {
+                  const IconComponent = item.icon
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => setActiveSection(item.id)}
+                      className={`w-full flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                        activeSection === item.id ? "text-white" : "text-gray-700 hover:bg-gray-100"
+                      }`}
+                      style={{
+                        backgroundColor: activeSection === item.id ? PRIMARY_COLOR : "transparent",
+                      }}
+                    >
+                      <IconComponent size={18} />
+                      <span>{item.label}</span>
+                    </button>
+                  )
+                })}
+              </nav>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+              <h3 className="text-sm font-semibold text-gray-900 mb-3">Quick Actions</h3>
+              <div className="space-y-2">
+                <button
+                  onClick={() => navigate("/")}
+                  className="w-full flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+                >
+                  <Home size={16} />
+                  <span>Home</span>
+                </button>
+                <button
+                  onClick={() => navigate("/sdg-actions")}
+                  className="w-full flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+                >
+                  <Target size={16} />
+                  <span>SDG Actions</span>
+                </button>
+                <button
+                  onClick={() => navigate("/take-action")}
+                  className="w-full flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+                >
+                  <Activity size={16} />
+                  <span>Take Action</span>
+                </button>
+              </div>
             </div>
           </div>
 
-          <div className="chart-container">
-            <h3 className="chart-title">Quiz Completion</h3>
-            <div className="chart-wrapper">
-              <Doughnut data={quizCompletionData} options={{ responsive: true, maintainAspectRatio: false }} />
-            </div>
-          </div>
-        </div>
+          {/* Main Content */}
+          <div className="flex-1">
+            {/* Overview Section */}
+            {activeSection === "overview" && (
+              <div className="space-y-6">
+                {/* Stats Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                        <Target className="text-blue-600" size={20} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Total Points</p>
+                        <p className="text-xl font-bold text-gray-900">
+                          {quizScores.reduce((acc, quiz) => acc + (quiz.score || 0), 0)}
+                          <span className="text-sm font-normal text-gray-500">/85</span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
 
-        {/* Achievements Section */}
-        <div className="achievements-section">
-          <h3 className="section-title">Your Achievements & Rewards</h3>
-          <BadgesDisplay
-            badgesEarned={badgesEarned}
-            quizScores={quizScores}
-            userName={user?.name || "User"}
-            showProgress={true}
-          />
-        </div>
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                        <CheckCircle className="text-green-600" size={20} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Completed Goals</p>
+                        <p className="text-xl font-bold text-gray-900">
+                          {completedQuizzes}
+                          <span className="text-sm font-normal text-gray-500">/17</span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
 
-        {/* Achievement Summary */}
-        <div className="achievement-summary">
-          <div className="summary-content">
-            <div className="summary-text">
-              <h3>🎉 Keep Up the Great Work!</h3>
-              <p>You're making amazing progress on your SDG journey. Share your achievements and inspire others!</p>
-            </div>
-            <div className="summary-stats">
-              <div className="summary-stat">
-                <p className="summary-number">{Math.round((completedQuizzes / 17) * 100)}%</p>
-                <p className="summary-label">Quiz Completion</p>
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                        <Activity className="text-purple-600" size={20} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Actions Submitted</p>
+                        <p className="text-xl font-bold text-gray-900">{userSubmissions.length}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
+                        <Award className="text-yellow-600" size={20} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Approved Actions</p>
+                        <p className="text-xl font-bold text-gray-900">
+                          {userSubmissions.filter((s) => s.status === "approved").length}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Charts */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Quiz Progress by Goal</h3>
+                    <div className="h-64">
+                      <Bar
+                        data={quizzesData}
+                        options={{
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          plugins: {
+                            legend: {
+                              display: false,
+                            },
+                          },
+                          scales: {
+                            y: {
+                              beginAtZero: true,
+                              max: 5,
+                              ticks: { stepSize: 1 },
+                            },
+                            x: {
+                              ticks: {
+                                maxRotation: 45,
+                                minRotation: 45,
+                              },
+                            },
+                          },
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Quiz Completion</h3>
+                    <div className="h-64 flex items-center justify-center">
+                      <div className="w-48 h-48">
+                        <Doughnut
+                          data={quizCompletionData}
+                          options={{
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                              legend: {
+                                position: "bottom",
+                              },
+                            },
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="summary-stat">
-                <p className="summary-number">{userSubmissions.filter((s) => s.status === "approved").length}</p>
-                <p className="summary-label">Approved Actions</p>
+            )}
+
+            {/* Submissions Section */}
+            {activeSection === "submissions" && (
+              <div className="space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900">Your SDG Actions</h2>
+                    <p className="text-sm text-gray-600 mt-1">Track and manage your submitted actions</p>
+                  </div>
+                  <div className="flex items-center space-x-3 mt-4 sm:mt-0">
+                    <span className="text-sm text-gray-500">Total: {userSubmissions.length}</span>
+                    <button
+                      onClick={refreshSubmissions}
+                      className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      <Activity size={16} />
+                    </button>
+                    <button
+                      onClick={() => navigate("/sdg-actions")}
+                      className="px-4 py-2 text-white rounded-md text-sm font-medium hover:opacity-90 transition-opacity"
+                      style={{ backgroundColor: PRIMARY_COLOR }}
+                    >
+                      Submit New Action
+                    </button>
+                  </div>
+                </div>
+
+                {userSubmissions.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {userSubmissions.map((submission) => {
+                      const goal = getGoalById(submission.goalId)
+                      return (
+                        <div key={submission.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                          <div className="flex items-start justify-between mb-3">
+                            <h4 className="font-semibold text-gray-900 text-sm">{submission.title}</h4>
+                            <div
+                              className={`flex items-center space-x-1 px-2 py-1 rounded-full text-xs border ${getStatusColor(submission.status)}`}
+                            >
+                              {getStatusIcon(submission.status)}
+                              <span className="capitalize">{submission.status}</span>
+                            </div>
+                          </div>
+
+                          <p className="text-gray-600 text-sm mb-3 line-clamp-2">{submission.description}</p>
+
+                          <div className="flex items-center justify-between text-xs text-gray-500">
+                            {goal && (
+                              <span
+                                className="px-2 py-1 rounded text-white text-xs"
+                                style={{ backgroundColor: goal.color }}
+                              >
+                                {goal.icon} Goal {submission.goalId}
+                              </span>
+                            )}
+                            <div className="flex items-center space-x-3">
+                              <div className="flex items-center space-x-1">
+                                <Calendar size={12} />
+                                <span>{submission.createdAt}</span>
+                              </div>
+                              <div className="flex items-center space-x-1">
+                                <MessageSquare size={12} />
+                                <span>{submission.solutions} solutions</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {submission.status === "approved" && (
+                            <button
+                              onClick={() => navigate("/sdg-actions")}
+                              className="mt-3 flex items-center space-x-1 text-blue-600 hover:text-blue-700 text-xs"
+                            >
+                              <Eye size={12} />
+                              <span>View Public</span>
+                            </button>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                ) : (
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+                    <Target className="mx-auto text-gray-400 mb-4" size={48} />
+                    <h4 className="text-lg font-semibold text-gray-900 mb-2">No SDG Actions Yet</h4>
+                    <p className="text-gray-600 mb-4">
+                      Ready to make a difference? Submit your first SDG action to help solve community problems.
+                    </p>
+                    <button
+                      onClick={() => navigate("/sdg-actions")}
+                      className="px-6 py-2 text-white rounded-md font-medium hover:opacity-90 transition-opacity"
+                      style={{ backgroundColor: PRIMARY_COLOR }}
+                    >
+                      Submit Your First Action
+                    </button>
+                  </div>
+                )}
               </div>
-            </div>
+            )}
+
+            {/* Pledges Section */}
+            {activeSection === "pledges" && (
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <PledgeDashboard userId={user?.id || localStorage.getItem("userId")} userName={user?.name} />
+              </div>
+            )}
+
+            {/* Progress Section */}
+            {activeSection === "progress" && (
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900 mb-2">Your Progress</h2>
+                  <p className="text-sm text-gray-600">Track your journey towards achieving the SDGs</p>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Quiz Progress by Goal</h3>
+                    <div className="h-80">
+                      <Bar
+                        data={quizzesData}
+                        options={{
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          plugins: {
+                            legend: {
+                              display: false,
+                            },
+                          },
+                          scales: {
+                            y: {
+                              beginAtZero: true,
+                              max: 5,
+                              ticks: { stepSize: 1 },
+                            },
+                            x: {
+                              ticks: {
+                                maxRotation: 45,
+                                minRotation: 45,
+                              },
+                            },
+                          },
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Overall Completion</h3>
+                    <div className="h-80 flex items-center justify-center">
+                      <div className="w-64 h-64">
+                        <Doughnut
+                          data={quizCompletionData}
+                          options={{
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                              legend: {
+                                position: "bottom",
+                              },
+                            },
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Achievement Summary</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="text-center p-4 bg-gray-50 rounded-lg">
+                      <p className="text-2xl font-bold text-gray-900">{Math.round((completedQuizzes / 17) * 100)}%</p>
+                      <p className="text-sm text-gray-600">Quiz Completion</p>
+                    </div>
+                    <div className="text-center p-4 bg-gray-50 rounded-lg">
+                      <p className="text-2xl font-bold text-gray-900">
+                        {userSubmissions.filter((s) => s.status === "approved").length}
+                      </p>
+                      <p className="text-sm text-gray-600">Approved Actions</p>
+                    </div>
+                    <div className="text-center p-4 bg-gray-50 rounded-lg">
+                      <p className="text-2xl font-bold text-gray-900">{badgesEarned.length}</p>
+                      <p className="text-sm text-gray-600">Badges Earned</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Achievements Section */}
+            {activeSection === "achievements" && (
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">Your Achievements & Rewards</h2>
+                <BadgesDisplay
+                  badgesEarned={badgesEarned}
+                  quizScores={quizScores}
+                  userName={user?.name || "User"}
+                  showProgress={true}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

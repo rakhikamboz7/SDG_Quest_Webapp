@@ -2,10 +2,18 @@ const bcrypt = require("bcryptjs")
 const User = require("../models/user")
 const generateToken = require("../utils/generateToken")
 
+// ✅ Register User
 exports.registerUser = async (req, res) => {
-  const { name, email, password, role } = req.body
+  console.log("📝 Registration request received:", req.body)
+
+  const { name, email, password } = req.body
 
   try {
+    // Validation
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: "All fields are required" })
+    }
+
     // Check if user already exists
     const existingUser = await User.findOne({ email })
     if (existingUser) {
@@ -20,16 +28,17 @@ exports.registerUser = async (req, res) => {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10)
 
-    // Create new user
+    // Create new user - ALWAYS as 'user' role
     const newUser = new User({
       name,
       email,
       password: hashedPassword,
-      role: role || "user", // Default to 'user' if no role specified
-      image: req.file ? req.file.path : null,
+      role: "user", // ✅ Hardcoded - no role from frontend
+      isActive: true,
     })
 
     await newUser.save()
+    console.log("✅ User registered successfully:", email)
 
     res.status(201).json({
       message: "User registered successfully",
@@ -41,18 +50,27 @@ exports.registerUser = async (req, res) => {
       },
     })
   } catch (err) {
-    console.error("Registration error:", err)
-    res.status(400).json({ error: err.message })
+    console.error("❌ Registration error:", err)
+    res.status(500).json({ error: err.message })
   }
 }
 
+// ✅ Login User
 exports.loginUser = async (req, res) => {
+  console.log("🔐 Login request received:", req.body.email)
+
   const { email, password } = req.body
 
   try {
+    // Validation
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required" })
+    }
+
     // Find user by email
     const user = await User.findOne({ email })
     if (!user) {
+      console.log("❌ User not found:", email)
       return res.status(404).json({ error: "User not found" })
     }
 
@@ -64,6 +82,7 @@ exports.loginUser = async (req, res) => {
     // Validate password
     const isPasswordValid = await bcrypt.compare(password, user.password)
     if (!isPasswordValid) {
+      console.log("❌ Invalid password for:", email)
       return res.status(401).json({ error: "Invalid credentials" })
     }
 
@@ -71,10 +90,13 @@ exports.loginUser = async (req, res) => {
     user.lastLogin = new Date()
     await user.save()
 
-    // Generate token and send response
+    // Generate token
     const token = generateToken(user._id)
 
+    console.log("✅ Login successful:", email, "Role:", user.role)
+
     res.json({
+      message: "Login successful",
       token,
       userId: user._id,
       user: {
@@ -86,16 +108,15 @@ exports.loginUser = async (req, res) => {
       },
     })
   } catch (err) {
-    console.error("Login error:", err)
+    console.error("❌ Login error:", err)
     res.status(500).json({ error: "Server error" })
   }
 }
 
+// ✅ Get User Data
 exports.getUserData = async (req, res) => {
   try {
-    // req.user is set by the auth middleware
     const user = await User.findById(req.user.id).select("-password")
-
     if (!user) {
       return res.status(404).json({ error: "User not found" })
     }
@@ -114,14 +135,9 @@ exports.getUserData = async (req, res) => {
   }
 }
 
-// Additional controller methods for role-based functionality
+// ✅ Get All Users (Admin only)
 exports.getAllUsers = async (req, res) => {
   try {
-    // Only allow admins to access this endpoint
-    if (req.user.role !== "admin") {
-      return res.status(403).json({ error: "Access denied. Admin role required." })
-    }
-
     const users = await User.find().select("-password")
     res.json(users)
   } catch (err) {
@@ -130,21 +146,21 @@ exports.getAllUsers = async (req, res) => {
   }
 }
 
+// ✅ Update User Role (Admin only)
 exports.updateUserRole = async (req, res) => {
   try {
-    // Only allow admins to access this endpoint
-    if (req.user.role !== "admin") {
-      return res.status(403).json({ error: "Access denied. Admin role required." })
-    }
-
     const { userId, role } = req.body
 
     if (!["user", "admin"].includes(role)) {
       return res.status(400).json({ error: "Invalid role specified" })
     }
 
-    const user = await User.findByIdAndUpdate(userId, { role }, { new: true }).select("-password")
+    // Prevent self-role modification
+    if (req.user.id === userId) {
+      return res.status(403).json({ error: "Cannot modify your own role" })
+    }
 
+    const user = await User.findByIdAndUpdate(userId, { role }, { new: true }).select("-password")
     if (!user) {
       return res.status(404).json({ error: "User not found" })
     }
@@ -159,17 +175,17 @@ exports.updateUserRole = async (req, res) => {
   }
 }
 
+// ✅ Deactivate User (Admin only)
 exports.deactivateUser = async (req, res) => {
   try {
-    // Only allow admins to access this endpoint
-    if (req.user.role !== "admin") {
-      return res.status(403).json({ error: "Access denied. Admin role required." })
-    }
-
     const { userId } = req.params
 
-    const user = await User.findByIdAndUpdate(userId, { isActive: false }, { new: true }).select("-password")
+    // Prevent self-deactivation
+    if (req.user.id === userId) {
+      return res.status(403).json({ error: "Cannot deactivate your own account" })
+    }
 
+    const user = await User.findByIdAndUpdate(userId, { isActive: false }, { new: true }).select("-password")
     if (!user) {
       return res.status(404).json({ error: "User not found" })
     }
@@ -180,6 +196,52 @@ exports.deactivateUser = async (req, res) => {
     })
   } catch (err) {
     console.error("Deactivate user error:", err)
+    res.status(500).json({ error: "Server error" })
+  }
+}
+
+// ✅ Create Admin User
+exports.createAdminUser = async (req, res) => {
+  try {
+    const { adminSecret } = req.body
+
+    // Check admin secret
+    if (adminSecret !== process.env.ADMIN_CREATION_SECRET) {
+      return res.status(403).json({ error: "Invalid admin secret" })
+    }
+
+    const adminEmail = process.env.ADMIN_EMAIL || "admin@sdgquest.com"
+    const adminPassword = process.env.ADMIN_PASSWORD || "admin123"
+
+    // Check if admin already exists
+    const existingAdmin = await User.findOne({ email: adminEmail })
+    if (existingAdmin) {
+      return res.status(400).json({ error: "Admin user already exists" })
+    }
+
+    const hashedPassword = await bcrypt.hash(adminPassword, 10)
+
+    const adminUser = new User({
+      name: "System Administrator",
+      email: adminEmail,
+      password: hashedPassword,
+      role: "admin",
+      isActive: true,
+    })
+
+    await adminUser.save()
+
+    res.status(201).json({
+      message: "Admin user created successfully",
+      admin: {
+        id: adminUser._id,
+        name: adminUser.name,
+        email: adminUser.email,
+        role: adminUser.role,
+      },
+    })
+  } catch (err) {
+    console.error("Create admin error:", err)
     res.status(500).json({ error: "Server error" })
   }
 }

@@ -743,7 +743,7 @@ const SDGWheel = () => {
                       <p className="text-sm text-blue-600">Detailed information</p>
                     </motion.div>
 
-                    <Link to={`/quiz/${goal.goalNumber}`}>
+                    <Link to={`/quiz/${currentGoal.goalNumber}`}>
                       <motion.div
                         className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg text-center cursor-pointer border border-green-200"
                         whileHover={{ scale: 1.05, y: -2 }}

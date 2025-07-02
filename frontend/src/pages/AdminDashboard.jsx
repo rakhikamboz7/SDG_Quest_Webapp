@@ -1,33 +1,56 @@
 "use client"
 
 import { useContext, useState, useEffect } from "react"
-import { motion } from "framer-motion"
 import {
-  FaUsers,
-  FaCog,
-  FaChartBar,
-  FaUserShield,
-  FaSignOutAlt,
-  FaPlus,
-  FaEye,
-  FaCheck,
-  FaTimes,
-  FaEnvelope,
-} from "react-icons/fa"
+  Users,
+  BarChart3,
+  Shield,
+  LogOut,
+  Plus,
+  Eye,
+  Check,
+  X,
+  Mail,
+  RefreshCw,
+  Calendar,
+  MessageSquare,
+  Home,
+  Target,
+  Globe,
+  Activity,
+  Clock,
+  CheckCircle,
+  XCircle,
+  AlertTriangle,
+} from "lucide-react"
 import { AuthContext } from "../context/AuthContext"
 import { useNavigate } from "react-router-dom"
-import SDGContentManager from "../components/sdg-content-manager"
 import { fetchProblemSubmissions, updateSubmissionStatus, createProblemSubmission } from "../lib/sanity"
-// import { sendApprovalEmail, sendRejectionEmail } from "../services/emailService"
+import axios from "axios"
+
+const PRIMARY_COLOR = "#005a54"
+const BACKEND_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:10000/api"
 
 const AdminDashboard = () => {
-  const { user, logout } = useContext(AuthContext)
+  const { user, logout, token, isAdmin } = useContext(AuthContext)
   const navigate = useNavigate()
+
+  // ✅ SECURE: Check admin role on component mount
+  useEffect(() => {
+    if (!isAdmin()) {
+      navigate("/dashboard")
+      return
+    }
+  }, [isAdmin, navigate])
+
   const [activeSection, setActiveSection] = useState("dashboard")
   const [pendingSubmissions, setPendingSubmissions] = useState([])
   const [approvedSubmissions, setApprovedSubmissions] = useState([])
+  const [users, setUsers] = useState([])
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [selectedGoalFilter, setSelectedGoalFilter] = useState("all")
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
 
   // Form state for creating new problems
   const [newProblemForm, setNewProblemForm] = useState({
@@ -39,30 +62,99 @@ const AdminDashboard = () => {
   })
 
   const sdgGoals = [
-    { id: 1, name: "No Poverty", color: "bg-red-500", icon: "🏠" },
-    { id: 2, name: "Zero Hunger", color: "bg-yellow-500", icon: "🌾" },
-    { id: 3, name: "Good Health", color: "bg-green-500", icon: "🏥" },
-    { id: 4, name: "Quality Education", color: "bg-red-600", icon: "📚" },
-    { id: 5, name: "Gender Equality", color: "bg-orange-500", icon: "⚖️" },
-    { id: 6, name: "Clean Water", color: "bg-blue-400", icon: "💧" },
-    { id: 7, name: "Clean Energy", color: "bg-yellow-400", icon: "⚡" },
-    { id: 8, name: "Economic Growth", color: "bg-purple-500", icon: "📈" },
-    { id: 9, name: "Innovation", color: "bg-orange-600", icon: "🏭" },
-    { id: 10, name: "Reduced Inequalities", color: "bg-pink-500", icon: "🤝" },
-    { id: 11, name: "Sustainable Cities", color: "bg-orange-400", icon: "🏙️" },
-    { id: 12, name: "Responsible Consumption", color: "bg-yellow-600", icon: "♻️" },
-    { id: 13, name: "Climate Action", color: "bg-green-600", icon: "🌍" },
-    { id: 14, name: "Life Below Water", color: "bg-blue-500", icon: "🐟" },
-    { id: 15, name: "Life on Land", color: "bg-green-700", icon: "🌳" },
-    { id: 16, name: "Peace & Justice", color: "bg-blue-600", icon: "⚖️" },
-    { id: 17, name: "Partnerships", color: "bg-blue-800", icon: "🤝" },
+    { id: 1, name: "No Poverty", color: "#E5243B", icon: "🏠" },
+    { id: 2, name: "Zero Hunger", color: "#DDA63A", icon: "🌾" },
+    { id: 3, name: "Good Health", color: "#4C9F38", icon: "🏥" },
+    { id: 4, name: "Quality Education", color: "#C5192D", icon: "📚" },
+    { id: 5, name: "Gender Equality", color: "#FF3A21", icon: "⚖️" },
+    { id: 6, name: "Clean Water", color: "#26BDE2", icon: "💧" },
+    { id: 7, name: "Clean Energy", color: "#FCC30B", icon: "⚡" },
+    { id: 8, name: "Economic Growth", color: "#A21942", icon: "📈" },
+    { id: 9, name: "Innovation", color: "#FD6925", icon: "🏭" },
+    { id: 10, name: "Reduced Inequalities", color: "#DD1367", icon: "🤝" },
+    { id: 11, name: "Sustainable Cities", color: "#FD9D24", icon: "🏙️" },
+    { id: 12, name: "Responsible Consumption", color: "#BF8B2E", icon: "♻️" },
+    { id: 13, name: "Climate Action", color: "#3F7E44", icon: "🌍" },
+    { id: 14, name: "Life Below Water", color: "#0A97D9", icon: "🐟" },
+    { id: 15, name: "Life on Land", color: "#56C02B", icon: "🌳" },
+    { id: 16, name: "Peace & Justice", color: "#00689D", icon: "⚖️" },
+    { id: 17, name: "Partnerships", color: "#19486A", icon: "🤝" },
+  ]
+
+  const navigationItems = [
+    { id: "dashboard", label: "Overview", icon: Home, description: "Dashboard overview and statistics" },
+    { id: "users", label: "User Management", icon: Users, description: "Manage user accounts and permissions" },
+    { id: "analytics", label: "Analytics", icon: BarChart3, description: "View platform statistics and insights" },
+    { id: "sdg-content", label: "SDG Content", icon: Globe, description: "Manage SDG goals content" },
+    { id: "action-management", label: "Actions", icon: Target, description: "Manage community actions" },
   ]
 
   useEffect(() => {
     fetchSubmissions()
-  }, [])
+    if (activeSection === "users") {
+      fetchUsers()
+    }
+  }, [activeSection])
+
+  // ✅ SECURE: Fetch users with authentication
+  const fetchUsers = async () => {
+    setLoading(true)
+    setError("")
+    try {
+      const response = await axios.get(`${BACKEND_URL}/admin/users`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      setUsers(response.data)
+    } catch (err) {
+      setError("Failed to fetch users")
+      console.error("Fetch users error:", err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // ✅ SECURE: Update user role with authentication
+  const updateUserRole = async (userId, newRole) => {
+    try {
+      await axios.put(
+        `${BACKEND_URL}/admin/user-role`,
+        { userId, role: newRole },
+        { headers: { Authorization: `Bearer ${token}` } },
+      )
+
+      // Update local state
+      setUsers(users.map((u) => (u._id === userId ? { ...u, role: newRole } : u)))
+      alert(`✅ User role updated to ${newRole}`)
+    } catch (err) {
+      setError("Failed to update user role")
+      console.error("Update role error:", err)
+      alert("❌ Failed to update user role")
+    }
+  }
+
+  // ✅ SECURE: Deactivate user with authentication
+  const deactivateUser = async (userId) => {
+    if (!confirm("Are you sure you want to deactivate this user?")) return
+
+    try {
+      await axios.put(
+        `${BACKEND_URL}/admin/deactivate/${userId}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+      )
+
+      // Update local state
+      setUsers(users.map((u) => (u._id === userId ? { ...u, isActive: false } : u)))
+      alert("✅ User deactivated successfully")
+    } catch (err) {
+      setError("Failed to deactivate user")
+      console.error("Deactivate user error:", err)
+      alert("❌ Failed to deactivate user")
+    }
+  }
 
   const fetchSubmissions = async () => {
+    setLoading(true)
     try {
       // Fetch pending submissions
       const pending = await fetchProblemSubmissions("pending")
@@ -97,7 +189,9 @@ const AdminDashboard = () => {
       )
     } catch (error) {
       console.error("Error fetching submissions:", error)
-      // Keep mock data as fallback
+      setError("Failed to fetch submissions")
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -109,24 +203,13 @@ const AdminDashboard = () => {
         return
       }
 
-      // Update status in Sanity
       await updateSubmissionStatus(submissionId, "approved")
-
-      // Move from pending to approved locally
       const updatedSubmission = { ...submission, status: "approved" }
+
       setPendingSubmissions((prev) => prev.filter((s) => s.id !== submissionId))
       setApprovedSubmissions((prev) => [updatedSubmission, ...prev])
 
-      // Send approval email
-      try {
-        await sendApprovalEmail(submission)
-        alert(
-          "✅ Submission approved successfully! The user has been notified via email and the submission is now live on the platform.",
-        )
-      } catch (emailError) {
-        console.error("Email sending failed:", emailError)
-        alert("✅ Submission approved successfully! However, the email notification failed to send.")
-      }
+      alert("✅ Submission approved successfully!")
     } catch (error) {
       console.error("Error approving submission:", error)
       alert(`❌ Error approving submission: ${error.message}`)
@@ -141,20 +224,10 @@ const AdminDashboard = () => {
         return
       }
 
-      // Update status in Sanity
       await updateSubmissionStatus(submissionId, "rejected")
-
-      // Remove from pending locally
       setPendingSubmissions((prev) => prev.filter((s) => s.id !== submissionId))
 
-      // Send rejection email
-      try {
-        await sendRejectionEmail(submission)
-        alert("📧 Submission rejected and user has been notified via email with feedback.")
-      } catch (emailError) {
-        console.error("Email sending failed:", emailError)
-        alert("❌ Submission rejected, but email notification failed to send.")
-      }
+      alert("❌ Submission rejected successfully.")
     } catch (error) {
       console.error("Error rejecting submission:", error)
       alert(`❌ Error rejecting submission: ${error.message}`)
@@ -172,13 +245,12 @@ const AdminDashboard = () => {
         authorEmail: user?.email || "admin@example.com",
         authorId: user?.id || "admin",
         solution: newProblemForm.solution,
-        status: "approved", // Admin posts are auto-approved
+        status: "approved",
         mediaFiles: newProblemForm.mediaFiles,
       }
 
       const result = await createProblemSubmission(newProblemData)
 
-      // Add to approved list
       const newProblem = {
         id: result._id,
         title: newProblemForm.title,
@@ -208,6 +280,7 @@ const AdminDashboard = () => {
     }
   }
 
+  // ✅ SECURE: Logout with proper cleanup
   const handleLogout = () => {
     logout()
     navigate("/signin")
@@ -225,477 +298,587 @@ const AdminDashboard = () => {
       ? approvedSubmissions
       : approvedSubmissions.filter((s) => s.goalId === Number.parseInt(selectedGoalFilter))
 
-  const menuItems = [
-    {
-      icon: FaUsers,
-      label: "User Management",
-      path: "users",
-      description: "Manage user accounts and permissions",
-    },
-    {
-      icon: FaChartBar,
-      label: "Analytics",
-      path: "analytics",
-      description: "View platform statistics and insights",
-    },
-    // {
-    //   icon: FaCog,
-    //   label: "Settings",
-    //   path: "settings",
-    //   description: "Configure platform settings",
-    // },
-    {
-      icon: () => <span className="text-xl">🌍</span>,
-      label: "SDG Content",
-      path: "sdg-content",
-      description: "Manage Sustainable Development Goals content",
-    },
-    {
-      icon: () => <span className="text-xl">📝</span>,
-      label: "Action Management",
-      path: "action-management",
-      description: "Manage community problem statements and solutions",
-    },
-  ]
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case "approved":
+        return <CheckCircle className="h-4 w-4 text-green-600" />
+      case "pending":
+        return <Clock className="h-4 w-4 text-yellow-600" />
+      case "rejected":
+        return <XCircle className="h-4 w-4 text-red-600" />
+      default:
+        return <Clock className="h-4 w-4 text-gray-500" />
+    }
+  }
+
+  // ✅ SECURE: Only render if user is admin
+  if (!isAdmin()) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <AlertTriangle className="mx-auto text-red-500 mb-4" size={48} />
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Access Denied</h2>
+          <p className="text-gray-600">You don't have permission to access this page.</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <motion.header
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="bg-white shadow-sm border-b border-gray-200"
-      >
+      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <div className="w-8 h-8 bg-gradient-to-r from-teal-500 to-blue-500 rounded-full flex items-center justify-center mr-3">
-                <span className="text-white text-sm">🌍</span>
+              <div
+                className="w-8 h-8 rounded-full flex items-center justify-center mr-3"
+                style={{ backgroundColor: PRIMARY_COLOR }}
+              >
+                <span className="text-white text-sm font-bold">A</span>
               </div>
-              <h1 className="text-xl font-semibold text-gray-900">SDG Quest Admin</h1>
+              <h1 className="text-xl font-semibold text-gray-900">Admin Dashboard</h1>
             </div>
 
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
-                <FaUserShield className="text-purple-500" />
+                <Shield className="text-gray-500" size={18} />
                 <span className="text-sm font-medium text-gray-700">{user?.name}</span>
+                <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full">{user?.role}</span>
               </div>
+
               <button
                 onClick={handleLogout}
-                className="flex items-center space-x-2 text-gray-500 hover:text-gray-700 transition-colors"
+                className="flex items-center space-x-2 text-gray-500 hover:text-gray-700 transition-colors p-2 rounded-md hover:bg-gray-100"
               >
-                <FaSignOutAlt />
-                <span className="text-sm">Logout</span>
+                <LogOut size={18} />
+                <span className="hidden sm:inline text-sm">Logout</span>
               </button>
             </div>
           </div>
         </div>
-      </motion.header>
+      </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-          <h2 className="text-2xl font-bold text-gray-900 mb-8">Dashboard Overview</h2>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {error && <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-6">{error}</div>}
 
-          {/* Navigation Tabs */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
-            <div className="border-b border-gray-200">
-              <nav className="flex space-x-8 px-6" aria-label="Tabs">
-                <button
-                  onClick={() => setActiveSection("dashboard")}
-                  className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                    activeSection === "dashboard"
-                      ? "border-teal-500 text-teal-600"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                  }`}
-                >
-                  Dashboard Overview
-                </button>
-                {menuItems.map((item) => (
-                  <button
-                    key={item.path}
-                    onClick={() => setActiveSection(item.path)}
-                    className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2 ${
-                      activeSection === item.path
-                        ? "border-teal-500 text-teal-600"
-                        : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                    }`}
-                  >
-                    {typeof item.icon === "function" ? <item.icon /> : <item.icon className="text-lg" />}
-                    <span>{item.label}</span>
-                  </button>
-                ))}
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Sidebar Navigation */}
+          <div className="lg:w-64 flex-shrink-0">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+              <nav className="space-y-1">
+                {navigationItems.map((item) => {
+                  const IconComponent = item.icon
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => setActiveSection(item.id)}
+                      className={`w-full flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                        activeSection === item.id ? "text-white" : "text-gray-700 hover:bg-gray-100"
+                      }`}
+                      style={{
+                        backgroundColor: activeSection === item.id ? PRIMARY_COLOR : "transparent",
+                      }}
+                    >
+                      <IconComponent size={18} />
+                      <span>{item.label}</span>
+                    </button>
+                  )
+                })}
               </nav>
             </div>
           </div>
 
-          {/* Content Area */}
-          {activeSection === "dashboard" && (
-            <>
-              {/* Stats Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                {[
-                  { label: "Total Users", value: "1,234", icon: FaUsers, color: "blue" },
-                  {
-                    label: "Pending Actions",
-                    value: pendingSubmissions.length.toString(),
-                    icon: FaChartBar,
-                    color: "yellow",
-                  },
-                  {
-                    label: "Approved Actions",
-                    value: approvedSubmissions.length.toString(),
-                    icon: FaCheck,
-                    color: "green",
-                  },
-                  { label: "Active Today", value: "89", icon: FaUsers, color: "teal" },
-                ].map((stat, index) => {
-                  const IconComponent = stat.icon
-                  return (
-                    <motion.div
-                      key={stat.label}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.1 * (index + 1) }}
-                      className="bg-white rounded-lg shadow-sm p-6 border border-gray-200"
-                    >
-                      <div className="flex items-center">
-                        <div className={`w-12 h-12 bg-${stat.color}-100 rounded-lg flex items-center justify-center`}>
-                          <IconComponent className={`text-${stat.color}-600 text-xl`} />
-                        </div>
-                        <div className="ml-4">
-                          <p className="text-sm font-medium text-gray-600">{stat.label}</p>
-                          <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )
-                })}
-              </div>
+          {/* Main Content */}
+          <div className="flex-1">
+            {/* Dashboard Overview */}
+            {activeSection === "dashboard" && (
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">Dashboard Overview</h2>
+                  <p className="text-gray-600 mt-1">Monitor platform activity and manage content</p>
+                </div>
 
-              {/* Quick Actions */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {menuItems.map((item, index) => (
-                    <motion.button
-                      key={item.label}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.2 + index * 0.1 }}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => setActiveSection(item.path)}
-                      className="flex flex-col items-center space-y-3 p-6 border border-gray-200 rounded-lg hover:border-teal-300 hover:bg-teal-50 transition-all duration-200"
-                    >
-                      {typeof item.icon === "function" ? (
-                        <item.icon />
-                      ) : (
-                        <item.icon className="text-teal-600 text-2xl" />
-                      )}
-                      <div className="text-center">
-                        <span className="font-medium text-gray-700 block">{item.label}</span>
-                        <span className="text-sm text-gray-500 mt-1">{item.description}</span>
+                {/* Stats Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                        <Users className="text-blue-600" size={20} />
                       </div>
-                    </motion.button>
-                  ))}
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Total Users</p>
+                        <p className="text-xl font-bold text-gray-900">{users.length}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
+                        <Clock className="text-yellow-600" size={20} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Pending Actions</p>
+                        <p className="text-xl font-bold text-gray-900">{pendingSubmissions.length}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                        <CheckCircle className="text-green-600" size={20} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Approved Actions</p>
+                        <p className="text-xl font-bold text-gray-900">{approvedSubmissions.length}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                        <Activity className="text-purple-600" size={20} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Active Users</p>
+                        <p className="text-xl font-bold text-gray-900">{users.filter((u) => u.isActive).length}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Actions */}
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {navigationItems.slice(1).map((item) => {
+                      const IconComponent = item.icon
+                      return (
+                        <button
+                          key={item.id}
+                          onClick={() => setActiveSection(item.id)}
+                          className="flex flex-col items-center space-y-3 p-4 border border-gray-200 rounded-lg hover:border-gray-300 hover:bg-gray-50 transition-all duration-200"
+                        >
+                          <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <IconComponent className="text-gray-600" size={24} />
+                          </div>
+                          <div className="text-center">
+                            <span className="font-medium text-gray-700 block text-sm">{item.label}</span>
+                            <span className="text-xs text-gray-500 mt-1">{item.description}</span>
+                          </div>
+                        </button>
+                      )
+                    })}
+                  </div>
                 </div>
               </div>
-            </>
-          )}
+            )}
 
-          {/* Action Management Section */}
-          {activeSection === "action-management" && (
-            <div className="space-y-6">
-              {/* Header with Create Button */}
-              <div className="flex justify-between items-center">
-                <h3 className="text-xl font-semibold text-gray-900">SDG Action Management</h3>
-                <div className="flex gap-4">
-                  <select
-                    value={selectedGoalFilter}
-                    onChange={(e) => setSelectedGoalFilter(e.target.value)}
-                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
-                  >
-                    <option value="all">All Goals</option>
-                    {sdgGoals.map((goal) => (
-                      <option key={goal.id} value={goal.id.toString()}>
-                        {goal.icon} Goal {goal.id}: {goal.name}
-                      </option>
-                    ))}
-                  </select>
+            {/* User Management Section */}
+            {activeSection === "users" && (
+              <div className="space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900">User Management</h2>
+                    <p className="text-gray-600 mt-1">Manage user accounts and permissions</p>
+                  </div>
                   <button
-                    onClick={() => setIsCreateModalOpen(true)}
-                    className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-md flex items-center gap-2 transition-colors"
+                    onClick={fetchUsers}
+                    className="flex items-center space-x-2 px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors mt-4 sm:mt-0"
+                    disabled={loading}
                   >
-                    <FaPlus />
-                    Create Problem Statement
+                    <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
+                    <span>Refresh</span>
                   </button>
                 </div>
-              </div>
 
-              {/* Pending Submissions */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                  <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                  Pending Submissions ({filteredPendingSubmissions.length})
-                </h4>
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                  <div className="px-6 py-4 border-b border-gray-200">
+                    <h3 className="text-lg font-semibold text-gray-900">All Users ({users.length})</h3>
+                  </div>
 
-                {filteredPendingSubmissions.length > 0 ? (
-                  <div className="space-y-4">
-                    {filteredPendingSubmissions.map((submission) => {
-                      const goal = getGoalById(submission.goalId)
-                      return (
-                        <div
-                          key={submission.id}
-                          className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-                        >
-                          <div className="flex justify-between items-start mb-3">
-                            <div className="flex-1">
-                              <h5 className="font-semibold text-gray-800 mb-1">{submission.title}</h5>
-                              <p className="text-gray-600 text-sm mb-2">{submission.description}</p>
-                              <div className="flex items-center gap-4 text-sm text-gray-500">
-                                <span className={`${goal?.color} text-white px-2 py-1 rounded text-xs`}>
-                                  {goal?.icon} Goal {submission.goalId}
+                  {loading ? (
+                    <div className="p-6 text-center">
+                      <RefreshCw className="animate-spin mx-auto mb-4" size={24} />
+                      <p className="text-gray-500">Loading users...</p>
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              User
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Role
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Status
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Joined
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Actions
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {users.map((userItem) => (
+                            <tr key={userItem._id}>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="flex items-center">
+                                  <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                                    <span className="text-sm font-medium text-gray-600">
+                                      {userItem.name.charAt(0).toUpperCase()}
+                                    </span>
+                                  </div>
+                                  <div>
+                                    <div className="text-sm font-medium text-gray-900">{userItem.name}</div>
+                                    <div className="text-sm text-gray-500">{userItem.email}</div>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span
+                                  className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                    userItem.role === "admin"
+                                      ? "bg-purple-100 text-purple-800"
+                                      : "bg-green-100 text-green-800"
+                                  }`}
+                                >
+                                  {userItem.role}
                                 </span>
-                                <span>By {submission.author}</span>
-                                <span>{submission.solutions.length} solution(s)</span>
-                                <span>{submission.createdAt}</span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span
+                                  className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                    userItem.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                                  }`}
+                                >
+                                  {userItem.isActive ? "Active" : "Inactive"}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {new Date(userItem.createdAt).toLocaleDateString()}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                {userItem._id !== user?.id ? (
+                                  <>
+                                    <select
+                                      value={userItem.role}
+                                      onChange={(e) => updateUserRole(userItem._id, e.target.value)}
+                                      className="border border-gray-300 rounded px-2 py-1 text-sm"
+                                    >
+                                      <option value="user">User</option>
+                                      <option value="admin">Admin</option>
+                                    </select>
+
+                                    {userItem.isActive && (
+                                      <button
+                                        onClick={() => deactivateUser(userItem._id)}
+                                        className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 transition-colors"
+                                      >
+                                        Deactivate
+                                      </button>
+                                    )}
+                                  </>
+                                ) : (
+                                  <span className="text-gray-500 text-sm">Current User</span>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Action Management Section - Keep existing implementation */}
+            {activeSection === "action-management" && (
+              <div className="space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900">Action Management</h2>
+                    <p className="text-gray-600 mt-1">Review and manage community SDG actions</p>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-3 mt-4 sm:mt-0">
+                    <select
+                      value={selectedGoalFilter}
+                      onChange={(e) => setSelectedGoalFilter(e.target.value)}
+                      className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:border-transparent text-sm"
+                      style={{ focusRingColor: PRIMARY_COLOR }}
+                    >
+                      <option value="all">All Goals</option>
+                      {sdgGoals.map((goal) => (
+                        <option key={goal.id} value={goal.id.toString()}>
+                          {goal.icon} Goal {goal.id}: {goal.name}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      onClick={() => setIsCreateModalOpen(true)}
+                      className="flex items-center space-x-2 px-4 py-2 text-white rounded-md text-sm font-medium hover:opacity-90 transition-opacity"
+                      style={{ backgroundColor: PRIMARY_COLOR }}
+                    >
+                      <Plus size={16} />
+                      <span>Create Action</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Pending Submissions */}
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+                  <div className="px-6 py-4 border-b border-gray-200">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
+                        <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                        <span>Pending Submissions ({filteredPendingSubmissions.length})</span>
+                      </h3>
+                      <button
+                        onClick={fetchSubmissions}
+                        className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                        disabled={loading}
+                      >
+                        <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    {filteredPendingSubmissions.length > 0 ? (
+                      <div className="space-y-4">
+                        {filteredPendingSubmissions.map((submission) => {
+                          const goal = getGoalById(submission.goalId)
+                          return (
+                            <div
+                              key={submission.id}
+                              className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                            >
+                              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-3">
+                                <div className="flex-1">
+                                  <h5 className="font-semibold text-gray-800 mb-1">{submission.title}</h5>
+                                  <p className="text-gray-600 text-sm mb-2 line-clamp-2">{submission.description}</p>
+                                  <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
+                                    {goal && (
+                                      <span
+                                        className="px-2 py-1 rounded text-white"
+                                        style={{ backgroundColor: goal.color }}
+                                      >
+                                        {goal.icon} Goal {submission.goalId}
+                                      </span>
+                                    )}
+                                    <span>By {submission.author}</span>
+                                    <div className="flex items-center space-x-1">
+                                      <MessageSquare size={12} />
+                                      <span>{submission.solutions.length} solutions</span>
+                                    </div>
+                                    <div className="flex items-center space-x-1">
+                                      <Calendar size={12} />
+                                      <span>{submission.createdAt}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="flex flex-wrap gap-2 mt-4">
+                                <button
+                                  onClick={() => handleApprove(submission.id)}
+                                  className="flex items-center space-x-1 px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded text-sm transition-colors"
+                                >
+                                  <Check size={14} />
+                                  <span>Approve</span>
+                                </button>
+                                <button
+                                  onClick={() => handleReject(submission.id)}
+                                  className="flex items-center space-x-1 px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-sm transition-colors"
+                                >
+                                  <X size={14} />
+                                  <span>Reject</span>
+                                </button>
+                                <button className="flex items-center space-x-1 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm transition-colors">
+                                  <Mail size={14} />
+                                  <span>Email</span>
+                                </button>
+                                <button className="flex items-center space-x-1 px-3 py-1 bg-gray-600 hover:bg-gray-700 text-white rounded text-sm transition-colors">
+                                  <Eye size={14} />
+                                  <span>Details</span>
+                                </button>
                               </div>
                             </div>
-                          </div>
+                          )
+                        })}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
+                        <Clock className="mx-auto text-gray-400 mb-4" size={48} />
+                        <p className="text-gray-500">No pending submissions found</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
 
-                          {submission.solutions.length > 0 && (
-                            <div className="mb-3 p-3 bg-gray-50 rounded-md">
-                              <h6 className="text-sm font-medium text-gray-700 mb-2">Proposed Solutions:</h6>
-                              {submission.solutions.map((solution) => (
-                                <div key={solution.id} className="text-sm text-gray-600">
-                                  <p>• {solution.description}</p>
-                                  <p className="text-xs text-gray-500 mt-1">By {solution.author}</p>
+                {/* Approved Submissions */}
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+                  <div className="px-6 py-4 border-b border-gray-200">
+                    <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
+                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                      <span>Approved Submissions ({filteredApprovedSubmissions.length})</span>
+                    </h3>
+                  </div>
+                  <div className="p-6">
+                    {filteredApprovedSubmissions.length > 0 ? (
+                      <div className="space-y-4">
+                        {filteredApprovedSubmissions.map((submission) => {
+                          const goal = getGoalById(submission.goalId)
+                          return (
+                            <div key={submission.id} className="border border-green-200 rounded-lg p-4 bg-green-50">
+                              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-3">
+                                <div className="flex-1">
+                                  <h5 className="font-semibold text-gray-800 mb-1">{submission.title}</h5>
+                                  <p className="text-gray-600 text-sm mb-2 line-clamp-2">{submission.description}</p>
+                                  <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
+                                    {goal && (
+                                      <span
+                                        className="px-2 py-1 rounded text-white"
+                                        style={{ backgroundColor: goal.color }}
+                                      >
+                                        {goal.icon} Goal {submission.goalId}
+                                      </span>
+                                    )}
+                                    <span>By {submission.author}</span>
+                                    <div className="flex items-center space-x-1">
+                                      <MessageSquare size={12} />
+                                      <span>{submission.solutions.length} solutions</span>
+                                    </div>
+                                    <div className="flex items-center space-x-1">
+                                      <Calendar size={12} />
+                                      <span>{submission.createdAt}</span>
+                                    </div>
+                                  </div>
                                 </div>
-                              ))}
-                            </div>
-                          )}
-
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => handleApprove(submission.id)}
-                              className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm flex items-center gap-1 transition-colors"
-                            >
-                              <FaCheck />
-                              Approve
-                            </button>
-                            <button
-                              onClick={() => handleReject(submission.id)}
-                              className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm flex items-center gap-1 transition-colors"
-                            >
-                              <FaTimes />
-                              Reject
-                            </button>
-                            <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm flex items-center gap-1 transition-colors">
-                              <FaEnvelope />
-                              Email
-                            </button>
-                            <button className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-sm flex items-center gap-1 transition-colors">
-                              <FaEye />
-                              View Details
-                            </button>
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <div className="text-gray-400 mb-4">📝</div>
-                    <p className="text-gray-500">No pending submissions found</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Approved Submissions */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                  Approved Submissions ({filteredApprovedSubmissions.length})
-                </h4>
-
-                {filteredApprovedSubmissions.length > 0 ? (
-                  <div className="space-y-4">
-                    {filteredApprovedSubmissions.map((submission) => {
-                      const goal = getGoalById(submission.goalId)
-                      return (
-                        <div key={submission.id} className="border border-green-200 rounded-lg p-4 bg-green-50">
-                          <div className="flex justify-between items-start mb-3">
-                            <div className="flex-1">
-                              <h5 className="font-semibold text-gray-800 mb-1">{submission.title}</h5>
-                              <p className="text-gray-600 text-sm mb-2">{submission.description}</p>
-                              <div className="flex items-center gap-4 text-sm text-gray-500">
-                                <span className={`${goal?.color} text-white px-2 py-1 rounded text-xs`}>
-                                  {goal?.icon} Goal {submission.goalId}
-                                </span>
-                                <span>By {submission.author}</span>
-                                <span>{submission.solutions.length} solution(s)</span>
-                                <span>{submission.createdAt}</span>
                               </div>
                             </div>
-                            <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">✅ Approved</span>
-                          </div>
-
-                          {submission.solutions.length > 0 && (
-                            <div className="mb-3 p-3 bg-white rounded-md">
-                              <h6 className="text-sm font-medium text-gray-700 mb-2">Solutions:</h6>
-                              {/* {submission.solutions.map((solution) => (
-                                <div key={solution.id} className="text-sm text-gray-600">
-                                  <p>• {solution.description}</p>
-                                  <p className="text-xs text-gray-500 mt-1">By {solution.author}</p>
-                                </div>
-                              ))} */}
-                            </div>
-                          )}
-
-                          <div className="flex gap-2">
-                            <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm flex items-center gap-1 transition-colors">
-                              <FaEye />
-                              View Public
-                            </button>
-                            <button className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-sm flex items-center gap-1 transition-colors">
-                              <FaEnvelope />
-                              Send Update
-                            </button>
-                          </div>
-                        </div>
-                      )
-                    })}
+                          )
+                        })}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
+                        <CheckCircle className="mx-auto text-gray-400 mb-4" size={48} />
+                        <p className="text-gray-500">No approved submissions found</p>
+                      </div>
+                    )}
                   </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <div className="text-gray-400 mb-4">✅</div>
-                    <p className="text-gray-500">No approved submissions found</p>
-                  </div>
-                )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* SDG Content Management Section */}
-          {activeSection === "sdg-content" && (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-1">
-              <SDGContentManager />
-            </div>
-          )}
+            {/* Analytics Section */}
+            {activeSection === "analytics" && (
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">Analytics</h2>
+                  <p className="text-gray-600 mt-1">Platform statistics and insights</p>
+                </div>
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                  <p className="text-gray-500">Analytics dashboard coming soon...</p>
+                </div>
+              </div>
+            )}
 
-          {/* Other Sections Placeholders */}
-          {activeSection === "users" && (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
-              <FaUsers className="mx-auto text-gray-400 mb-4 text-4xl" />
-              <h3 className="text-xl font-semibold text-gray-600 mb-2">User Management</h3>
-              <p className="text-gray-500">User management functionality will be implemented here</p>
-            </div>
-          )}
-
-          {activeSection === "analytics" && (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
-              <FaChartBar className="mx-auto text-gray-400 mb-4 text-4xl" />
-              <h3 className="text-xl font-semibold text-gray-600 mb-2">Analytics Dashboard</h3>
-              <p className="text-gray-500">Analytics and reporting features will be implemented here</p>
-            </div>
-          )}
-
-          {activeSection === "settings" && (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
-              <FaCog className="mx-auto text-gray-400 mb-4 text-4xl" />
-              <h3 className="text-xl font-semibold text-gray-600 mb-2">Platform Settings</h3>
-              <p className="text-gray-500">System configuration options will be implemented here</p>
-            </div>
-          )}
-        </motion.div>
-      </main>
+            {/* SDG Content Section */}
+            {activeSection === "sdg-content" && (
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">SDG Content Management</h2>
+                  <p className="text-gray-600 mt-1">Manage SDG goals and related content</p>
+                </div>
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                  <p className="text-gray-500">SDG content management coming soon...</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
 
       {/* Create Problem Modal */}
       {isCreateModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-6">
-                <div>
-                  <h2 className="text-xl font-bold text-gray-800">Create Problem Statement</h2>
-                  <p className="text-gray-600">Add a new problem statement for the community</p>
-                </div>
-                <button onClick={() => setIsCreateModalOpen(false)} className="text-gray-400 hover:text-gray-600">
-                  <FaTimes className="h-6 w-6" />
+          <div className="bg-white rounded-lg max-w-md w-full p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Create New Problem Statement</h3>
+            <form onSubmit={handleCreateProblem} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                <input
+                  type="text"
+                  value={newProblemForm.title}
+                  onChange={(e) => setNewProblemForm({ ...newProblemForm, title: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:border-transparent"
+                  style={{ focusRingColor: PRIMARY_COLOR }}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <textarea
+                  value={newProblemForm.description}
+                  onChange={(e) => setNewProblemForm({ ...newProblemForm, description: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:border-transparent"
+                  style={{ focusRingColor: PRIMARY_COLOR }}
+                  rows={3}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">SDG Goal</label>
+                <select
+                  value={newProblemForm.goalId}
+                  onChange={(e) => setNewProblemForm({ ...newProblemForm, goalId: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:border-transparent"
+                  style={{ focusRingColor: PRIMARY_COLOR }}
+                  required
+                >
+                  <option value="">Select a goal</option>
+                  {sdgGoals.map((goal) => (
+                    <option key={goal.id} value={goal.id.toString()}>
+                      {goal.icon} Goal {goal.id}: {goal.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Solution (Optional)</label>
+                <textarea
+                  value={newProblemForm.solution}
+                  onChange={(e) => setNewProblemForm({ ...newProblemForm, solution: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:border-transparent"
+                  style={{ focusRingColor: PRIMARY_COLOR }}
+                  rows={2}
+                />
+              </div>
+              <div className="flex space-x-3 pt-4">
+                <button
+                  type="submit"
+                  className="flex-1 text-white py-2 px-4 rounded-md text-sm font-medium hover:opacity-90 transition-opacity"
+                  style={{ backgroundColor: PRIMARY_COLOR }}
+                >
+                  Create Problem
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsCreateModalOpen(false)}
+                  className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md text-sm font-medium hover:bg-gray-400 transition-colors"
+                >
+                  Cancel
                 </button>
               </div>
-
-              <form onSubmit={handleCreateProblem} className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Problem Title *</label>
-                  <input
-                    type="text"
-                    value={newProblemForm.title}
-                    onChange={(e) => setNewProblemForm((prev) => ({ ...prev, title: e.target.value }))}
-                    placeholder="Describe the problem in one line"
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Problem Description *</label>
-                  <textarea
-                    value={newProblemForm.description}
-                    onChange={(e) => setNewProblemForm((prev) => ({ ...prev, description: e.target.value }))}
-                    placeholder="Provide detailed description of the problem..."
-                    rows={4}
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Related SDG Goal *</label>
-                  <select
-                    value={newProblemForm.goalId}
-                    onChange={(e) => setNewProblemForm((prev) => ({ ...prev, goalId: e.target.value }))}
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                  >
-                    <option value="">Select the most relevant SDG goal</option>
-                    {sdgGoals.map((goal) => (
-                      <option key={goal.id} value={goal.id.toString()}>
-                        {goal.icon} Goal {goal.id}: {goal.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Proposed Solution (Optional)</label>
-                  <textarea
-                    value={newProblemForm.solution}
-                    onChange={(e) => setNewProblemForm((prev) => ({ ...prev, solution: e.target.value }))}
-                    placeholder="Describe a proposed solution or action plan..."
-                    rows={4}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                  />
-                </div>
-
-                <div className="flex gap-3 pt-4">
-                  <button
-                    type="submit"
-                    className="flex-1 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-md transition-colors"
-                  >
-                    Create Problem Statement
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setIsCreateModalOpen(false)}
-                    className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </div>
+            </form>
           </div>
         </div>
       )}
