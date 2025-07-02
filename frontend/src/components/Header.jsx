@@ -73,9 +73,9 @@ const Header = () => {
           <Link to="/sdg-actions" className="text-[#00786F] hover:text-green-800">
             SDG Actions
           </Link>
-          <button onClick={handleStartQuiz} className="text-[#00786F] hover:text-green-800 rounded-md">
+          <Link to="#" onClick={handleStartQuiz} className="text-[#00786F] hover:text-green-800 rounded-md">
             Start Quiz
-          </button>
+          </Link>
         </nav>
 
         {/* Mobile Menu Button and Signup Button */}
