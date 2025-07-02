@@ -16,6 +16,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminDashboard from "./pages/AdminDashboard";
 import SDGActionPlatform from "./components/SdgActionPlatform";
 import TakeActionPage from "./components/TakeActionPage";
+import PledgeDashboard from "./components/PledgeDashboard";
 const App = () => {
   const location = useLocation();
   const path = location.pathname;
@@ -44,6 +45,7 @@ const App = () => {
           <Route path="/about" element={<AboutUs />} />
           <Route path="/contact" element={<ContactUs />} />
            <Route path="/take-action" element={<TakeActionPage />} />
+           <Route path="/pledge" element={<PledgeDashboard />} />
           <Route
             path="/admin-dashboard"
             element={

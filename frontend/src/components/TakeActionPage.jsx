@@ -256,7 +256,7 @@ const TakeActionPage = () => {
 
   const handleCreatePledge = async () => {
     if (!user) {
-      navigate("/login")
+      navigate("/pledge")
       return
     }
 

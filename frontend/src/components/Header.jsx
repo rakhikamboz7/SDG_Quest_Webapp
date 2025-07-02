@@ -48,7 +48,7 @@ const Header = () => {
 
   const handleStartQuiz = () => {
     const nextQuizId = quizScores.length + 1
-    navigate(nextQuizId <= 17 ? `/quiz/${nextQuizId}` : "/profile")
+    navigate(nextQuizId <= 17 ? `/quiz/${nextQuizId}` : "/dashboard")
   }
 
   return (
@@ -73,7 +73,7 @@ const Header = () => {
           <Link to="/sdg-actions" className="text-[#00786F] hover:text-green-800">
             SDG Actions
           </Link>
-          <Link to="#" onClick={handleStartQuiz} className="text-[#00786F] hover:text-green-800 rounded-md">
+          <Link to={`/quiz/${quizScores.length + 1}`} onClick={handleStartQuiz} className="text-[#00786F] hover:text-green-800 rounded-md">
             Start Quiz
           </Link>
         </nav>

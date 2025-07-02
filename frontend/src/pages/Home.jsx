@@ -7,7 +7,7 @@ import { Link } from "react-router-dom"
 import { getSDGGoals } from "../lib/sanity"
 import { goalDetails } from "../goalDetail"
 
-const EnhancedSDGWheel = () => {
+const SDGWheel = () => {
   const [goals, setGoals] = useState(Object.values(goalDetails))
   const [isSpinning, setIsSpinning] = useState(false)
   const [selectedGoal, setSelectedGoal] = useState(null)
@@ -743,7 +743,7 @@ const EnhancedSDGWheel = () => {
                       <p className="text-sm text-blue-600">Detailed information</p>
                     </motion.div>
 
-                    <Link to={`/quiz/${currentGoal.goalNumber}`}>
+                    <Link to={`/quiz/${goal.goalNumber}`}>
                       <motion.div
                         className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg text-center cursor-pointer border border-green-200"
                         whileHover={{ scale: 1.05, y: -2 }}
@@ -862,4 +862,4 @@ const EnhancedSDGWheel = () => {
   )
 }
 
-export default EnhancedSDGWheel
+export default SDGWheel
