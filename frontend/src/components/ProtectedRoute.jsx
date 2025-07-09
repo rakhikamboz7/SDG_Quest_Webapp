@@ -11,13 +11,13 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
   useEffect(() => {
     if (!loading) {
       if (!isAuthenticated()) {
-        navigate("/login")
+        navigate("/admin-dashboard")
         return
       }
 
       // ✅ SECURE: Check admin role from server-verified user data
       if (adminOnly && !isAdmin()) {
-        navigate("/dashboard") // Redirect non-admins to regular dashboard
+        navigate("/admin-dashboard") // Redirect non-admins to regular dashboard
         return
       }
     }

@@ -3,4 +3,6 @@
 config/keys.js
 .node_modules
 .env
-
+.env.*
+backend/.env
+frontend/.env

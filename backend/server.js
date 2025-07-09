@@ -7,7 +7,7 @@ const connectDB = require("./config/db")
 const app = express()
 const PORT = 10000
 
-console.log("🚀 Starting server...")
+console.log("Starting server...")
 
 connectDB()
 
@@ -41,7 +41,7 @@ app.get("/", (req, res) => {
 
 // ✅ Catch all for debugging
 app.use("*", (req, res) => {
-  console.log("❌ Route not found:", req.method, req.originalUrl)
+  console.log("Route not found:", req.method, req.originalUrl)
   res.status(404).json({
     message: "Route not found",
     method: req.method,
@@ -51,6 +51,6 @@ app.use("*", (req, res) => {
 })
 
 app.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`)
-  console.log(`🌐 Server URL: http://localhost:${PORT}`)
+  console.log(`Server running on port ${PORT}`)
+  console.log(`Server URL: http://localhost:${PORT}`)
 })

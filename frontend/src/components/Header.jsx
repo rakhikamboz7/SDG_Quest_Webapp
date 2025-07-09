@@ -7,7 +7,7 @@ import axios from "axios"
 import { Menu, X, ChevronDown, Play, Target, BookOpen, Award } from "lucide-react"
 import logo from "../assets/logo.svg"
 
-const BACKEND_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:10000"
+const BACKEND_URL = import.meta.env.VITE_API_BASE_URL
 const PRIMARY_COLOR = "#005a54"
 
 const Header = () => {

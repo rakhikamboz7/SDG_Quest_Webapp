@@ -183,7 +183,7 @@ const GoalContent = () => {
                   <img
                     src={goal.icon || "/placeholder.svg"}
                     alt={goal.title}
-                    className="w-16 h-16 object-contain"
+                    className="w-25 h-25 object-contain"
                     crossOrigin="anonymous"
                     onError={(e) => {
                       console.error("Error loading goal icon:", goal.icon)
@@ -219,15 +219,7 @@ const GoalContent = () => {
               </motion.button>
 
               <div className="text-white flex-1">
-                <motion.div
-                  className="inline-flex items-center px-4 py-2 rounded-full bg-white bg-opacity-10 backdrop-blur-sm mb-4"
-                  initial={{ x: -20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  <Globe size={16} className="mr-2" />
-                  <span className="text-sm font-medium">UN Sustainable Development Goals 2030</span>
-                </motion.div>
+               
 
                 <motion.h1
                   initial={{ y: 20, opacity: 0 }}

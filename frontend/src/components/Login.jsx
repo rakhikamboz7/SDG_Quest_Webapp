@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import { FaUser, FaLock, FaEnvelope, FaEye, FaEyeSlash } from "react-icons/fa"
 
-const BACKEND_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:10000/api"
+const BACKEND_URL = import.meta.env.VITE_API_BASE_URL 
 
 function LoginSignup() {
   const navigate = useNavigate()

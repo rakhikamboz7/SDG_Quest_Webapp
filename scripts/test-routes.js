@@ -4,7 +4,7 @@ const path = require("path")
 require("dotenv").config({ path: path.join(__dirname, "../backend/.env") })
 
 const testRoutes = async () => {
-  const apiUrl = process.env.VITE_API_BASE_URL || "http://localhost:10000"
+  const apiUrl = process.env.VITE_API_BASE_URL
 
   console.log("🔍 Testing available routes on:", apiUrl)
 

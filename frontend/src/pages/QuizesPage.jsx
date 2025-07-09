@@ -3,8 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import BadgesDisplay from "../components/BadgesDisplay";
 import { motion, useAnimation, AnimatePresence } from "framer-motion"
-const BACKEND_URL =
- import.meta.env.VITE_API_BASE_URL || "http://localhost:10000";
+const BACKEND_URL = import.meta.env.VITE_API_BASE_URL;
 
  function QuizPage() {
 

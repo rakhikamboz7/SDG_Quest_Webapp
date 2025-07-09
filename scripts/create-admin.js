@@ -5,7 +5,7 @@ require("dotenv").config({ path: path.join(__dirname, "../backend/.env") })
 
 const createAdminAlternative = async () => {
   const adminSecret = process.env.ADMIN_CREATION_SECRET
-  const apiUrl = process.env.VITE_API_BASE_URL || "http://localhost:10000"
+  const apiUrl = process.env.VITE_API_BASE_URL 
   const adminEmail = process.env.ADMIN_EMAIL
   const adminPassword = process.env.ADMIN_PASSWORD
 

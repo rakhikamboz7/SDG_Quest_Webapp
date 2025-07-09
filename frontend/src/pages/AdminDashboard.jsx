@@ -27,9 +27,10 @@ import { AuthContext } from "../context/AuthContext"
 import { useNavigate } from "react-router-dom"
 import { fetchProblemSubmissions, updateSubmissionStatus, createProblemSubmission } from "../lib/sanity"
 import axios from "axios"
+import SDGContentManager from "../components/sdg-content-manager"
 
 const PRIMARY_COLOR = "#005a54"
-const BACKEND_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:10000/api"
+const BACKEND_URL = import.meta.env.VITE_API_BASE_URL 
 
 const AdminDashboard = () => {
   const { user, logout, token, isAdmin } = useContext(AuthContext)
@@ -38,7 +39,7 @@ const AdminDashboard = () => {
   // ✅ SECURE: Check admin role on component mount
   useEffect(() => {
     if (!isAdmin()) {
-      navigate("/dashboard")
+      navigate("/admin-dashboard")
       return
     }
   }, [isAdmin, navigate])
@@ -799,7 +800,7 @@ const AdminDashboard = () => {
                   <p className="text-gray-600 mt-1">Manage SDG goals and related content</p>
                 </div>
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                  <p className="text-gray-500">SDG content management coming soon...</p>
+                  <SDGContentManager/>
                 </div>
               </div>
             )}

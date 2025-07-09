@@ -15,8 +15,8 @@ const createAdminManually = async () => {
     await mongoose.connect(process.env.MONGODB_URL)
     console.log("✅ Connected to MongoDB")
 
-    const adminEmail = process.env.ADMIN_EMAIL || "admin@sdgquest.com"
-    const adminPassword = process.env.ADMIN_PASSWORD || "admin123"
+    const adminEmail = process.env.ADMIN_EMAIL 
+    const adminPassword = process.env.ADMIN_PASSWORD 
 
     // Check if admin already exists
     const existingAdmin = await User.findOne({ email: adminEmail })

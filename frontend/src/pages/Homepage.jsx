@@ -363,7 +363,7 @@ const InteractiveSDGAnimation = () => {
               <motion.div className="relative">
                 {/* Icon Container */}
                 <motion.div
-                  className="flex items-center bottom-30 justify-center shadow-lg border-2 border-white/20 backdrop-blur-sm relative overflow-hidden"
+                  className="flex items-center bottom-22 justify-center shadow-lg border-2 border-white/20 backdrop-blur-sm relative overflow-hidden"
                   style={{
                     backgroundColor: `${goal.color}20`,
                   }}
@@ -422,7 +422,7 @@ const InteractiveSDGAnimation = () => {
               transition={{ duration: 0.8 }}
             >
               <motion.div
-                className="rounded-full ml-9 mb-24 flex items-center justify-center shadow-xl border-4 border-white/20 backdrop-blur-sm"
+                className="rounded-full ml-9 mb-30 flex items-center justify-center shadow-xl border-4 border-white/20 backdrop-blur-sm"
                 style={{
                   backgroundColor: `${PRIMARY_COLOR}20`,
                   width:
@@ -483,7 +483,7 @@ const InteractiveSDGAnimation = () => {
 
         {/* User Controls - At the top */}
         <motion.div
-          className="absolute top-32 ml-10 left-1/2 transform -translate-x-1/2 flex items-center space-x-2 sm:space-x-3 px-3 sm:px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg z-30"
+          className="absolute top-45 ml-9 left-1/2 transform -translate-x-1/2 flex items-center space-x-2 sm:space-x-3 px-3 sm:px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg z-30"
           initial={{ opacity: 0, y: -20 }}
           animate={{
             opacity: visibleIcons >= 17 ? 1 : 0,
@@ -526,7 +526,7 @@ const InteractiveSDGAnimation = () => {
 
         {/* Connection Lines (only in circle mode) */}
         {animationPhase === "circle" && (
-          <svg className="absolute inset-0 w-full h-full pointer-events-none">
+          <svg className="absolute color-teal-500 inset-0 w-full h-full pointer-events-none">
             <g transform="translate(50%, 50%)">
               {sdgGoals.map((_, index) => {
                 if (index >= visibleIcons) return null
@@ -602,8 +602,8 @@ const HeroSection = () => {
               key={`leaf-${i}`}
               className="absolute hidden sm:block"
               style={{
-                left: `${15 + i * 20}%`,
-                top: `${25 + (i % 2) * 30}%`,
+                left: `${25 + i * 50}%`,
+                top: `${25 + (i % 2) * 20}%`,
               }}
               animate={{
                 y: [0, -20, 0],
@@ -772,7 +772,7 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.9, duration: 0.6 }}
-              className="grid grid-cols-2 lg:grid-cols-4 gap-4 bottom-40 sm:gap-6"
+              className="grid grid-cols-2 lg:grid-cols-4 gap-4 bottom-20 sm:gap-6"
             >
               {stats.map((stat, index) => {
                 const IconComponent = stat.icon

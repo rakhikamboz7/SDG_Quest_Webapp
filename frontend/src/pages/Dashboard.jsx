@@ -27,7 +27,7 @@ import {
 import { fetchUserSubmissions, fetchUserPledges, uploadImage, client } from "../lib/sanity"
 import PledgeDashboard from "../components/PledgeDashboard"
 
-const BACKEND_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:10000"
+const BACKEND_URL = import.meta.env.VITE_API_BASE_URL
 const PRIMARY_COLOR = "#005a54"
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, BarElement, ArcElement, Tooltip)

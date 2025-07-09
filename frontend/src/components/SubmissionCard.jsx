@@ -396,8 +396,8 @@ const SubmissionCard = ({ problem, onTakeAction }) => {
 
       {/* Solutions Modal */}
       {showSolutionsModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-white/70 bg-opacity-0 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg border-2 border-teal-500 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-bold text-gray-800">Solutions for: {problem.title}</h2>
@@ -463,8 +463,8 @@ const SubmissionCard = ({ problem, onTakeAction }) => {
 
       {/* Solution Form Modal */}
       {showSolutionForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-white/70 bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white border-2 border-teal-500 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-bold text-gray-800">Provide Solution</h2>

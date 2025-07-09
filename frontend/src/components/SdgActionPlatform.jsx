@@ -274,7 +274,7 @@ const SDGActionPlatform = () => {
 
               <button
                 onClick={() => setIsSubmissionOpen(true)}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md flex items-center gap-2 transition-colors"
+                className="bg-emerald-600 w-40 hover:bg-emerald-700 text-white px-4 py-2 rounded-md flex items-center gap-2 transition-colors"
               >
                 <Plus className="h-4 w-4" />
                 Submit Action
@@ -545,7 +545,7 @@ const SDGActionPlatform = () => {
                 <div className="flex gap-3 pt-4">
                   <button
                     type="submit"
-                    className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md transition-colors"
+                    className="flex-1 w-50 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md transition-colors"
                   >
                     Submit Action
                   </button>

@@ -192,8 +192,8 @@ exports.createAdminUser = async (req, res) => {
       return res.status(403).json({ error: "Invalid admin secret" })
     }
 
-    const adminEmail = process.env.ADMIN_EMAIL || "admin@sdgquest.com"
-    const adminPassword = process.env.ADMIN_PASSWORD || "admin123"
+    const adminEmail = process.env.ADMIN_EMAIL
+    const adminPassword = process.env.ADMIN_PASSWORD
 
     const existingAdmin = await User.findOne({ email: adminEmail })
     if (existingAdmin) {

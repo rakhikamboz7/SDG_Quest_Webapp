@@ -7,7 +7,7 @@ const createAdmin = async () => {
     console.log("🔐 Setting up admin user securely...")
 
     const adminSecret = process.env.ADMIN_CREATION_SECRET
-    const apiUrl = process.env.VITE_API_BASE_URL || "http://localhost:10000"
+    const apiUrl = import.meta.env.VITE_API_BASE_URL 
     const adminEmail = process.env.ADMIN_EMAIL
     const adminPassword = process.env.ADMIN_PASSWORD
 
@@ -20,15 +20,13 @@ const createAdmin = async () => {
     if (!adminSecret || !adminEmail || !adminPassword) {
       console.error("❌ Missing environment variables in .env file")
       console.error("💡 Your .env file should contain:")
-      console.error("   ADMIN_EMAIL=admin@sdgquest.com")
-      console.error("   ADMIN_PASSWORD=admin123")
-      console.error("   ADMIN_CREATION_SECRET=super-secret-admin-key-2024")
+       
       return
     }
 
     console.log("🔄 Creating admin user...")
 
-    const response = await axios.post(`${apiUrl}/api/create-admin`, {
+    const response = await axios.post(`${apiUrl}/create-admin`, {
       adminSecret: adminSecret,
     })
 
