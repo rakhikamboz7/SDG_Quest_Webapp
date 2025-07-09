@@ -5,7 +5,7 @@ const cors = require("cors")
 const connectDB = require("./config/db")
 
 const app = express()
-const PORT = 10000
+const PORT = 5005
 
 console.log("Starting server...")
 
