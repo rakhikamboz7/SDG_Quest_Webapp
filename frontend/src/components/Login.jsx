@@ -132,7 +132,7 @@ function LoginSignup() {
       const userData = {
         name: userRes.data.name,
         email: userRes.data.email,
-        role: userRes.data.role, // ✅ Role comes from server, not frontend
+        role: userRes.data.role,  
         profilePicture: userRes.data.image,
       }
 

@@ -1,0 +1,52 @@
+[
+    {
+        "goalId": 1,
+        "goalName": "No Poverty",
+        "questions": [
+            {
+                "question": "What is the main cause of poverty?",
+                "explanation": "Unemployment leads to poverty because people without jobs have no income.",
+                "options": [
+                    {
+                        "text": "Unemployment",
+                        "isCorrect": true
+                    },
+                    {
+                        "text": "Lack of education",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "Climate Change",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "Corruption",
+                        "isCorrect": false
+                    }
+                ]
+            },
+            {
+                "question": "Which of the following is a solution to poverty?",
+                "explanation": "Social safety nets help protect people during hard times and reduce poverty.",
+                "options": [
+                    {
+                        "text": "Providing clean water",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "Promoting social safety nets",
+                        "isCorrect": true
+                    },
+                    {
+                        "text": "Increasing fossil fuel consumption",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "Building more infrastructure",
+                        "isCorrect": false
+                    }
+                ]
+            }
+        ]
+    }
+]
