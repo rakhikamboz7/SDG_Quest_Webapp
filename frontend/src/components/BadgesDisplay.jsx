@@ -3,13 +3,15 @@
 import { useState } from "react"
 import PropTypes from "prop-types"
 import { motion } from "framer-motion"
-import { FaShare, FaTrophy } from "react-icons/fa"
+import { FaTrophy, FaRocket, FaShare, FaInstagram } from "react-icons/fa"
 import BadgeIcon from "./badge-icon"
 import LockedBadgeIcon from "./locked-badge-icon"
 import ShareModal from "./share-modal"
+import InstagramShareModal from "./instagram-share-modal"
 
 const BadgesDisplay = ({ badgesEarned, quizScores, showProgress = true, userName = "User" }) => {
   const [shareModalOpen, setShareModalOpen] = useState(false)
+  const [instagramModalOpen, setInstagramModalOpen] = useState(false)
   const [selectedBadge, setSelectedBadge] = useState(null)
 
   const totalPoints = quizScores.reduce((acc, quiz) => acc + quiz.score, 0)
@@ -38,6 +40,11 @@ const BadgesDisplay = ({ badgesEarned, quizScores, showProgress = true, userName
     setShareModalOpen(true)
   }
 
+  const handleInstagramShare = (badge) => {
+    setSelectedBadge(badge)
+    setInstagramModalOpen(true)
+  }
+
   const userStats = {
     totalPoints,
     completedQuizzes,
@@ -45,36 +52,47 @@ const BadgesDisplay = ({ badgesEarned, quizScores, showProgress = true, userName
   }
 
   return (
-    <div className="py-4">
+    <div className="space-y-6">
       {badgesEarned.length > 0 ? (
         <>
-          <div className="flex flex-wrap justify-center gap-4">
+          {/* Badges Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {badgesEarned.map((badge, index) => (
               <motion.div
                 key={index}
-                className="flex flex-col items-center group"
+                className="group"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
               >
-                <div className="relative overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer border-teal-700 border-2 hover:border-teal-200 bg-white rounded-lg">
-                  <div className="p-4 text-center bg-gradient-to-b from-white to-gray-50">
+                <div className="relative overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-teal-200 bg-gradient-to-b from-white to-gray-50 rounded-lg">
+                  <div className="p-4 text-center">
                     <BadgeIcon
                       badge={badge}
                       size="md"
                       className="mx-auto mb-3 group-hover:scale-110 transition-transform duration-300"
                     />
                     <p className="text-sm font-bold text-teal-700 mb-3">
-                      {getBadgeEmoji(badge)} {badge} Badge
+                      {getBadgeEmoji(badge)} {badge}
                     </p>
 
-                    <button
-                      onClick={() => handleShareClick(badge)}
-                      className="bg-teal-600 hover:bg-teal-700 text-white opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 px-3 py-1 rounded text-sm font-medium"
-                    >
-                      <FaShare className="mr-2 text-xs inline" />
-                      Share Achievement
-                    </button>
+                    {/* Share Buttons */}
+                    <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 space-y-2">
+                      <button
+                        onClick={() => handleInstagramShare(badge)}
+                        className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 hover:from-pink-600 hover:via-red-600 hover:to-yellow-600 text-white shadow-lg w-full px-3 py-1 rounded text-sm flex items-center justify-center gap-2"
+                      >
+                        <FaInstagram className="text-xs" />
+                        Instagram
+                      </button>
+                      <button
+                        onClick={() => handleShareClick(badge)}
+                        className="bg-teal-600 hover:bg-teal-700 text-white shadow-lg w-full px-3 py-1 rounded text-sm flex items-center justify-center gap-2"
+                      >
+                        <FaShare className="text-xs" />
+                        Share
+                      </button>
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -83,41 +101,63 @@ const BadgesDisplay = ({ badgesEarned, quizScores, showProgress = true, userName
 
           {/* Achievement Summary */}
           <motion.div
-            className="mt-6 bg-gradient-to-r from-teal-50 to-blue-50 border border-teal-200 rounded-xl p-6"
+            className="bg-gradient-to-r from-teal-50 to-blue-50 border border-teal-200 rounded-xl p-6 shadow-sm"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <div className="text-center mb-4">
-              <FaTrophy className="text-3xl text-teal-600 mx-auto mb-2" />
-              <h3 className="text-lg font-bold text-teal-800">Amazing Progress!</h3>
-              <p className="text-teal-600">Share your achievements and inspire others to join the SDG movement</p>
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
+              <div className="text-center lg:text-left">
+                <div className="flex items-center justify-center lg:justify-start gap-2 mb-2">
+                  <FaTrophy className="text-2xl text-teal-600" />
+                  <h4 className="text-lg font-bold text-teal-800">Amazing Progress!</h4>
+                </div>
+                <p className="text-teal-600">Share your achievements and inspire others to join the SDG movement</p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4 text-center">
+                <div className="bg-white p-3 rounded-lg shadow-sm border border-teal-100">
+                  <p className="text-xl font-bold text-teal-700">{totalPoints}</p>
+                  <p className="text-xs text-teal-600">Total Points</p>
+                </div>
+                <div className="bg-white p-3 rounded-lg shadow-sm border border-teal-100">
+                  <p className="text-xl font-bold text-teal-700">{badgesEarned.length}</p>
+                  <p className="text-xs text-teal-600">Badges</p>
+                </div>
+                <div className="bg-white p-3 rounded-lg shadow-sm border border-teal-100">
+                  <p className="text-xl font-bold text-teal-700">{completedQuizzes}</p>
+                  <p className="text-xs text-teal-600">Goals</p>
+                </div>
+              </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div className="text-center">
-                <p className="text-2xl font-bold text-teal-700">{totalPoints}</p>
-                <p className="text-sm text-teal-600">Total Points</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-teal-700">{badgesEarned.length}</p>
-                <p className="text-sm text-teal-600">Badges Earned</p>
-              </div>
+            <div className="flex flex-col sm:flex-row gap-3 mt-4">
+              <button
+                onClick={() => handleInstagramShare(badgesEarned[badgesEarned.length - 1])}
+                className="flex-1 bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 hover:from-pink-600 hover:via-red-600 hover:to-yellow-600 text-white shadow-lg px-4 py-3 rounded-lg font-medium flex items-center justify-center gap-2"
+              >
+                <FaInstagram />
+                Share on Instagram
+              </button>
+
+              <button
+                onClick={() => handleShareClick(badgesEarned[badgesEarned.length - 1])}
+                className="flex-1 bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white shadow-lg px-4 py-3 rounded-lg font-medium flex items-center justify-center gap-2"
+              >
+                <FaRocket />
+                Share Achievement
+              </button>
             </div>
 
-            <button
-              onClick={() => handleShareClick(badgesEarned[badgesEarned.length - 1])}
-              className="w-full bg-teal-600 hover:bg-teal-700 text-white px-4 py-3 rounded-lg font-medium transition-colors"
-            >
-              <FaShare className="mr-2 inline" />
-              Share Latest Achievement
-            </button>
+            <p className="text-xs text-center text-teal-600 mt-2">
+              ✨ Content auto-generated • Multiple platforms • Easy sharing!
+            </p>
           </motion.div>
         </>
       ) : (
-        <div className="text-center p-6 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
-          <LockedBadgeIcon size="md" className="mx-auto mb-3" />
-          <p className="text-gray-600 font-medium mb-2">No badges yet!</p>
+        <div className="text-center p-8 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
+          <LockedBadgeIcon size="lg" className="mx-auto mb-4" />
+          <h4 className="text-lg font-semibold text-gray-600 mb-2">No badges yet!</h4>
           <p className="text-sm text-gray-500">
             Complete quizzes to earn your first badge and start sharing your achievements! 🌟
           </p>
@@ -126,13 +166,13 @@ const BadgesDisplay = ({ badgesEarned, quizScores, showProgress = true, userName
 
       {showProgress && (
         <motion.div
-          className="mt-6 p-4 bg-white rounded-lg shadow-lg border border-gray-200"
+          className="bg-white rounded-lg shadow-sm border border-gray-200 p-4"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
           <p className="text-gray-700 mb-3 font-medium">{getNextBadgeHint()}</p>
-          <div className="mt-2 h-3 bg-gray-200 rounded-full overflow-hidden">
+          <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
             <motion.div
               className="h-full bg-gradient-to-r from-teal-500 to-teal-600 rounded-full"
               initial={{ width: 0 }}
@@ -149,6 +189,14 @@ const BadgesDisplay = ({ badgesEarned, quizScores, showProgress = true, userName
         isOpen={shareModalOpen}
         onClose={() => setShareModalOpen(false)}
         userStats={userStats}
+      />
+
+      <InstagramShareModal
+        badge={selectedBadge}
+        isOpen={instagramModalOpen}
+        onClose={() => setInstagramModalOpen(false)}
+        userStats={userStats}
+        achievementType="badge"
       />
     </div>
   )

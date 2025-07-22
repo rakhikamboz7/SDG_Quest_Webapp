@@ -29,6 +29,8 @@ console.log("🔧 Loading routes...")
 app.use("/", require("./routes/userRoutes")) // This should handle /create-admin
 app.use("/api/quizzes", require("./routes/quizRoutes"))
 app.use("/api", require("./routes/scoreRoutes"))
+app.use("/api/donations", require("./routes/donationRoutes"))
+
 
 // ✅ Health check
 app.get("/", (req, res) => {

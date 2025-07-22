@@ -17,6 +17,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 import SDGActionPlatform from "./components/SdgActionPlatform";
 import TakeActionPage from "./components/TakeActionPage";
 import PledgeDashboard from "./components/PledgeDashboard";
+import DonatePage from "./components/donate-page";
+import DonateSuccess from "./components/donate-success";
 const App = () => {
   const location = useLocation();
   const path = location.pathname;
@@ -41,6 +43,8 @@ const App = () => {
           <Route path="/goal/:id" element={<GoalContent />} />
           <Route path="/quiz/:goalId" element={<SDGQuiz />} />
           <Route path="/knowledge" element={<KnowledgeBites />} />
+          <Route path="/donate" element={<DonatePage />} />
+          <Route path="/donate/success" element={<DonateSuccess />} />
           <Route path="/signin" element={<LoginSignup />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/contact" element={<ContactUs />} />

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
 import axios from "axios"
-import { Menu, X, ChevronDown, Play, Target, BookOpen, Award } from "lucide-react"
+import { Menu, X, ChevronDown, Play, Target, BookOpen, Award, HeartHandshake } from "lucide-react"
 import logo from "../assets/logo.svg"
 
 const BACKEND_URL = import.meta.env.VITE_API_BASE_URL
@@ -66,6 +66,7 @@ const Header = () => {
     { label: "Knowledge Hub", href: "/knowledge", icon: Target },
     { label: "SDG Actions", href: "/sdg-actions", icon: Award },
     { label: "Start Quiz", onClick: handleStartQuiz, icon: Play, isButton: true },
+    { label: "Donate", href:"/donate", icon: HeartHandshake },
   ]
 
   return (
@@ -216,6 +217,7 @@ const Header = () => {
                           </button>
                           <hr className="my-2" />
                         </div>
+
 
                         <Link
                           to="/dashboard"
